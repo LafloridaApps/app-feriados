@@ -46,6 +46,8 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         resetErrors
     } = useDateValidation(fechasFeriadas, detalleFer, detalleAdm, tipo);
 
+
+
     const calcularFechaFinPropuesta = useCallback(async (inicio, cantidadDias) => {
         if (!inicio || cantidadDias <= 0) return inicio;
         let fecha = new Date(inicio);
@@ -224,21 +226,46 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     const submitForm = async (e, esJefe, esDirector) => {
         e.preventDefault();
         setEnviando(true);
+
         const isValid = validarFechas(fechaInicio, fechaFin);
         if (!isValid || errorSaldo) {
             setEnviando(false);
             return;
         }
+
         if (esJefe && esDirector && !subrogante) {
             setMostrarModalSubrogante(true);
             return;
         }
+
+        if (esJefe && !esDirector && !subrogante) {
+            const { isConfirmed } = await Swal.fire({
+                icon: 'question',
+                title: '¿Deseas agregar un subrogante?',
+                text: 'Puedes agregar un subrogante o dejar que la solicitud sea aprobada por el director.',
+                showCancelButton: true,
+                confirmButtonText: 'Agregar Subrogante',
+                cancelButtonText: 'Firmará el Director',
+            });
+
+            if (isConfirmed) {
+                setMostrarModalSubrogante(true);
+            } else {
+                console.log("Firmará el director");
+                await handleSaveSolicitud();
+            }
+
+            setEnviando(false);
+            return;
+        }
+
         await handleSaveSolicitud();
     };
 
     const handleSubroganteSelected = (func) => {
         setSubrogante(func);
         setMostrarModalSubrogante(false);
+        console.log(subrogante)
         handleSaveSolicitud();
     };
 

@@ -9,7 +9,7 @@ export const UsuarioProvider = ({ children }) => {
 	useEffect(() => {
 		const fetchFuncionario = async () => {
 			try {
-				const data = await getFuncionarioByRut(10397956);
+				const data = await getFuncionarioByRut(13890844);
 				setFuncionario(data);
 			} catch (error) {
 				console.error("Error al obtener funcionario:", error);
