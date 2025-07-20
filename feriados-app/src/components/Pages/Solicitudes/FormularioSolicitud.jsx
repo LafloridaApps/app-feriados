@@ -5,23 +5,25 @@ import ModalSubrogante from './Subrogancias/ModalSubrogante';
 import { useEffect, useState } from 'react';
 import { useIsJefe } from '../../../hooks/useIsJefe';
 import { useFormularioSolicitud } from '../../../hooks/useFormularioSolicitud';
+import ModalVerSubrogante from './Subrogancias/ModalVerSubrogante';
 
 const tiposPermiso = [
-     
+
     { value: 'FERIADO', label: 'Feriado' },
     { value: 'ADMINISTRATIVO', label: 'Administrativo' }
-   
+
 ];
 
 const jornadas = ['AM', 'PM'];
 
 const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer }) => {
+
+
     const { verificar } = useIsJefe();
     const [esJefe, setEsJefe] = useState(false);
     const [esDirector, setEsDirector] = useState(false);
+    const [mostrarInfoSubrogante, setMostrarInfoSubrogante] = useState(false);
 
-    console.log(esJefe);
-    console.log(esDirector);
 
 
     const {
@@ -35,15 +37,16 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         submitForm,
         mostrarModalSubrogante,
         handleSubroganteSelected,
+        hanglerEliminarSubrogancia,
         closeSubroganteModal,
-        rut, depto
+        rut, depto,
+        subrogancia
     } = useFormularioSolicitud({ resumenAdm, resumenFer, detalleAdm, detalleFer });
 
 
     useEffect(() => {
         if (depto && rut) {
-            const codEx = depto.split('||')[0];
-             verificar(codEx, rut)
+            verificar(depto, rut)
                 .then(response => {
                     setEsJefe(response.esJefe);
                     setEsDirector(response.esDirector);
@@ -52,7 +55,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         }
     }, [depto, rut, verificar]);
 
-    const handleSubmit = (e) => submitForm(e, esJefe, esDirector);
+    const handleSubmit = (e) => submitForm(e, esJefe, esDirector, fechaInicio);
 
     const renderSelect = (id, label, value, onChange, options) => (
         <div className="mb-3">
@@ -67,8 +70,9 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         </div>
     );
 
+
     return (
-       <div className='row'>
+        <div className='row'>
             <div className='col-md-6'>
                 <div className="card shadow-sm">
                     <div className="card-header bg-secondary text-white">
@@ -96,7 +100,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     onChange={handlerFechaInicio}
                                     onKeyDown={(e) => e.preventDefault()}
                                 />
-                            </div> 
+                            </div>
 
                             <div className="mb-3">
                                 <label htmlFor="fechaFin" className="form-label">
@@ -143,17 +147,40 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                 >
                                     Enviar Solicitud
                                 </button>
+                                {subrogancia && (
+                                    <div className="alert alert-info d-flex justify-content-between align-items-center m-3" role="alert">
+                                        <div>
+                                            <i className="bi bi-info-circle"></i> Esta solicitud tiene un subrogante seleccionado.
+                                        </div>
+                                        <button
+                                            type='button'
+                                            className="btn btn-sm btn-outline-primary"
+                                            onClick={() => setMostrarInfoSubrogante(true)}
+                                        >
+                                            Ver Detalles
+                                        </button>
+                                    </div>
+                                )}
+
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
 
+            <ModalVerSubrogante
+                show={mostrarInfoSubrogante}
+                onClose={() => setMostrarInfoSubrogante(false)}
+                subrogante={subrogancia}
+                onEliminar={hanglerEliminarSubrogancia}
+            />
+
             <ModalSubrogante
                 show={mostrarModalSubrogante}
                 onClose={closeSubroganteModal}
                 onSubroganteSelected={handleSubroganteSelected}
-                depto={depto}
+                rutFuncionario={rut}
+                deptoFuncionario={depto}
             />
 
             <div className='col-md-6'>
@@ -175,6 +202,9 @@ FormularioSolicitud.propTypes = {
     resumenFer: PropTypes.array,
     detalleAdm: PropTypes.array,
     detalleFer: PropTypes.array,
+    funcionario: PropTypes.shape({
+        rut: PropTypes.number.isRequired,
+    }).isRequired
 };
 
 export default FormularioSolicitud;

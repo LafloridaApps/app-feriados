@@ -81,7 +81,6 @@ const InboxSolicitudes = () => {
         return cumpleAnio && cumpleFechaInicio && cumpleFechaFin && cumpleNombre && cumpleRut;
     });
 
-    console.log('refetch es función?', typeof refetch === 'function');
 
     return (
         <div className="container-fluid mt-4">

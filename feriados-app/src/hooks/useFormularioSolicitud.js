@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import Swal from 'sweetalert2';
 import { calculoDiasAusar, fechaActual } from "../services/utils";
-import { saveSolicitud } from '../services/solicitudService';
+import { getSolicitudByFechaAndTipo, saveSolicitud } from '../services/solicitudService';
 import { UsuarioContext } from "../context/UsuarioContext";
 import { FeriadosContext } from "../context/FeriadosContext";
 import { useDateValidation } from "./useDateValidation";
+import { getDireccionByIdDepto } from "../services/funcionarioService";
 
 const initialState = {
     rut: 0,
@@ -24,7 +25,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     const [saldoFeriado, setSaldoFeriado] = useState(0);
     const [saldoAdministrativo, setSaldoAdministrativo] = useState(0);
     const [enviando, setEnviando] = useState(false);
-    const [subrogante, setSubrogante] = useState(null);
+    const [subrogancia, setSubrogancia] = useState(null);
     const [mostrarModalSubrogante, setMostrarModalSubrogante] = useState(false);
     const [fechaEditada, setFechaEditada] = useState("inicio");
     const [solicitud, setSolicitud] = useState(initialState);
@@ -32,11 +33,14 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     const [jornadaFin, setJornadaFin] = useState("PM");
     const [errorSaldo, setErrorSaldo] = useState("");
 
+
+
     const funcionario = useContext(UsuarioContext);
     const feriados = useContext(FeriadosContext);
     const fechasFeriadas = feriados.map(f => f.fecha);
     const rut = funcionario?.rut;
-    const depto = funcionario?.codDeptoExt;
+    const depto = funcionario?.codDepto;
+    const codDeptoJefe = funcionario?.codDeptoJefe
 
     const {
         errorFecha,
@@ -44,7 +48,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         errorRangoFechas,
         validarFechas,
         resetErrors
-    } = useDateValidation(fechasFeriadas, detalleFer, detalleAdm, tipo);
+    } = useDateValidation(fechasFeriadas, detalleFer, detalleAdm, tipo, fechaInicio);
 
 
 
@@ -170,6 +174,13 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         if (errorRangoFechas) mostrarAlertaError(errorRangoFechas);
     }, [errorSaldo, errorFecha, errorFeriado, errorRangoFechas, mostrarAlertaError]);
 
+
+    const handerAgregaDirectorSubrante = async (id)=>{
+        const dataDirector = await getDireccionByIdDepto(id)
+        console.log(dataDirector)
+    }
+
+
     const handleSaveSolicitud = useCallback(async () => {
         const nuevaSolicitud = {
             ...solicitud,
@@ -183,9 +194,9 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                 jornadaInicio,
                 jornadaTermino: jornadaFin,
             }),
-            ...(subrogante && {
-                subroganteRut: subrogante.rut,
-                subroganteNombre: subrogante.nombre,
+            ...(subrogancia && {
+                subroganteRut: subrogancia.rut,
+                subroganteNombre: subrogancia.nombre,
             }),
         };
 
@@ -212,7 +223,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
             setFechaFin(fechaActual());
             setDiasUsarFeriado(null);
             setDiasUsarAdministrativo(null);
-            setSubrogante(null);
+            setSubrogancia(null);
             resetErrors();
             setErrorSaldo("");
         } catch (error) {
@@ -221,52 +232,87 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         } finally {
             setEnviando(false);
         }
-    }, [solicitud, rut, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogante, resetErrors]);
+    }, [solicitud, rut, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, resetErrors]);
 
     const submitForm = async (e, esJefe, esDirector) => {
         e.preventDefault();
         setEnviando(true);
 
-        const isValid = validarFechas(fechaInicio, fechaFin);
-        if (!isValid || errorSaldo) {
-            setEnviando(false);
-            return;
-        }
-
-        if (esJefe && esDirector && !subrogante) {
-            setMostrarModalSubrogante(true);
-            return;
-        }
-
-        if (esJefe && !esDirector && !subrogante) {
-            const { isConfirmed } = await Swal.fire({
-                icon: 'question',
-                title: '¿Deseas agregar un subrogante?',
-                text: 'Puedes agregar un subrogante o dejar que la solicitud sea aprobada por el director.',
-                showCancelButton: true,
-                confirmButtonText: 'Agregar Subrogante',
-                cancelButtonText: 'Firmará el Director',
-            });
-
-            if (isConfirmed) {
-                setMostrarModalSubrogante(true);
-            } else {
-                console.log("Firmará el director");
-                await handleSaveSolicitud();
+        try {
+            // Validar fechas y saldo
+            const isValid = validarFechas(fechaInicio, fechaFin);
+            if (!isValid || errorSaldo) {
+                setEnviando(false);
+                return;
             }
 
-            setEnviando(false);
-            return;
-        }
+            // Validar si ya existe una solicitud en ese rango de fechas
+            const existe = await getSolicitudByFechaAndTipo(rut, fechaInicio, tipo);
+            if (existe) {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Ya existe una solicitud',
+                    text: 'Tienes una solicitud en este mismo rango de fechas.',
+                });
+                setEnviando(false);
+                return;
+            }
 
-        await handleSaveSolicitud();
+            // Caso: Jefe y Director sin subrogante => debe agregar subrogante
+            if (esJefe && esDirector && !subrogancia) {
+                setMostrarModalSubrogante(true);
+                return;
+            }
+
+            // Caso: Solo jefe sin subrogante => preguntar si agrega subrogante o deja que firme el director
+            if (esJefe && !esDirector && !subrogancia) {
+                const { isConfirmed } = await Swal.fire({
+                    icon: 'question',
+                    title: '¿Deseas agregar un subrogante?',
+                    text: 'Puedes agregar un subrogante o dejar que firme el director.',
+                    confirmButtonText: 'Agregar subrogante',
+                    cancelButtonText: 'Firmará el director',
+                    showCancelButton: true,
+                });
+
+                if (isConfirmed) {
+                    setMostrarModalSubrogante(true);
+                    return;
+                } else {
+                    handerAgregaDirectorSubrante(depto)
+                    return;
+                }
+            }
+
+            // Si pasó todas las validaciones y condiciones anteriores
+            await handleSaveSolicitud();
+
+        } catch (error) {
+            console.error("Error al enviar la solicitud:", error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error inesperado',
+                text: 'Ocurrió un problema al enviar la solicitud. Intenta nuevamente.',
+            });
+        } finally {
+            setEnviando(false);
+        }
     };
 
-    const handleSubroganteSelected = (func) => {
-        setSubrogante(func);
+
+    const handleSubroganteSelected = (subrogancia) => {
+        subrogancia = {
+            ...subrogancia, fechaInicio: fechaInicio, fechaFin: fechaFin
+
+        };
+
+        setSubrogancia(subrogancia);
         setMostrarModalSubrogante(false);
-        console.log(subrogante)
-        handleSaveSolicitud();
+    };
+
+    const hanglerEliminarSubrogancia = () => {
+        setSubrogancia(null);
+        setMostrarModalSubrogante(false);
     };
 
     const closeSubroganteModal = () => {
@@ -275,6 +321,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     };
 
     const hasErrors = !!errorSaldo || !!errorFecha || !!errorFeriado || !!errorRangoFechas;
+
 
     return {
         tipo, setTipo,
@@ -292,6 +339,8 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         closeSubroganteModal,
         rut,
         depto,
-        subrogante,
+        subrogancia,
+        codDeptoJefe,
+        hanglerEliminarSubrogancia
     };
 };

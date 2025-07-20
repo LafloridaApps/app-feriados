@@ -23,8 +23,6 @@ const SolicitudesPage = () => {
 
     const { detalle: detalleFer } = dataFer || {};
 
-
-
     useEffect(() => {
         if (!funcionario) return;
 
@@ -33,9 +31,7 @@ const SolicitudesPage = () => {
         const fetchDataAdm = async () => {
             try {
                 const response = await getAdministrativoByRut(funcionario.rut, funcionario.ident);
-               
-               
-              
+
                 const resumenFiltrado = {
                     maximo: response?.maximo || 0,
                     usados: response?.usados || 0,
@@ -43,13 +39,14 @@ const SolicitudesPage = () => {
                     anio: response?.anio || anioActual
 
                 }
-              
-                
+
+
                 const detalleFiltrado = response.detalle?.filter(item => {
                     const fecha = new Date(item.fechaInicio);
                     return !isNaN(fecha) && fecha.getFullYear() === anioActual;
                 }) || [];
-                
+
+
                 setDataAdm({ ...response, resumen: resumenFiltrado, detalle: detalleFiltrado });
             } catch (error) {
                 console.error('Error al obtener datos administrativos:', error);
@@ -65,7 +62,7 @@ const SolicitudesPage = () => {
                     dias_acumulados: response?.diasAcumulados || 0,
                     dias_tomados: response?.diasTomados || 0,
                     dias_pendientes: response?.diasPendientes || 0,
-                    total: response?.total || 0, 
+                    total: response?.total || 0,
                     dias_perdidos: response?.diasPerdidos || 0
 
                 }
@@ -82,10 +79,9 @@ const SolicitudesPage = () => {
         fetchDataFeriados();
     }, [funcionario]);
 
-     
+
 
     if (!funcionario) return <p className="alert alert-info text-center mt-5" role='alert'>Cargando Información...</p>;
-
 
     return (
         <div className="container py-4">
@@ -96,7 +92,12 @@ const SolicitudesPage = () => {
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <FormularioSolicitud resumenAdm={resumenAdm} resumenFer={resumenFer} detalleAdm={detalleAdm} detalleFer={detalleFer} />
+                        <FormularioSolicitud
+                            resumenAdm={resumenAdm}
+                            resumenFer={resumenFer}
+                            detalleAdm={detalleAdm}
+                            detalleFer={detalleFer}
+                        />
                     </div>
                 </div>
             </div>

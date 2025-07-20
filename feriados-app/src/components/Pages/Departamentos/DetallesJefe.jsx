@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getFuncionarioLocalByRut } from '../../../services/funcionarioService';
-import { upddateJefeDepto } from '../../../services/departamentosService';
+import { updateJefeDepto } from '../../../services/departamentosService';
 
 const DetallesJefe = ({ departamento, fetchDepartamentos }) => {
 
@@ -42,7 +42,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await upddateJefeDepto(departamento.id, rutJefeEditado);
+                    await updateJefeDepto(departamento.id, rutJefeEditado);
                     Swal.fire({
                         icon: 'success',
                         title: '¡Jefe de departamento actualizado!',

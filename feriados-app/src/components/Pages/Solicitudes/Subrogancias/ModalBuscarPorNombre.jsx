@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { searchFuncionarioByNombreAndDepto } from '../../../../services/funcionarioService';
 
-const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected }) => {
+const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFuncionario }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredFuncionarios, setFilteredFuncionarios] = useState([]);
     const [selectedFuncionario, setSelectedFuncionario] = useState(null);
@@ -18,11 +19,13 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected }) => {
         }
     }, [show]);
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
+        const response = await searchFuncionarioByNombreAndDepto(deptoFuncionario, searchTerm);
+        setFilteredFuncionarios(response.funcionarios);
         setError('');
         setSelectedFuncionario(null);
 
-       
+
     };
 
     const handleSelectFuncionario = (funcionario) => {
@@ -80,14 +83,16 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected }) => {
                                             <tr>
                                                 <th>RUT</th>
                                                 <th>Nombre</th>
+                                                <th>Depto</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {filteredFuncionarios.map(func => (
                                                 <tr key={func.rut} className={selectedFuncionario?.rut === func.rut ? 'table-primary' : ''}>
-                                                    <td>{func.rut}</td>
+                                                    <td>{func.rut}-{func.vrut}</td>
                                                     <td>{func.nombre}</td>
+                                                    <td>{func.departamento}</td>
                                                     <td>
                                                         <button
                                                             className="btn btn-sm btn-info"
@@ -107,7 +112,7 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected }) => {
 
                         {selectedFuncionario && (
                             <div className="alert alert-success mt-3">
-                                <strong>Funcionario Seleccionado:</strong> {selectedFuncionario.nombre} (RUT: {selectedFuncionario.rut})
+                                <strong>Funcionario Seleccionado:</strong> {selectedFuncionario.nombre} (RUT: {selectedFuncionario.rut}-{selectedFuncionario.vrut})
                             </div>
                         )}
                     </div>
@@ -126,7 +131,8 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected }) => {
 ModalBuscarPorNombre.propTypes = {
     show: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onFuncionarioSelected: PropTypes.func.isRequired, // Para pasar el funcionario seleccionado de vuelta
+    onFuncionarioSelected: PropTypes.func.isRequired,
+    deptoFuncionario: PropTypes.isRequired
 };
 
 export default ModalBuscarPorNombre;

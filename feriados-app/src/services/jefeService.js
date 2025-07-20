@@ -2,12 +2,24 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8082/api/departamentos/esjefe';
 
-export const getIsJefe = async (codEx, rut) => {
+const api = axios.create({
+    baseURL: BASE_URL
+
+});
+
+export const getIsJefe = async (codDepto, rut) => {
     try {
-        const response = await axios.get(`${BASE_URL}?codEx=${codEx}&rut=${rut}`);
+        const response = await api.get(BASE_URL, {
+            params: {
+                codDepto: codDepto,
+                rut: rut
+            }
+        })
         return response;
     } catch (error) {
         console.error('Error al obtener funcionario:', error);
         throw error;
     }
 };
+
+

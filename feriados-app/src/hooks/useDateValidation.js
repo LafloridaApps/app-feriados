@@ -6,6 +6,7 @@ export const useDateValidation = (fechasFeriadas, detalleFer, detalleAdm, tipo) 
     const [errorFeriado, setErrorFeriado] = useState("");
     const [errorRangoFechas, setErrorRangoFechas] = useState("");
 
+
     const hayConflictoDeFechas = useCallback((inicioForm, terminoForm) => {
         const data = tipo === "FERIADO" ? detalleFer : detalleAdm;
         return data?.some(item => {
@@ -14,6 +15,8 @@ export const useDateValidation = (fechasFeriadas, detalleFer, detalleAdm, tipo) 
             return inicioForm <= terminoExistente && terminoForm >= inicioExistente;
         }) ?? false;
     }, [tipo, detalleAdm, detalleFer]);
+
+     
 
     const validarFechas = useCallback((inicio, fin) => {
         const inicioDate = new Date(inicio);
@@ -33,7 +36,7 @@ export const useDateValidation = (fechasFeriadas, detalleFer, detalleAdm, tipo) 
         if (hayConflictoDeFechas(inicioDate, finDate)) {
             currentErrorRangoFechas = "El rango de fechas solicitadas ya fue ocupado";
         }
-
+       
         setErrorFecha(currentErrorFecha);
         setErrorFeriado(currentErrorFeriado);
         setErrorRangoFechas(currentErrorRangoFechas);

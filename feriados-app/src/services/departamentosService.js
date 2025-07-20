@@ -1,11 +1,15 @@
 import axios from 'axios';
 
-// URL base (puede venir de env si prefieres)
 const BASE_URL = 'http://localhost:8082/api/departamentos';
+
+const api = axios.create({
+  baseURL: BASE_URL
+
+});
 
 export const getDepartamentosList = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/list`);
+    const response = await api.get(`/list`);
     return response
   } catch (error) {
     console.error('Error al obtener los departamentos:', error);
@@ -15,20 +19,24 @@ export const getDepartamentosList = async () => {
 
 export const updateDepartamento = async (id, nuevoNombre) => {
   try {
-    const response = await axios.put(`${BASE_URL}?idDepto=${id}`, { nombre: nuevoNombre });
-    return response.data;
+    const { data } = await api.put('', { nombre: nuevoNombre }, {
+      params: { idDepto: id }
+    });
+    return data;
   } catch (error) {
     console.error('Error al actualizar el departamento:', error);
     throw error;
   }
-}
+};
 
-export const upddateJefeDepto = async (id, nuevoRut) => {
+export const updateJefeDepto = async (id, nuevoRut) => {
   try {
-    const response = await axios.put(`${BASE_URL}/jefe?idDepto=${id}`, { rut: nuevoRut });
-    return response.data;
+    const { data } = await api.put('/jefe', { rut: nuevoRut }, {
+      params: { idDepto: id }
+    });
+    return data;
   } catch (error) {
-    console.error('Error al actualizar el departamento:', error);
+    console.error('Error al actualizar el jefe del departamento:', error);
     throw error;
   }
-}
+};

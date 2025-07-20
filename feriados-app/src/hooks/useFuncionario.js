@@ -1,11 +1,11 @@
 // src/hooks/useFuncionario.js
 import { useCallback } from 'react';
-import { getFuncionarioLocalByRut } from '../services/funcionarioService';
+import { getFuncionarioByRut } from '../services/funcionarioService';
 
 export function useFuncionario() {
-    const consultarRut = useCallback(async (rut) => {
+    const consultarRut = useCallback(async (rut, vRut) => {
         try {
-            const response = await getFuncionarioLocalByRut(rut);
+            const response = await getFuncionarioByRut(rut, vRut);
             return response;
         } catch (error) {
             console.error('Error al consultar funcionario:', error);
