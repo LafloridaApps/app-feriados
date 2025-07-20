@@ -176,8 +176,16 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
 
     const handerAgregaDirectorSubrante = async (id)=>{
-        const dataDirector = await getDireccionByIdDepto(id)
-        console.log(dataDirector)
+
+        try{
+             const dataDirector = await getDireccionByIdDepto(id, fechaInicio,fechaInicio)
+               console.log(dataDirector)
+
+        }catch(error) {
+            console.log(error);
+        }
+       
+      
     }
 
 
