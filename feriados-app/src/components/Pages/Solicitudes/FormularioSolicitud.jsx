@@ -98,7 +98,6 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     className="form-control"
                                     value={fechaInicio}
                                     onChange={handlerFechaInicio}
-                                    onKeyDown={(e) => e.preventDefault()}
                                 />
                             </div>
 
@@ -112,7 +111,6 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     className="form-control"
                                     value={fechaFin}
                                     onChange={handlerFechaFin}
-                                    onKeyDown={(e) => e.preventDefault()}
                                 />
                             </div>
 
@@ -181,6 +179,8 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                 onSubroganteSelected={handleSubroganteSelected}
                 rutFuncionario={rut}
                 deptoFuncionario={depto}
+                fechaInicio={fechaInicio}
+                fechaFin={fechaFin}
             />
 
             <div className='col-md-6'>

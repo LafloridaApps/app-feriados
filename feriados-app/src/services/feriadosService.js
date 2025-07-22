@@ -7,7 +7,7 @@ const api = axios.create({
 
 });
 
-export const getFeriadosByRut = async (rut, ident) => {
+export const getFeriadosByRutAndIdent = async (rut, ident) => {
     try {
         const { data } = await api.get('', { params: { rut, ident } });
         return data;

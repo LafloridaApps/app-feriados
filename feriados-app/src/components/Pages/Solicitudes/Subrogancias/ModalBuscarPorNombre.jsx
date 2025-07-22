@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { searchFuncionarioByNombreAndDepto } from '../../../../services/funcionarioService';
 
-const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFuncionario }) => {
+const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFuncionario, fechaInicio, fechaFin }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredFuncionarios, setFilteredFuncionarios] = useState([]);
     const [selectedFuncionario, setSelectedFuncionario] = useState(null);
@@ -20,8 +20,10 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
     }, [show]);
 
     const handleSearch = async () => {
-        const response = await searchFuncionarioByNombreAndDepto(deptoFuncionario, searchTerm);
-        setFilteredFuncionarios(response.funcionarios);
+        const { funcionarios } = await searchFuncionarioByNombreAndDepto(deptoFuncionario, searchTerm, fechaInicio,fechaFin);
+
+        setFilteredFuncionarios(funcionarios);
+        
         setError('');
         setSelectedFuncionario(null);
 
@@ -132,7 +134,9 @@ ModalBuscarPorNombre.propTypes = {
     show: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onFuncionarioSelected: PropTypes.func.isRequired,
-    deptoFuncionario: PropTypes.isRequired
+    deptoFuncionario: PropTypes.isRequired,
+    fechInicio:PropTypes.isRequired,
+    fechaFin:PropTypes.isRequired
 };
 
 export default ModalBuscarPorNombre;

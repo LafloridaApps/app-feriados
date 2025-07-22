@@ -1,7 +1,7 @@
 // src/providers/SolicitudesNoLeidasProvider.jsx
 import { useEffect, useCallback, useState, useContext, useMemo } from "react";
 import { SolicitudesNoLeidasContext } from "../context/SolicitudesNoLeidasContext";
-import { inboxSolicitudesByRut } from "../services/inboxSolicitudes";
+import { getInboxSolicitudesByRut } from "../services/inboxSolicitudes";
 import { UsuarioContext } from "../context/UsuarioContext";
 import PropTypes from "prop-types";
 
@@ -12,7 +12,7 @@ export const SolicitudesNoLeidasProvider = ({ children }) => {
     const fetchSolicitudes = useCallback(async () => {
         if (funcionario?.rut) {
             try {
-                const data = await inboxSolicitudesByRut(funcionario.rut);
+                const data = await getInboxSolicitudesByRut(funcionario.rut);
                 const noLeidas = data.filter(
                     (sol) => sol.derivaciones?.[0] && !sol.derivaciones[0].recepcionada
                 );

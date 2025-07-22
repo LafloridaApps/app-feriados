@@ -7,7 +7,7 @@ const api = axios.create({
 
 });
 
-export const getAdministrativoByRut = async (rut, ident) => {
+export const getAdministrativoByRutAnIdent = async (rut, ident) => {
   try {
     const response = await api.get('', { params: { rut, ident } });
     return response.data;

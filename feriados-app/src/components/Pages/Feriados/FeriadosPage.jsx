@@ -1,6 +1,6 @@
 import { PropTypes } from 'prop-types';
 import { useState, useEffect, useContext } from "react";
-import { getFeriadosByRut } from "../../../services/feriadosService";
+import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import TabsFeridos from "./TabsFeridos ";
 import { UsuarioContext } from '../../../context/UsuarioContext';
 
@@ -14,7 +14,7 @@ const FeridosPage = () => {
         if (funcionario) {
             const fetchPermisos = async () => {
                 try {
-                    const response = await getFeriadosByRut(funcionario.rut,funcionario.ident);
+                    const response = await getFeriadosByRutAndIdent(funcionario.rut,funcionario.ident);
                     setData(response);
                 } catch (error) {
                     console.error("Error al obtener funcionario:", error);

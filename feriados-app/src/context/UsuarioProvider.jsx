@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFuncionarioByRut } from "../services/funcionarioService";
+import { getFuncionarioByRutAndVrut } from "../services/funcionarioService";
 import PropTypes from "prop-types";
 import { UsuarioContext } from "./UsuarioContext";
 
@@ -9,7 +9,7 @@ export const UsuarioProvider = ({ children }) => {
 	useEffect(() => {
 		const fetchFuncionario = async () => {
 			try {
-				const data = await getFuncionarioByRut(13890844,5);
+				const data = await getFuncionarioByRutAndVrut(13890844,5);
 				setFuncionario(data);
 			} catch (error) {
 				console.error("Error al obtener funcionario:", error);

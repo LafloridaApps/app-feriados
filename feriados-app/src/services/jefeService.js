@@ -7,7 +7,7 @@ const api = axios.create({
 
 });
 
-export const getIsJefe = async (codDepto, rut) => {
+export const searchIsJefeByCodDeptoAndRut = async (codDepto, rut) => {
     try {
         const response = await api.get(BASE_URL, {
             params: {

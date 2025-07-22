@@ -17,7 +17,7 @@ export const getDepartamentosList = async () => {
   }
 };
 
-export const updateDepartamento = async (id, nuevoNombre) => {
+export const updateDepartamentoById = async (id, nuevoNombre) => {
   try {
     const { data } = await api.put('', { nombre: nuevoNombre }, {
       params: { idDepto: id }
@@ -29,7 +29,7 @@ export const updateDepartamento = async (id, nuevoNombre) => {
   }
 };
 
-export const updateJefeDepto = async (id, nuevoRut) => {
+export const updateJefeDeptoById = async (id, nuevoRut) => {
   try {
     const { data } = await api.put('/jefe', { rut: nuevoRut }, {
       params: { idDepto: id }

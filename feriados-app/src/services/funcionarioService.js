@@ -8,7 +8,7 @@ const api = axios.create({
 
 });
 
-export const getFuncionarioByRut = async (rut, vRut) => {
+export const getFuncionarioByRutAndVrut = async (rut, vRut) => {
     try {
         const { data } = await api.get('', { params: { rut, vRut } });
         return data;
@@ -24,10 +24,10 @@ export const getFuncionarioLocalByRut = async (rut) => {
 };
 
 
-export const searchFuncionarioByNombreAndDepto = async (id, nombre) => {
+export const searchFuncionarioByNombreAndDepto = async (id, nombre, fechaInicio,fechaFin) => {
 
     try {
-        const { data } = await api.get("/buscar", { params: { id, nombre } });
+        const { data } = await api.get("/buscar", { params: { id, nombre , fechaInicio,fechaFin} });
         return data;
     } catch (error) {
         console.error('Error al obtener funcionario:', error);
@@ -36,7 +36,7 @@ export const searchFuncionarioByNombreAndDepto = async (id, nombre) => {
 };
 
 
-export const getDireccionByIdDepto = async (id, fechaInicio, fechaFin) => {
+export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id, fechaInicio, fechaFin) => {
 
     try {
         const { data } = await api.get("/buscar-director", { params: { id, fechaInicio, fechaFin } });

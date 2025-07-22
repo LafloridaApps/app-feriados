@@ -8,7 +8,7 @@ const api = axios.create({
 });
 
 
-export const inboxSolicitudesByRut = async (rut) => {
+export const getInboxSolicitudesByRut = async (rut) => {
     try {
         const { data } = await api.get(`/${rut}`);
         return data;

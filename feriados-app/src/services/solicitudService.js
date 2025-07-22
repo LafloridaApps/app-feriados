@@ -17,7 +17,7 @@ export const saveSolicitud = async (solicitud) => {
     }
 };
 
-export const getSolicitudByFechaAndTipo = async (rut, fechaInicio, tipo) => {
+export const getSolicitudByFechaInicioAndTipo = async (rut, fechaInicio, tipo) => {
     try {
         const { data } = await api.get('/existe', {
             params: { rut, fechaInicio, tipo }

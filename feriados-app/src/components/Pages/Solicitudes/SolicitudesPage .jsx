@@ -2,8 +2,8 @@ import { PropTypes } from 'prop-types';
 import { useContext, useEffect, useState } from "react";
 import FormularioSolicitud from "./FormularioSolicitud";
 import ResumenPermisos from "./ResumenPermisos";
-import { getAdministrativoByRut } from "../../../services/adminsitrativoService";
-import { getFeriadosByRut } from "../../../services/feriadosService";
+import { getAdministrativoByRutAnIdent } from "../../../services/adminsitrativoService";
+import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import { UsuarioContext } from '../../../context/UsuarioContext';
 
 
@@ -30,7 +30,7 @@ const SolicitudesPage = () => {
 
         const fetchDataAdm = async () => {
             try {
-                const response = await getAdministrativoByRut(funcionario.rut, funcionario.ident);
+                const response = await getAdministrativoByRutAnIdent(funcionario.rut, funcionario.ident);
 
                 const resumenFiltrado = {
                     maximo: response?.maximo || 0,
@@ -55,7 +55,7 @@ const SolicitudesPage = () => {
 
         const fetchDataFeriados = async () => {
             try {
-                const response = await getFeriadosByRut(funcionario.rut, funcionario.ident);
+                const response = await getFeriadosByRutAndIdent(funcionario.rut, funcionario.ident);
                 const resumenFiltrado = {
                     anio: response?.anio || anioActual,
                     dias_corresponden: response?.diasCorresponden || 0,

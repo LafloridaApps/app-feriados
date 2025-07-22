@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useFuncionario } from '../../../../hooks/useFuncionario';
 import ModalBuscarPorNombre from './ModalBuscarPorNombre';
 
-const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, deptoFuncionario }) => {
+const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, deptoFuncionario, fechaInicio, fechaFin }) => {
     const [rut, setRut] = useState('');
     const [errors, setErrors] = useState({ mensaje: '', detalle: '' });
     const [subrogante, setSubrogante] = useState({});
@@ -73,16 +73,8 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
         if (subrogante?.rut && subrogante?.nombre) {
             const subrogancia = {
                 rutSubrogante: subrogante.rut,
-                vutSubrogante: subrogante.vrut,
-                nombreSubrogante: subrogante.nombre,
-                departamentoSubrogante: subrogante.departamento,
-                rutJefe: rutFuncionario,
-                codDepto: deptoFuncionario
-
-
-
+                rutJefe: rutFuncionario
             }
-            console.log(subrogancia)
             onSubroganteSelected(subrogancia);
             onClose();
         } else {
@@ -158,6 +150,8 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
                 onClose={() => setShowBuscarPorNombreModal(false)}
                 onFuncionarioSelected={handleFuncionarioSelectedFromSearch}
                 deptoFuncionario={deptoFuncionario}
+                fechaInicio={fechaInicio}
+                fechaFin={fechaFin}
             />
         </>
     );
@@ -170,7 +164,9 @@ ModalSubrogante.propTypes = {
     funcionario: PropTypes.shape({
         rut: PropTypes.number.isRequired,
     }).isRequired,
-    deptoFuncionario: PropTypes.string.isRequired
+    deptoFuncionario: PropTypes.string.isRequired,
+    fechaInicio: PropTypes.isRequired,
+    fechaFin: PropTypes.isRequired
 };
 
 export default ModalSubrogante;

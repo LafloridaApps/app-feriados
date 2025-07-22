@@ -3,7 +3,7 @@ import './ArbolDepartamentos.css'; // Importamos el CSS
 import NodoDepartamentoConector from './NodoDepartamentoConector';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
-import { updateDepartamento } from '../../../services/departamentosService';
+import { updateJefeDeptoById } from '../../../services/departamentosService';
 
 function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departamentoSeleccionado }) {
 
@@ -27,7 +27,7 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await updateDepartamento(id, nuevoNombre);
+                    await updateJefeDeptoById(id, nuevoNombre);
                     Swal.fire(
                         'Editado!',
                         `El departamento ${id} ha sido editado a ${nuevoNombre}.`,
