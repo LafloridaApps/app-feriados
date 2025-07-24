@@ -180,7 +180,11 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
             if (dataDirector) {
                 const subrogancia = {
                     rutSubrogante: dataDirector.rut,
-                    rutJefe: funcionario.rut
+                    rutJefe: funcionario.rut,
+                    nombreSubrogante: dataDirector.nombre,
+                    departamentoSubrogante: dataDirector.departamento,
+                    vrutSubrogante: dataDirector.vrut
+
                 }
                 setSubrogancia(subrogancia);
             }
@@ -200,6 +204,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
             fechaInicio,
             fechaFin,
             depto,
+            diasUsar,
             tipoSolicitud: tipo,
             ...(tipo === "ADMINISTRATIVO" && {
                 jornadaInicio,
@@ -242,7 +247,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         } finally {
             setEnviando(false);
         }
-    }, [solicitud, rut, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, resetErrors]);
+    }, [solicitud, rut, fechaInicio, fechaFin, depto, diasUsar, tipo, jornadaInicio, jornadaFin, subrogancia, resetErrors]);
 
     const submitForm = async (e, esJefe, esDirector) => {
         e.preventDefault();

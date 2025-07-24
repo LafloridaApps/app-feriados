@@ -43,7 +43,6 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
 
         try {
             const dataFuncionario = await consultarRut(rutSinDv, vrut);
-            console.log(dataFuncionario)
 
             setSubrogante(dataFuncionario);
 
@@ -73,7 +72,13 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
         if (subrogante?.rut && subrogante?.nombre) {
             const subrogancia = {
                 rutSubrogante: subrogante.rut,
-                rutJefe: rutFuncionario
+                rutJefe: rutFuncionario,
+                nombreSubrogante: subrogante.nombre,
+                departamentoSubrogante: subrogante.departamento,
+                vrutSubrogante: subrogante.vrut
+                
+                
+                
             }
             onSubroganteSelected(subrogancia);
             onClose();

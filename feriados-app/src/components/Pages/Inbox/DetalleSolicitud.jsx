@@ -3,17 +3,40 @@ import { formatFecha } from "../../../services/utils";
 
 const DetalleSolicitud = ({ detalle }) => {
 
-    const { departamentoOrigen, fechaInicio, fechaFin, cantidadDias } = detalle;
+    const { departamentoOrigen, fechaInicio, fechaFin, cantidadDias, jornadaInicio, jornadaFin, tipoSolicitud } = detalle;
+
+
+    let jornada = null;
+
+    if (tipoSolicitud == 'ADMINISTRATIVO') {
+
+
+        if (jornadaInicio == 'AM' && jornadaFin == 'AM') {
+            jornada ="AM"
+        } else if (jornadaInicio == 'PM' && jornadaFin == 'PM') {
+            jornada = "PM"
+        } else {
+            jornada ="Completa"
+
+        }
+
+    }
 
     return (
         <div className="row">
             <div className="col-md-6">
-                <p><strong>Departamento:</strong> {departamentoOrigen}</p>
-                <p><strong>Fecha Inicio:</strong> {formatFecha(fechaInicio)}</p>
-                <p><strong>Fecha Fin:</strong> {formatFecha(fechaFin)}</p>
+                <p><strong>Departamento :</strong> {departamentoOrigen}</p>
+                <p><strong>Fecha Inicio :</strong> {formatFecha(fechaInicio)}</p>
+                <p><strong>Fecha Fin :</strong> {formatFecha(fechaFin)}</p>
+
             </div>
             <div className="col-md-6">
-                <p><strong>Días Solicitados:</strong> {cantidadDias}</p>
+                {
+                    jornada && (
+                        <p><strong>Jornada : </strong>  {jornada}</p>
+                    )
+                }
+                <p><strong>Días Solicitados :</strong> {cantidadDias}</p>
             </div>
         </div>
     );

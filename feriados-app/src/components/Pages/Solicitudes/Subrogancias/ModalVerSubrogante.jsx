@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 
 const ModalVerSubrogante = ({ show, onClose, subrogante, onEliminar }) => {
+
     useEffect(() => {
         const body = document.body;
         if (show) {
@@ -39,7 +40,7 @@ const ModalVerSubrogante = ({ show, onClose, subrogante, onEliminar }) => {
                         </div>
                         <div className="modal-body">
                             <p><strong>Nombre:</strong> {subrogante.nombreSubrogante}</p>
-                            <p><strong>RUT:</strong> {subrogante.rutSubrogante}</p>
+                            <p><strong>RUT:</strong> {subrogante.rutSubrogante} - {subrogante.vrutSubrogante}</p>
                             <p><strong>Departamento:</strong> {subrogante.departamentoSubrogante}</p>
                         </div>
                         <div className="modal-footer">

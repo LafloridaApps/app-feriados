@@ -7,25 +7,25 @@ import { useSolicitudesNoLeidas } from '../../hooks/useSolicitudesNoLeidas';
 
 const Navbar = () => {
 
-      const { cantidadNoLeidas } = useSolicitudesNoLeidas();
-
-
+    const { cantidadNoLeidas } = useSolicitudesNoLeidas();
 
     const [esJefe, setEsJefe] = useState(false);
     const { verificar } = useIsJefe();
 
     const funcionario = useContext(UsuarioContext);
 
-    const { codDeptoExt, rut } = funcionario || {};
+    const { codDepto, rut } = funcionario || {};
+
+    
 
     useEffect(() => {
-        if (codDeptoExt && rut) {
-             const codEx = codDeptoExt.split('||')[0];
-            verificar(codEx, rut)
-                .then(setEsJefe)
+        if (codDepto && rut) {
+            verificar(codDepto, rut)
+                .then(response => setEsJefe(response.esJefe))
                 .catch(() => setEsJefe(false));
         }
-    }, [codDeptoExt, rut, funcionario, verificar]);
+    }, [codDepto, rut, funcionario, verificar]);
+
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3">

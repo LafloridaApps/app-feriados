@@ -64,6 +64,7 @@ const InboxSolicitudes = () => {
 
     const handleFiltrarSolicitudes = (filtros) => {
         setFiltroAplicado(filtros);
+        console.log("aplicando filtros");
     };
 
     // Lógica para filtrar las solicitudes basadas en el estado 'filtroAplicado'
@@ -80,7 +81,6 @@ const InboxSolicitudes = () => {
 
         return cumpleAnio && cumpleFechaInicio && cumpleFechaFin && cumpleNombre && cumpleRut;
     });
-
 
     return (
         <div className="container-fluid mt-4">
