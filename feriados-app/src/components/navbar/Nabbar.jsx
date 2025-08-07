@@ -16,6 +16,8 @@ const Navbar = () => {
 
     const { codDepto, rut } = funcionario || {};
 
+
+
     
 
     useEffect(() => {
@@ -48,3 +50,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+

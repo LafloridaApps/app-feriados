@@ -24,10 +24,10 @@ export const getFuncionarioLocalByRut = async (rut) => {
 };
 
 
-export const searchFuncionarioByNombreAndDepto = async (id, nombre, fechaInicio,fechaFin) => {
+export const searchFuncionarioByNombreAndDepto = async (id, nombre, fechaInicio, fechaFin) => {
 
     try {
-        const { data } = await api.get("/buscar", { params: { id, nombre , fechaInicio,fechaFin} });
+        const { data } = await api.get("/buscar", { params: { id, nombre, fechaInicio, fechaFin } });
         return data;
     } catch (error) {
         console.error('Error al obtener funcionario:', error);
@@ -39,10 +39,10 @@ export const searchFuncionarioByNombreAndDepto = async (id, nombre, fechaInicio,
 export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id, fechaInicio, fechaFin) => {
 
     try {
-        const { data } = await api.get("/buscar-director", { params: { id, fechaInicio, fechaFin } });
+        const { data } = await api.get("/director-activo", { params: { id, fechaInicio, fechaFin } });
         return data;
     } catch (error) {
-       Swal.fire({
+        Swal.fire({
             icon: 'error',
             title: 'Error al obtener funcionario',
             text: error.response.data.mensaje,

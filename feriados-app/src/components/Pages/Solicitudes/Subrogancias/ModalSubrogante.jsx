@@ -1,72 +1,30 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useFuncionario } from '../../../../hooks/useFuncionario';
+import { useSubroganteForm } from '../../../../hooks/useSubroganteForm';
+import { useSubroganteSearch } from '../../../../hooks/useSubroganteSearch';
 import ModalBuscarPorNombre from './ModalBuscarPorNombre';
+import SubroganteForm from './SubroganteForm';
+import SubroganteSearchResult from './SubroganteSearchResult';
 
 const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, deptoFuncionario, fechaInicio, fechaFin }) => {
-    const [rut, setRut] = useState('');
-    const [errors, setErrors] = useState({ mensaje: '', detalle: '' });
-    const [subrogante, setSubrogante] = useState({});
+    const {
+        rut,
+        setRut,
+        errors,
+        setErrors,
+        subrogante,
+        setSubrogante,
+        limpiarCampos,
+    } = useSubroganteForm();
 
+    const { handleBuscar } = useSubroganteSearch(setSubrogante, setErrors);
     const [showBuscarPorNombreModal, setShowBuscarPorNombreModal] = useState(false);
-
-    const { consultarRut } = useFuncionario();
-
-    const limpiarCampos = () => {
-        setRut('');
-        setErrors({ mensaje: '', detalle: '' });
-        setSubrogante(null);
-    };
 
     useEffect(() => {
         if (!show) {
             limpiarCampos();
         }
-    }, [show]);
-
-    const handleBuscar = async () => {
-
-        setErrors({ mensaje: '', detalle: '' });
-        setSubrogante(null);
-
-        const rutLimpio = rut.replace(/\D/g, '');
-
-        if (!rutLimpio) {
-            setErrors({ mensaje: 'RUT inválido', detalle: 'Por favor, ingrese un RUT válido sin puntos ni guiones.' });
-            return;
-        }
-
-        const vrut = rutLimpio.slice(-1);        // Último carácter = dígito verificador
-        const rutSinDv = rutLimpio.slice(0, -1);
-
-
-
-        try {
-            const dataFuncionario = await consultarRut(rutSinDv, vrut);
-
-            setSubrogante(dataFuncionario);
-
-        } catch (error) {
-            console.error('Error al consultar funcionario:', error);
-            setSubrogante(null);
-
-            if (error.response?.data) {
-                setErrors({
-                    mensaje: error.response.data.mensaje || 'Error desconocido',
-                });
-            } else if (error.message) {
-                setErrors({
-                    mensaje: 'Error de red o conexión',
-                    detalle: error.message
-                });
-            } else {
-                setErrors({
-                    mensaje: 'Error inesperado',
-                    detalle: 'Ocurrió un error al buscar el funcionario.'
-                });
-            }
-        }
-    };
+    }, [show, limpiarCampos]);
 
     const handleConfirmar = () => {
         if (subrogante?.rut && subrogante?.nombre) {
@@ -75,11 +33,8 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
                 rutJefe: rutFuncionario,
                 nombreSubrogante: subrogante.nombre,
                 departamentoSubrogante: subrogante.departamento,
-                vrutSubrogante: subrogante.vrut
-                
-                
-                
-            }
+                vrutSubrogante: subrogante.vrut,
+            };
             onSubroganteSelected(subrogancia);
             onClose();
         } else {
@@ -87,18 +42,12 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
         }
     };
 
-    const handleClose = () => {
-        onClose();
-    };
-
     const handleFuncionarioSelectedFromSearch = (selectedFunc) => {
-        setRut(selectedFunc.rut); // Establece el RUT en el campo principal
-        setSubrogante(selectedFunc); // Establece el funcionario completo
-        setErrors({ mensaje: '', detalle: '' }); // Limpia errores
-        setShowBuscarPorNombreModal(false); // Cierra el modal de búsqueda por nombre
+        setRut(selectedFunc.rut);
+        setSubrogante(selectedFunc);
+        setErrors({ mensaje: '', detalle: '' });
+        setShowBuscarPorNombreModal(false);
     };
-
-
 
     return (
         <>
@@ -107,41 +56,19 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
                     <div className="modal-content shadow">
                         <div className="modal-header">
                             <h5 className="modal-title">Asignar Subrogante</h5>
-                            <button type="button" className="btn-close" onClick={handleClose}></button>
+                            <button type="button" className="btn-close" onClick={onClose}></button>
                         </div>
                         <div className="modal-body">
-                            <div className="mb-3">
-                                <label htmlFor="rut" className="form-label">RUT del subrogante (sin puntos ni guion)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="rut"
-                                    value={rut}
-                                    onChange={(e) => setRut(e.target.value.replace(/\D/g, ''))}
-                                    placeholder="Ej: 12345678"
-                                />
-                            </div>
-                            <button className="btn btn-primary mb-3" onClick={handleBuscar}>
-                                Buscar  RUT
-                            </button>
-                            <button className="btn btn-outline-secondary mb-3 ms-2" onClick={() => setShowBuscarPorNombreModal(true)}>
-                                Buscar por Nombre
-                            </button>
-
-                            {subrogante && (
-                                <div className="alert alert-success">
-                                    <strong>Nombre:</strong> {subrogante.nombre}
-                                </div>
-                            )}
-                            {errors.mensaje != '' && (
-                                <div className="alert alert-danger">
-                                    {errors.mensaje} <br />
-                                    {errors.detalle}
-                                </div>
-                            )}
+                            <SubroganteForm
+                                rut={rut}
+                                setRut={setRut}
+                                handleBuscar={handleBuscar}
+                                setShowBuscarPorNombreModal={setShowBuscarPorNombreModal}
+                            />
+                            <SubroganteSearchResult subrogante={subrogante} errors={errors} />
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" onClick={handleClose}>Cancelar</button>
+                            <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
                             <button className="btn btn-success" onClick={handleConfirmar} disabled={!subrogante}>
                                 Confirmar Subrogante
                             </button>
@@ -166,12 +93,10 @@ ModalSubrogante.propTypes = {
     show: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onSubroganteSelected: PropTypes.func.isRequired,
-    funcionario: PropTypes.shape({
-        rut: PropTypes.number.isRequired,
-    }).isRequired,
+    rutFuncionario: PropTypes.number.isRequired,
     deptoFuncionario: PropTypes.string.isRequired,
-    fechaInicio: PropTypes.isRequired,
-    fechaFin: PropTypes.isRequired
+    fechaInicio: PropTypes.string.isRequired,
+    fechaFin: PropTypes.string.isRequired,
 };
 
 export default ModalSubrogante;

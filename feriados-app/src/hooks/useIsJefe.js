@@ -7,7 +7,8 @@ export function useIsJefe() {
     const verificar = useCallback(async (codDepto, rut) => {
         try {
             const response = await searchIsJefeByCodDeptoAndRut(codDepto, rut);
-            return response.data;
+            
+            return response;
         } catch (error) {
             console.error('Error al verificar si es jefe:', error);
             throw error;
