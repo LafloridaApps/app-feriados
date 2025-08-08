@@ -23,6 +23,7 @@ const SolicitudesPage = () => {
 
     const { detalle: detalleFer } = dataFer || {};
 
+
     useEffect(() => {
         if (!funcionario) return;
 

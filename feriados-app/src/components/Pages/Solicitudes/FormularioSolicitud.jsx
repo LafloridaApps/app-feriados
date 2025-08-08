@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useIsJefe } from '../../../hooks/useIsJefe';
 import { useFormularioSolicitud } from '../../../hooks/useFormularioSolicitud';
 import ModalVerSubrogante from './Subrogancias/ModalVerSubrogante';
+import { calcularPrimerDiaDelMes, calcularPrimerDiaMesAnterior } from '../../../services/utils';
 
 const tiposPermiso = [
 
@@ -96,8 +97,10 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     id="fechaInicio"
                                     type="date"
                                     className="form-control"
+                                    min={new Date().getDate() > 7 ? calcularPrimerDiaDelMes() : calcularPrimerDiaMesAnterior }
                                     value={fechaInicio}
                                     onChange={handlerFechaInicio}
+                                    onKeyDown={(e) => e.preventDefault()}
                                 />
                             </div>
 
@@ -109,8 +112,11 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     id="fechaFin"
                                     type="date"
                                     className="form-control"
+                                    min={fechaInicio}
+                                    max={fechaFin}
                                     value={fechaFin}
                                     onChange={handlerFechaFin}
+                                    onKeyDown={(e) => e.preventDefault()}
                                 />
                             </div>
 

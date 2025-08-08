@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import SolicitudItem from './SolicitudItem';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import { UsuarioContext } from '../../../context/UsuarioContext';
-import { getInboxSolicitudesByRut } from '../../../services/inboxSolicitudes';
+import { getInboxSolicitudesByDepto } from '../../../services/inboxSolicitudes';
 import FiltrosSolicitudes from './FiltroSolicitudes';
 import { useAccionesSolicitud } from '../../../hooks/useAccionesSolicitud';
 import { useSolicitudesNoLeidas } from '../../../hooks/useSolicitudesNoLeidas';
@@ -23,7 +23,6 @@ const InboxSolicitudes = () => {
     };
 
 
-
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
@@ -38,7 +37,7 @@ const InboxSolicitudes = () => {
         if (!funcionario) return;
 
         try {
-            const response = await getInboxSolicitudesByRut(funcionario.rut);
+            const response = await getInboxSolicitudesByDepto(funcionario.codDepto);
             setSolicitudes(response);
         } catch (error) {
             console.error("Error al obtener funcionario:", error);

@@ -8,9 +8,9 @@ const api = axios.create({
 });
 
 
-export const getInboxSolicitudesByRut = async (rut) => {
+export const getInboxSolicitudesByDepto = async (codDepto) => {
     try {
-        const { data } = await api.get(`/${rut}`);
+        const { data } = await api.get(`departamento/${codDepto}`);
         return data;
     } catch (error) {
         console.error('Error al obtener funcionario:', error);
