@@ -33,18 +33,19 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
                     <div className="modal-content shadow">
                         <div className="modal-header">
                             <h5 className="modal-title">Asignar Subrogante</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
+                            <button type="button" className="btn-close" onClick={() => { setSubrogante(null); onClose(); }}></button>
                         </div>
                         <div className="modal-body">
                             <SubroganteForm
                                 fechaInicio={fechaInicio}
                                 fechaFin={fechaFin}
                                 onSubroganteSelect={setSubrogante}
+                                subrogante={subrogante}
                             />
                              <button className="btn btn-link" onClick={() => setShowBuscarPorNombreModal(true)}>Buscar por nombre</button>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
+                            <button className="btn btn-secondary" onClick={() => { setSubrogante(null); onClose(); }}>Cancelar</button>
                             <button className="btn btn-success" onClick={handleConfirmar} disabled={!subrogante}>
                                 Confirmar Subrogante
                             </button>

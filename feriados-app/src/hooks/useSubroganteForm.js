@@ -55,6 +55,7 @@ export const useSubroganteForm = (fechaInicio, fechaFin, onSubroganteSelect) => 
         setRut,
         errors,
         subrogante,
+        setSubrogante, // Expose setSubrogante
         buscarSubrogante,
         limpiarCampos,
     };

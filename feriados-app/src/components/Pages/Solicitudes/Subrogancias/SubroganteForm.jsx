@@ -1,8 +1,16 @@
 
+import { useEffect } from 'react';
 import { useSubroganteForm } from '../../../../hooks/useSubroganteForm';
 
-const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect }) => {
-    const { rut, setRut, errors, subrogante, buscarSubrogante, limpiarCampos } = useSubroganteForm(fechaInicio, fechaFin, onSubroganteSelect);
+const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect, subrogante }) => {
+    const { rut, setRut, errors, buscarSubrogante, limpiarCampos } = useSubroganteForm(fechaInicio, fechaFin, onSubroganteSelect);
+
+    useEffect(() => {
+        if (!subrogante) {
+            setRut('');
+            limpiarCampos();
+        }
+    }, [subrogante, setRut, limpiarCampos]);
 
     const handleBuscar = (e) => {
         e.preventDefault();
@@ -35,7 +43,7 @@ const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect }) => {
                     <p> <strong>Nombre :</strong> {subrogante.nombre}</p>
                     <p> <strong>Apellidos : </strong> {subrogante.apellidoPaterno} {subrogante.apellidoMaterno} </p>
                     <p> <strong>Departamento : </strong> {subrogante.departamento}</p>
-                    <button className="btn btn-danger" onClick={limpiarCampos}>Quitar</button>
+                    <button className="btn btn-danger" onClick={() => onSubroganteSelect(null)}>Quitar</button>
                 </div>
             )}
         </div>
