@@ -1,10 +1,10 @@
 
-import { useFuncionario } from './useFuncionario';
+import { useSubrogante } from "./useSubrogante";
 
 export const useSubroganteSearch = (setSubrogante, setErrors) => {
     const { consultarRut } = useFuncionario();
 
-    const handleBuscar = async (rut) => {
+    const handleBuscar = async (rut, fechaInicio, fechaFin) => {
         setErrors({ mensaje: '', detalle: '' });
         setSubrogante(null);
 
@@ -19,7 +19,7 @@ export const useSubroganteSearch = (setSubrogante, setErrors) => {
         const rutSinDv = rutLimpio.slice(0, -1);
 
         try {
-            const dataFuncionario = await consultarRut(rutSinDv, vrut);
+            const dataFuncionario = await consultarRut(rutSinDv, fechaInicio,fechaFin);
             
             setSubrogante(dataFuncionario);
         } catch (error) {

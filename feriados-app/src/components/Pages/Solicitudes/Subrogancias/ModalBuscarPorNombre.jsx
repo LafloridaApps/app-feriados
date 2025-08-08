@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { subroganciaService } from '../../../../services/subroganciaService';
 import PropTypes from 'prop-types';
 import { searchFuncionarioByNombreAndDepto } from '../../../../services/funcionarioService';
 
@@ -20,10 +21,11 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
     }, [show]);
 
     const handleSearch = async () => {
-        const { funcionarios } = await searchFuncionarioByNombreAndDepto(deptoFuncionario, searchTerm, fechaInicio,fechaFin);
+        const funcionarios = await subroganciaService.buscarPorNombre(searchTerm, fechaInicio, fechaFin, 0, deptoFuncionario)
+        
 
         setFilteredFuncionarios(funcionarios);
-        
+
         setError('');
         setSelectedFuncionario(null);
 
@@ -93,7 +95,7 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
                                             {filteredFuncionarios.map(func => (
                                                 <tr key={func.rut} className={selectedFuncionario?.rut === func.rut ? 'table-primary' : ''}>
                                                     <td>{func.rut}-{func.vrut}</td>
-                                                    <td>{func.nombre}</td>
+                                                    <td>{func.nombre} {func.apellidoPaterno} {func.apellidoMaterno} </td>
                                                     <td>{func.departamento}</td>
                                                     <td>
                                                         <button
@@ -135,8 +137,8 @@ ModalBuscarPorNombre.propTypes = {
     onClose: PropTypes.func.isRequired,
     onFuncionarioSelected: PropTypes.func.isRequired,
     deptoFuncionario: PropTypes.isRequired,
-    fechInicio:PropTypes.isRequired,
-    fechaFin:PropTypes.isRequired
+    fechInicio: PropTypes.isRequired,
+    fechaFin: PropTypes.isRequired
 };
 
 export default ModalBuscarPorNombre;

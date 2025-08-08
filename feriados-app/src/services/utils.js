@@ -98,5 +98,36 @@ export function formatFechaString(fecha) {
 	return `${dia}-${mes}-${anio}`;
 }
 
+export const validarRut = (rut) => {
+    if (!/^[0-9]+[0-9kK]{1}$/.test(rut)) {
+        return false;
+    }
+    const rutLimpio = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+    const cuerpo = rutLimpio.slice(0, -1);
+    const dv = rutLimpio.slice(-1);
 
+    let suma = 0;
+    let multiplo = 2;
 
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+        suma += multiplo * cuerpo.charAt(i);
+        if (multiplo < 7) {
+            multiplo++;
+        } else {
+            multiplo = 2;
+        }
+    }
+
+    const dvEsperado = 11 - (suma % 11);
+    let dvCalculado;
+
+    if (dvEsperado === 11) {
+        dvCalculado = '0';
+    } else if (dvEsperado === 10) {
+        dvCalculado = 'K';
+    } else {
+        dvCalculado = dvEsperado.toString();
+    }
+
+    return dv === dvCalculado;
+};

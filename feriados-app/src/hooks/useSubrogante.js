@@ -1,11 +1,11 @@
 // src/hooks/useFuncionario.js
 import { useCallback } from 'react';
-import { getFuncionarioByRutAndVrut } from '../services/funcionarioService';
+import { getSubroganteByRut } from '../services/subroganciaService';
 
-export function useFuncionario() {
-    const consultarRut = useCallback(async (rut, vRut) => {
+export function useSubrogante() {
+    const consultarRut = useCallback(async (rut, fechaInicio, fechaFin) => {
         try {
-            const response = await getFuncionarioByRutAndVrut(rut, vRut);
+            const response = await getSubroganteByRut(rut, fechaInicio,fechaFin);
             return response;
         } catch (error) {
             console.error('Error al consultar funcionario:', error);

@@ -1,30 +1,11 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSubroganteForm } from '../../../../hooks/useSubroganteForm';
-import { useSubroganteSearch } from '../../../../hooks/useSubroganteSearch';
 import ModalBuscarPorNombre from './ModalBuscarPorNombre';
 import SubroganteForm from './SubroganteForm';
-import SubroganteSearchResult from './SubroganteSearchResult';
 
 const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, deptoFuncionario, fechaInicio, fechaFin }) => {
-    const {
-        rut,
-        setRut,
-        errors,
-        setErrors,
-        subrogante,
-        setSubrogante,
-        limpiarCampos,
-    } = useSubroganteForm();
-
-    const { handleBuscar } = useSubroganteSearch(setSubrogante, setErrors);
+    const [subrogante, setSubrogante] = useState(null);
     const [showBuscarPorNombreModal, setShowBuscarPorNombreModal] = useState(false);
-
-    useEffect(() => {
-        if (!show) {
-            limpiarCampos();
-        }
-    }, [show, limpiarCampos]);
 
     const handleConfirmar = () => {
         if (subrogante?.rut && subrogante?.nombre) {
@@ -37,15 +18,11 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
             };
             onSubroganteSelected(subrogancia);
             onClose();
-        } else {
-            setErrors({ mensaje: 'No hay subrogante seleccionado', detalle: 'Por favor, busque y seleccione un subrogante válido antes de confirmar.' });
-        }
+        } 
     };
 
     const handleFuncionarioSelectedFromSearch = (selectedFunc) => {
-        setRut(selectedFunc.rut);
         setSubrogante(selectedFunc);
-        setErrors({ mensaje: '', detalle: '' });
         setShowBuscarPorNombreModal(false);
     };
 
@@ -60,12 +37,11 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
                         </div>
                         <div className="modal-body">
                             <SubroganteForm
-                                rut={rut}
-                                setRut={setRut}
-                                handleBuscar={handleBuscar}
-                                setShowBuscarPorNombreModal={setShowBuscarPorNombreModal}
+                                fechaInicio={fechaInicio}
+                                fechaFin={fechaFin}
+                                onSubroganteSelect={setSubrogante}
                             />
-                            <SubroganteSearchResult subrogante={subrogante} errors={errors} />
+                             <button className="btn btn-link" onClick={() => setShowBuscarPorNombreModal(true)}>Buscar por nombre</button>
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
