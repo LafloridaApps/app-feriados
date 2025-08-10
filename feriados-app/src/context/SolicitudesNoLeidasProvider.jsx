@@ -1,7 +1,7 @@
 // src/providers/SolicitudesNoLeidasProvider.jsx
 import { useEffect, useCallback, useState, useContext, useMemo } from "react";
 import { SolicitudesNoLeidasContext } from "../context/SolicitudesNoLeidasContext";
-import { getInboxSolicitudesByDepto } from "../services/inboxSolicitudes";
+import { getSolicitudesNoLeidas } from "../services/inboxSolicitudes";
 import { UsuarioContext } from "../context/UsuarioContext";
 import PropTypes from "prop-types";
 
@@ -10,25 +10,15 @@ export const SolicitudesNoLeidasProvider = ({ children }) => {
     const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
 
     const fetchSolicitudes = useCallback(async () => {
-    if (funcionario?.rut) {
-
-        try {
-            const data = await getInboxSolicitudesByDepto(funcionario.codDepto);
-            console.log(data);
-
-            if (Array.isArray(data)) {
-                const noLeidas = data.filter(
-                    (sol) => sol.derivaciones?.[0] && !sol.derivaciones[0].recepcionada
-                );
-                setCantidadNoLeidas(noLeidas.length);
-            } else {
-                setCantidadNoLeidas(0); // o lo que estimes adecuado
+        if (funcionario?.rut) {
+            try {
+                const data = await getSolicitudesNoLeidas(funcionario.codDepto);
+                setCantidadNoLeidas(data);
+            } catch (error) {
+                console.error("Error al obtener solicitudes no leídas:", error);
             }
-        } catch (error) {
-            console.error("Error al obtener solicitudes:", error);
         }
-    }
-}, [funcionario]);
+    }, [funcionario]);
 
 
     const contextValue = useMemo(() => ({

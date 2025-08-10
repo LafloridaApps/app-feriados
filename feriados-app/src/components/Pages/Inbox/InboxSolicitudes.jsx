@@ -13,9 +13,9 @@ const InboxSolicitudes = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [filtroAplicado, setFiltroAplicado] = useState({});
     const [rutFuncionario, setRutFuncionario] = useState('');
-    const [currentPage, setCurrentPage ] =useState(0)
-    const [totalPages,setTotalPages] = useState(null);
-    const [totalElements,setTotalElements] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(null);
+    const [totalElements, setTotalElements] = useState(null);
 
     const [detalleAbiertoId, setDetalleAbiertoId] = useState(null);
 
@@ -24,7 +24,6 @@ const InboxSolicitudes = () => {
     const handleVerDetalleClick = (idSolicitud) => {
         setDetalleAbiertoId(detalleAbiertoId === idSolicitud ? null : idSolicitud);
     };
-
 
     useEffect(() => {
         const handleResize = () => {
@@ -40,7 +39,7 @@ const InboxSolicitudes = () => {
         if (!funcionario) return;
 
         try {
-            const response = await getInboxSolicitudesByDepto(funcionario.codDepto,currentPage);
+            const response = await getInboxSolicitudesByDepto(funcionario.codDepto, currentPage);
             setTotalElements(response.totalElements);
             setTotalPages(response.totalPages);
             setSolicitudes(response.solicitudes);
@@ -68,12 +67,16 @@ const InboxSolicitudes = () => {
 
     const handleFiltrarSolicitudes = (filtros) => {
         setFiltroAplicado(filtros);
-        console.log("aplicando filtros");
     };
 
-    // Lógica para filtrar las solicitudes basadas en el estado 'filtroAplicado'
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
     const solicitudesFiltradas = solicitudes.filter(solicitud => {
         const { anio, fechaInicio, fechaFin, nombreSolicitante, rutSolicitante } = filtroAplicado;
+        if (Object.keys(filtroAplicado).length === 0) return true;
+
         const fechaSolicitudObj = new Date(solicitud.fechaSolicitud);
         const anioSolicitud = fechaSolicitudObj.getFullYear();
 
@@ -88,7 +91,7 @@ const InboxSolicitudes = () => {
 
     return (
         <div className="container-fluid mt-4">
-            <FiltrosSolicitudes onFiltrar={handleFiltrarSolicitudes} /> {/* Renderiza el componente de filtros */}
+            <FiltrosSolicitudes onFiltrar={handleFiltrarSolicitudes} />
             <div className="row">
                 <div className="col-md-12">
                     <div className="card shadow-sm">
@@ -109,7 +112,7 @@ const InboxSolicitudes = () => {
                                             <th className="text-right"><i className="bi bi-info-circle-fill me-2"></i> Detalle</th>
                                         </tr>
                                     </thead>
-                                    <tbody  >
+                                    <tbody>
                                         {solicitudesFiltradas.map((solicitud) => (
                                             <SolicitudItem
                                                 key={solicitud.id}
@@ -121,9 +124,7 @@ const InboxSolicitudes = () => {
                                                 open={detalleAbiertoId === solicitud.id}
                                                 handlerAprobar={handlerAprobar}
                                                 handleVerDetalleClick={() => handleVerDetalleClick(solicitud.id)}
-
                                             />
-
                                         ))}
                                     </tbody>
                                 </table>
@@ -148,6 +149,28 @@ const InboxSolicitudes = () => {
                                     )}
                                 </div>
                             )}
+                        </div>
+                        <div className="card-footer d-flex justify-content-between align-items-center">
+                            <div className="text-muted">
+                                Mostrando {solicitudesFiltradas.length} de {totalElements} solicitudes
+                            </div>
+                            <nav>
+                                <ul className="pagination mb-0">
+                                    <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
+                                        <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+                                            Anterior
+                                        </button>
+                                    </li>
+                                    <li className="page-item">
+                                        <span className="page-link">{currentPage + 1} de {totalPages}</span>
+                                    </li>
+                                    <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
+                                        <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+                                            Siguiente
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
