@@ -13,6 +13,9 @@ const InboxSolicitudes = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [filtroAplicado, setFiltroAplicado] = useState({});
     const [rutFuncionario, setRutFuncionario] = useState('');
+    const [currentPage, setCurrentPage ] =useState(0)
+    const [totalPages,setTotalPages] = useState(null);
+    const [totalElements,setTotalElements] = useState(null);
 
     const [detalleAbiertoId, setDetalleAbiertoId] = useState(null);
 
@@ -37,12 +40,14 @@ const InboxSolicitudes = () => {
         if (!funcionario) return;
 
         try {
-            const response = await getInboxSolicitudesByDepto(funcionario.codDepto);
-            setSolicitudes(response);
+            const response = await getInboxSolicitudesByDepto(funcionario.codDepto,currentPage);
+            setTotalElements(response.totalElements);
+            setTotalPages(response.totalPages);
+            setSolicitudes(response.solicitudes);
         } catch (error) {
             console.error("Error al obtener funcionario:", error);
         }
-    }, [funcionario]);
+    }, [currentPage, funcionario]);
 
     const handleActualizarSolicitud = async () => {
         await fetchPermisos();

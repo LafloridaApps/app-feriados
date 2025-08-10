@@ -18,6 +18,7 @@ const SolicitudItem = ({
 
     const derivaciones = solicitud?.derivaciones;
 
+
     const tieneDerivaciones = derivaciones && derivaciones.length > 0;
 
 

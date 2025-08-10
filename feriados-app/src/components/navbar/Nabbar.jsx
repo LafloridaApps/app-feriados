@@ -7,7 +7,7 @@ import { useSolicitudesNoLeidas } from '../../hooks/useSolicitudesNoLeidas';
 
 const Navbar = () => {
 
-    const { cantidadNoLeidas } = useSolicitudesNoLeidas();
+    // const { cantidadNoLeidas } = useSolicitudesNoLeidas();
 
     const [esJefe, setEsJefe] = useState(false);
     const { verificar } = useIsJefe();
@@ -16,9 +16,6 @@ const Navbar = () => {
 
     const { codDepto, rut } = funcionario || {};
 
-
-
-    
 
     useEffect(() => {
         if (codDepto && rut) {
@@ -42,7 +39,10 @@ const Navbar = () => {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarContent">
-                    <NavbarNav esJefe={esJefe} cantidadNoLeidas={cantidadNoLeidas} />
+                    <NavbarNav 
+                    esJefe={esJefe} 
+                    // cantidadNoLeidas={cantidadNoLeidas} 
+                    />
                 </div>
             </div>
         </nav>

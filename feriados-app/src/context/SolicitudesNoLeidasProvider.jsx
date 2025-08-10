@@ -11,8 +11,9 @@ export const SolicitudesNoLeidasProvider = ({ children }) => {
 
     const fetchSolicitudes = useCallback(async () => {
     if (funcionario?.rut) {
+
         try {
-            const data = await getInboxSolicitudesByDepto(funcionario.rut);
+            const data = await getInboxSolicitudesByDepto(funcionario.codDepto);
             console.log(data);
 
             if (Array.isArray(data)) {

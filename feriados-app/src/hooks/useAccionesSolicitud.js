@@ -12,6 +12,7 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
             rutFuncionario,
         };
 
+
         const result = await Swal.fire({
             title: '¿Estás seguro de que quieres Recibir esta solicitud?',
             icon: 'warning',
