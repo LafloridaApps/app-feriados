@@ -7,7 +7,7 @@ import { useSolicitudesNoLeidas } from '../../hooks/useSolicitudesNoLeidas';
 
 const Navbar = () => {
 
-    // const { cantidadNoLeidas } = useSolicitudesNoLeidas();
+     const { cantidadNoLeidas } = useSolicitudesNoLeidas();
 
     const [esJefe, setEsJefe] = useState(false);
     const { verificar } = useIsJefe();
@@ -41,7 +41,7 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarContent">
                     <NavbarNav 
                     esJefe={esJefe} 
-                    // cantidadNoLeidas={cantidadNoLeidas} 
+                     cantidadNoLeidas={cantidadNoLeidas} 
                     />
                 </div>
             </div>

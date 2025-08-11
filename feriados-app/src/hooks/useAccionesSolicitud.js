@@ -3,7 +3,7 @@ import { saveEntrada } from '../services/entradaService';
 import { saveDerivacion } from '../services/derivacionService';
 import { saveAprobacion } from '../services/aprobacionService';
 
-export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refetch ) => {
+export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refetch) => {
 
 
     const handlerEntrada = async (idDerivacion) => {

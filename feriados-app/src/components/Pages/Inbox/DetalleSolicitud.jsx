@@ -3,7 +3,7 @@ import { formatFecha } from "../../../services/utils";
 
 const DetalleSolicitud = ({ detalle }) => {
 
-    const { departamentoOrigen, fechaInicio, fechaFin, cantidadDias, jornadaInicio, jornadaFin, tipoSolicitud } = detalle;
+    const { nombreDepartamento, fechaInicio, fechaFin, cantidadDias, jornadaInicio, jornadaFin, tipoSolicitud } = detalle;
 
 
     let jornada = null;
@@ -25,7 +25,7 @@ const DetalleSolicitud = ({ detalle }) => {
     return (
         <div className="row">
             <div className="col-md-6">
-                <p><strong>Departamento :</strong> {departamentoOrigen}</p>
+                <p><strong>Departamento :</strong> {nombreDepartamento}</p>
                 <p><strong>Fecha Inicio :</strong> {formatFecha(fechaInicio)}</p>
                 <p><strong>Fecha Fin :</strong> {formatFecha(fechaFin)}</p>
 

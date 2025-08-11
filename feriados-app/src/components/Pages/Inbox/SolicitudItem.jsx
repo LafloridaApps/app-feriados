@@ -14,7 +14,7 @@ const SolicitudItem = ({
     handleVerDetalleClick
 }) => {
 
-    const { id, solicitante, fechaSolicitud, tipoSolicitud, estadoSolicitud } = solicitud;
+    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud } = solicitud;
 
     const derivaciones = solicitud?.derivaciones;
 
@@ -37,7 +37,7 @@ const SolicitudItem = ({
         <>
             <tr className={`d-none d-md-table-row align-middle ${!recepcionada ? 'fw-bold' : ''}`}>
                 <td >{id}</td>
-                <td className="text-truncate" style={{ maxWidth: '250px' }}>{solicitante}</td>
+                <td className="text-truncate" style={{ maxWidth: '250px' }}>{nombreFuncionario}</td>
                 <td>{tipoSolicitud}</td>
                 <td>{formatFecha(fechaSolicitud)}</td>
                 <td>{estadoSolicitud}</td>
@@ -72,7 +72,7 @@ const SolicitudItem = ({
                         {
                             recepcionada && tipoMovimiento === "FIRMA" && estadoDerivacion === "PENDIENTE" && (
                                 <button
-                                    onClick={handlerAprobar}
+                                    onClick={()=>handlerAprobar(idDerivacion)}
                                     className="btn btn-success btn-sm"
                                     title="Firmar"
                                 >

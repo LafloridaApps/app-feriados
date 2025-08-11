@@ -85,9 +85,11 @@ const InboxSolicitudes = () => {
         const cumpleFechaFin = !fechaFin || fechaSolicitudObj <= new Date(fechaFin);
         const cumpleNombre = !nombreSolicitante || solicitud.solicitante.toLowerCase().includes(nombreSolicitante.toLowerCase());
         const cumpleRut = !rutSolicitante || solicitud.rutSolicitante?.includes(rutSolicitante);
+        console.log(cumpleRut);
 
         return cumpleAnio && cumpleFechaInicio && cumpleFechaFin && cumpleNombre && cumpleRut;
     });
+
 
     return (
         <div className="container-fluid mt-4">

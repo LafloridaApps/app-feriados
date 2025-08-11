@@ -26,12 +26,13 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
         setFechaFin('');
         setNombreSolicitante('');
         setRutSolicitante('');
-        onFiltrar({}); 
+        onFiltrar({});
     };
 
     const toggleCollapse = () => {
         setIsOpen(!isOpen);
     };
+
 
     return (
         <div className="card shadow-sm mb-4">
@@ -47,23 +48,52 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
                 <div className="row g-3">
                     <div className="col-md-3">
                         <label htmlFor="anio" className="form-label"><i className="bi bi-calendar-date me-1"></i> Año</label>
-                        <input type="number" className="form-control" id="anio" value={anio} onChange={(e) => setAnio(e.target.value)} />
+                        <input
+                            type="number"
+                            className="form-control"
+                            id="anio" value={anio}
+                            onChange={(e) => setAnio(e.target.value)}
+                        />
                     </div>
                     <div className="col-md-3">
                         <label htmlFor="fechaInicio" className="form-label"><i className="bi bi-calendar-range me-1"></i> Fecha Inicio</label>
-                        <input type="date" className="form-control" id="fechaInicio" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+                        <input
+                            type="date"
+                            className="form-control"
+                            id="fechaInicio"
+                            value={fechaInicio}
+                            onChange={(e) => setFechaInicio(e.target.value)}
+                        />
                     </div>
                     <div className="col-md-3">
                         <label htmlFor="fechaFin" className="form-label"><i className="bi bi-calendar-range-fill me-1"></i> Fecha Fin</label>
-                        <input type="date" className="form-control" id="fechaFin" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
+                        <input
+                            type="date"
+                            className="form-control"
+                            id="fechaFin"
+                            value={fechaFin}
+                            onChange={(e) => setFechaFin(e.target.value)}
+                        />
                     </div>
                     <div className="col-md-3">
                         <label htmlFor="nombreSolicitante" className="form-label"><i className="bi bi-person-fill me-1"></i> Nombre Solicitante</label>
-                        <input type="text" className="form-control" id="nombreSolicitante" value={nombreSolicitante} onChange={(e) => setNombreSolicitante(e.target.value)} />
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="nombreSolicitante"
+                            value={nombreSolicitante}
+                            onChange={(e) => setNombreSolicitante(e.target.value)}
+                        />
                     </div>
                     <div className="col-md-3">
                         <label htmlFor="rutSolicitante" className="form-label"><i className="bi bi-person-vcard-fill me-1"></i> Rut Solicitante</label>
-                        <input type="text" className="form-control" id="rutSolicitante" value={rutSolicitante} onChange={(e) => setRutSolicitante(e.target.value)} />
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="rutSolicitante"
+                            value={rutSolicitante}
+                            onChange={(e) => setRutSolicitante(e.target.value)}
+                        />
                     </div>
                 </div>
                 <div className="mt-3">
