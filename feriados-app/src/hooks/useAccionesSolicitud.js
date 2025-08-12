@@ -43,11 +43,11 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
 
         if (result.isConfirmed) {
             try {
-                await saveDerivacion(idDerivacion);
+                await saveDerivacion(idDerivacion, rutFuncionario);
                 Swal.fire('¡Visado!', 'La solicitud ha sido visada.', 'success');
                 onActualizarSolicitud();
             } catch (error) {
-                Swal.fire('¡Error!', 'Error al visar: ' + error?.data || error, 'error');
+                Swal.fire('¡Error!', 'Error al visar: ' + error?.response?.data.message || error, 'error');
             }
         }
     };
@@ -62,7 +62,11 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
 
         if (result.isConfirmed) {
             try {
-                await saveAprobacion({ idDerivacion });
+                const aprobacion = {
+                    idDerivacion: idDerivacion,
+                    aprobadoPor: rutFuncionario,
+                };
+                await saveAprobacion(aprobacion);
                 Swal.fire('¡Aprobado!', 'La solicitud ha sido aprobada.', 'success');
                 onActualizarSolicitud();
             } catch (error) {

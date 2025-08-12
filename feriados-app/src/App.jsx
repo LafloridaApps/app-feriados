@@ -7,6 +7,7 @@ import SolicitudesPage from "./components/Pages/Solicitudes/SolicitudesPage ";
 import { AppContextProvider } from "./context/AppContextProvider";
 import InboxSolicitudes from "./components/Pages/Inbox/InboxSolicitudes";
 import DepartamentosPage from "./components/Pages/Departamentos/DepartamentosPage";
+import MisSolicitudes from "./components/Pages/MisSolicitudes/MisSolicitudes";
 
 function App() {
     return (
@@ -21,6 +22,7 @@ function App() {
                         <Route path="/solicitudes" element={<SolicitudesPage />} />
                         <Route path="/inbox" element={<InboxSolicitudes />} />
                         <Route path="/deptos" element={<DepartamentosPage />} />
+                        <Route path="/mis-solicitudes" element={<MisSolicitudes />} />
                     </Routes>
                 </div>
             </AppContextProvider>

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import SolicitudItem from './SolicitudItem';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import { UsuarioContext } from '../../../context/UsuarioContext';
@@ -16,6 +16,7 @@ const InboxSolicitudes = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(null);
     const [totalElements, setTotalElements] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'descending' });
 
     const [detalleAbiertoId, setDetalleAbiertoId] = useState(null);
 
@@ -83,13 +84,47 @@ const InboxSolicitudes = () => {
         const cumpleAnio = !anio || anioSolicitud === parseInt(anio);
         const cumpleFechaInicio = !fechaInicio || fechaSolicitudObj >= new Date(fechaInicio);
         const cumpleFechaFin = !fechaFin || fechaSolicitudObj <= new Date(fechaFin);
-        const cumpleNombre = !nombreSolicitante || solicitud.solicitante.toLowerCase().includes(nombreSolicitante.toLowerCase());
-        const cumpleRut = !rutSolicitante || solicitud.rutSolicitante?.includes(rutSolicitante);
-        console.log(cumpleRut);
+        const cumpleNombre = !nombreSolicitante || solicitud.nombreFuncionario?.toLowerCase().includes(nombreSolicitante.toLowerCase());
+        const cumpleRut = !rutSolicitante || String(solicitud.rutSolicitante)?.includes(rutSolicitante);
 
         return cumpleAnio && cumpleFechaInicio && cumpleFechaFin && cumpleNombre && cumpleRut;
     });
 
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedItems = useMemo(() => {
+        let sortableItems = [...solicitudesFiltradas];
+        if (sortConfig.key !== null) {
+            sortableItems.sort((a, b) => {
+                if (a[sortConfig.key] === null || a[sortConfig.key] === undefined) return 1;
+                if (b[sortConfig.key] === null || b[sortConfig.key] === undefined) return -1;
+
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableItems;
+    }, [solicitudesFiltradas, sortConfig]);
+
+    const getSortIcon = (key) => {
+        if (sortConfig.key !== key) {
+            return null;
+        }
+        return sortConfig.direction === 'ascending'
+            ? <i className="bi bi-sort-up ms-1"></i>
+            : <i className="bi bi-sort-down ms-1"></i>;
+    };
 
     return (
         <div className="container-fluid mt-4">
@@ -105,17 +140,27 @@ const InboxSolicitudes = () => {
                                 <table className="table table-striped table-hover mb-0">
                                     <thead className="bg-light">
                                         <tr>
-                                            <th><i className="bi bi-hash me-2"></i> ID</th>
-                                            <th><i className="bi bi-person-fill me-2"></i> Solicitante</th>
-                                            <th><i className="bi bi-type me-2"></i> Tipo Solicitud</th>
-                                            <th><i className="bi bi-calendar-date me-2"></i> Fecha Solicitud</th>
-                                            <th><i className="bi bi-exclamation-circle-fill me-2"></i> Estado Solicitud</th>
+                                            <th onClick={() => requestSort('id')} style={{ cursor: 'pointer' }}>
+                                                <i className="bi bi-hash me-2"></i> ID {getSortIcon('id')}
+                                            </th>
+                                            <th onClick={() => requestSort('nombreFuncionario')} style={{ cursor: 'pointer' }}>
+                                                <i className="bi bi-person-fill me-2"></i> Solicitante {getSortIcon('nombreFuncionario')}
+                                            </th>
+                                            <th onClick={() => requestSort('tipoSolicitud')} style={{ cursor: 'pointer' }}>
+                                                <i className="bi bi-type me-2"></i> Tipo Solicitud {getSortIcon('tipoSolicitud')}
+                                            </th>
+                                            <th onClick={() => requestSort('fechaSolicitud')} style={{ cursor: 'pointer' }}>
+                                                <i className="bi bi-calendar-date me-2"></i> Fecha Solicitud {getSortIcon('fechaSolicitud')}
+                                            </th>
+                                            <th onClick={() => requestSort('estadoSolicitud')} style={{ cursor: 'pointer' }}>
+                                                <i className="bi bi-exclamation-circle-fill me-2"></i> Estado Solicitud {getSortIcon('estadoSolicitud')}
+                                            </th>
                                             <th className="text-right"><i className="bi bi-gear-fill me-2"></i> Acciones</th>
                                             <th className="text-right"><i className="bi bi-info-circle-fill me-2"></i> Detalle</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {solicitudesFiltradas.map((solicitud) => (
+                                        {sortedItems.map((solicitud) => (
                                             <SolicitudItem
                                                 key={solicitud.id}
                                                 solicitud={solicitud}
@@ -133,7 +178,7 @@ const InboxSolicitudes = () => {
                             </div>
                             {isMobile && (
                                 <div>
-                                    {solicitudesFiltradas.map((solicitud) => (
+                                    {sortedItems.map((solicitud) => (
                                         <SolicitudItemMobile
                                             key={solicitud.id}
                                             solicitud={solicitud}

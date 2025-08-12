@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
 
 const FiltrosSolicitudes = ({ onFiltrar }) => {
     const [anio, setAnio] = useState('');
@@ -9,7 +10,23 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
     const [rutSolicitante, setRutSolicitante] = useState('');
     const [isOpen, setIsOpen] = useState(false);
 
+    const { mostrarAlertaError } = useAlertaSweetAlert();
+
+    const handleAnioChange = (e) => {
+        const value = e.target.value;
+        // Permitir solo números y limitar a 4 caracteres
+        if (/^\d*$/.test(value) && value.length <= 4) {
+            setAnio(value);
+        }
+    };
+
     const handleFiltrar = () => {
+        // Validar que si el año no está vacío, tenga 4 dígitos
+        if (anio && anio.length !== 4) {
+            mostrarAlertaError('El año ingresado no es válido. Por favor, ingrese un año con 4 dígitos.');
+            return;
+        }
+
         const filtros = {
             anio,
             fechaInicio,
@@ -49,10 +66,12 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
                     <div className="col-md-3">
                         <label htmlFor="anio" className="form-label"><i className="bi bi-calendar-date me-1"></i> Año</label>
                         <input
-                            type="number"
+                            type="text" // Cambiado a text para controlar el input
                             className="form-control"
                             id="anio" value={anio}
-                            onChange={(e) => setAnio(e.target.value)}
+                            onChange={handleAnioChange}
+                            placeholder="Ej: 2024"
+                            maxLength="4"
                         />
                     </div>
                     <div className="col-md-3">

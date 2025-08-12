@@ -27,7 +27,7 @@ const Navbar = () => {
 
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3">
+        <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
             <div className="container-fluid">
                 <NavbarBrand />
                 <button
