@@ -14,7 +14,10 @@ const SolicitudItem = ({
     handleVerDetalleClick
 }) => {
 
-    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud } = solicitud;
+    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo } = solicitud;
+
+    const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
+    const subroganciaText = isSubrogada ? `(Subrogando a ${subroganciaInfo[0].nombreDeptoSubrogado})` : '';
 
     const derivaciones = solicitud?.derivaciones;
 
@@ -37,7 +40,10 @@ const SolicitudItem = ({
         <>
             <tr className={`d-none d-md-table-row align-middle ${!recepcionada ? 'fw-bold' : ''}`}>
                 <td >{id}</td>
-                <td className="text-truncate" style={{ maxWidth: '250px' }}>{nombreFuncionario}</td>
+                <td className="text-truncate" style={{ maxWidth: '250px' }}>
+                    {nombreFuncionario}
+                    {isSubrogada && <small className="d-block text-info">{subroganciaText}</small>}
+                </td>
                 <td>{tipoSolicitud}</td>
                 <td>{formatFecha(fechaSolicitud)}</td>
                 <td>{estadoSolicitud}</td>
@@ -132,21 +138,22 @@ export default SolicitudItem;
 SolicitudItem.propTypes = {
     solicitud: PropTypes.shape({
         id: PropTypes.number.isRequired,
-        solicitante: PropTypes.string.isRequired,
+        nombreFuncionario: PropTypes.string.isRequired,
         fechaSolicitud: PropTypes.string.isRequired,
         tipoSolicitud: PropTypes.string.isRequired,
         estadoSolicitud: PropTypes.string.isRequired,
-
+        subroganciaInfo: PropTypes.arrayOf(
+            PropTypes.shape({
+                nombreDeptoSubrogado: PropTypes.string,
+            })
+        ),
         derivaciones: PropTypes.arrayOf(
             PropTypes.shape({
-                id: PropTypes.number.isRequired, // Añadir 'id' si es un número
+                id: PropTypes.number.isRequired,
                 tipoMovimiento: PropTypes.string.isRequired,
-                fechaMovimiento: PropTypes.string.isRequired,
-                estadoDerivacion: PropTypes.string.isRequired, // Cambiado a estadoDerivacion
-                usuarioMovimiento: PropTypes.string.isRequired,
+                estadoDerivacion: PropTypes.string.isRequired,
             })
-        ).isRequired,
-
+        ),
     }).isRequired,
     onActualizarSolicitud: PropTypes.func.isRequired,
     rutFuncionario: PropTypes.string.isRequired,

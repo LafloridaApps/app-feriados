@@ -12,7 +12,9 @@ function SolicitudItemMobile({
 
 }) {
 
-
+    const { subroganciaInfo, nombreFuncionario } = solicitud;
+    const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
+    const subroganciaText = isSubrogada ? `(Subrogando a ${subroganciaInfo[0].nombreDeptoSubrogado})` : '';
 
     const derivaciones = solicitud?.derivaciones;
 
@@ -33,7 +35,8 @@ function SolicitudItemMobile({
         <div className="card shadow-sm mb-3">
             <div className="card-body">
                 <h6 className="card-title font-weight-bold mb-1">
-                    {solicitud.solicitante}
+                    {nombreFuncionario}
+                    {isSubrogada && <small className="d-block text-info">{subroganciaText}</small>}
                 </h6>
                 <div className="d-flex justify-content-end mb-2">
                     {
@@ -89,12 +92,27 @@ function SolicitudItemMobile({
 }
 
 SolicitudItemMobile.propTypes = {
-    solicitud: PropTypes.object.isRequired,
+    solicitud: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        nombreFuncionario: PropTypes.string.isRequired,
+        subroganciaInfo: PropTypes.arrayOf(
+            PropTypes.shape({
+                nombreDeptoSubrogado: PropTypes.string,
+            })
+        ),
+        derivaciones: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                tipoMovimiento: PropTypes.string.isRequired,
+                estadoDerivacion: PropTypes.string.isRequired,
+            })
+        ),
+    }).isRequired,
     handlerAprobar: PropTypes.func.isRequired,
     handlerVisar: PropTypes.func.isRequired,
     handlerEntrada: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    handleVerDetalleClick: PropTypes.func.isRequire
+    handleVerDetalleClick: PropTypes.func.isRequired
 };
 
 export default SolicitudItemMobile;

@@ -17,6 +17,7 @@ const InboxSolicitudes = () => {
     const [totalPages, setTotalPages] = useState(null);
     const [totalElements, setTotalElements] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'descending' });
+    const [isSubrogante, setIsSubrogante] = useState(false);
 
     const [detalleAbiertoId, setDetalleAbiertoId] = useState(null);
 
@@ -44,6 +45,10 @@ const InboxSolicitudes = () => {
             setTotalElements(response.totalElements);
             setTotalPages(response.totalPages);
             setSolicitudes(response.solicitudes);
+
+            const subrogante = response.solicitudes.some(s => s.subroganciaInfo && s.subroganciaInfo.length > 0);
+            setIsSubrogante(subrogante);
+
         } catch (error) {
             console.error("Error al obtener funcionario:", error);
         }
@@ -133,7 +138,9 @@ const InboxSolicitudes = () => {
                 <div className="col-md-12">
                     <div className="card shadow-sm">
                         <div className="card-header bg-white py-3">
-                            <h5 className="mb-0 font-weight-bold text-primary">Bandeja de Solicitudes</h5>
+                            <h5 className="mb-0 font-weight-bold text-primary">
+                                Bandeja de Solicitudes {isSubrogante && <span className='badge bg-info ms-2'>Subrogante</span>}
+                            </h5>
                         </div>
                         <div className="card-body p-0">
                             <div className="table-responsive d-none d-md-block">
