@@ -60,6 +60,7 @@ const DetalleMiSolicitud = ({ solicitud }) => {
                                     <p className="fw-bold mb-0">{evento.accion}</p>
                                     <p className="text-muted small mb-0">{formatFecha(evento.fecha)} por {evento.usuario}</p>
                                     {evento.departamento && <p className="small text-muted mt-1">Departamento: {evento.departamento}</p>}
+                                    {evento.estado && <p className="small text-muted mt-1">Estado: {evento.estado}</p>}
                                 </div>
                             </div>
                         ))}

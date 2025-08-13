@@ -2,80 +2,48 @@ import { useState, useEffect, useContext } from 'react';
 import { UsuarioContext } from '../../../context/UsuarioContext';
 import { formatFecha } from '../../../services/utils';
 import DetalleMiSolicitud from './DetalleMiSolicitud';
+import { getSolicitudesByRut } from '../../../services/misSolicitudesService';
 
-// Datos de ejemplo (mock) actualizados con departamento en la trazabilidad
-const mockSolicitudes = [
-    {
-        id: 2024001,
-        tipoSolicitud: 'FERIADO LEGAL',
-        fechaSolicitud: '2024-07-15T10:00:00.000Z',
-        estadoSolicitud: 'APROBADA',
-        fechaInicio: '2024-08-01',
-        fechaFin: '2024-08-05',
-        cantidadDias: 3,
-        trazabilidad: [
-            { fecha: '2024-07-15', accion: 'CREACIÓN', usuario: 'Mirko Gutierrez', departamento: 'Tecnología' },
-            { fecha: '2024-07-16', accion: 'VISACIÓN', usuario: 'Jefe Directo', departamento: 'Tecnología' },
-            { fecha: '2024-07-17', accion: 'APROBACIÓN', usuario: 'Gerencia RRHH', departamento: 'Recursos Humanos' },
-        ]
-    },
-    {
-        id: 2024002,
-        tipoSolicitud: 'PERMISO ADMINISTRATIVO',
-        fechaSolicitud: '2024-08-01T11:30:00.000Z',
-        estadoSolicitud: 'PENDIENTE',
-        fechaInicio: '2024-08-20',
-        fechaFin: '2024-08-20',
-        cantidadDias: 1,
-        trazabilidad: [
-            { fecha: '2024-08-01', accion: 'CREACIÓN', usuario: 'Mirko Gutierrez', departamento: 'Tecnología' },
-        ]
-    },
-    {
-        id: 2024003,
-        tipoSolicitud: 'FERIADO LEGAL',
-        fechaSolicitud: '2024-06-20T09:00:00.000Z',
-        estadoSolicitud: 'RECHAZADA',
-        fechaInicio: '2024-07-01',
-        fechaFin: '2024-07-05',
-        cantidadDias: 5,
-        trazabilidad: [
-            { fecha: '2024-06-20', accion: 'CREACIÓN', usuario: 'Mirko Gutierrez', departamento: 'Tecnología' },
-            { fecha: '2024-06-21', accion: 'RECHAZO', usuario: 'Jefe Directo', departamento: 'Tecnología' },
-        ]
-    },
-];
 
-const getStatusBadge = (status) => {
-    switch (status) {
-        case 'APROBADA':
-            return 'badge bg-success';
-        case 'RECHAZADA':
-            return 'badge bg-danger';
-        case 'PENDIENTE':
-            return 'badge bg-warning text-dark';
-        case 'PENDIENTE VISACION':
-            return 'badge bg-info text-dark';
-        default:
-            return 'badge bg-secondary';
-    }
-};
 
-const MisSolicitudes = () => {
+import MisSolicitudesLoadingSpinner from './MisSolicitudesLoadingSpinner';
+import MisSolicitudesNoDataMessage from './MisSolicitudesNoDataMessage';
+import MisSolicitudesTable from './MisSolicitudesTable';
+import MisSolicitudesPagination from './MisSolicitudesPagination';
+
+const MisSolicitudes =  () => {
     const [solicitudes, setSolicitudes] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [openDetailId, setOpenDetailId] = useState(null);
     const funcionario = useContext(UsuarioContext);
 
+    // Estados para paginación
+    const [currentPage, setCurrentPage] = useState(0); // Backend usa 0-based index
+    const [pageSize, setPageSize] = useState(10); // Tamaño de página por defecto
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
+
+
+    const fetSolicitudesByRut = async (page, size) => {
+        setLoading(true);
+        try {
+            const response = await getSolicitudesByRut(funcionario.rut, page, size);
+            setSolicitudes(Array.isArray(response.solicitudes) ? response.solicitudes : []);
+            setTotalPages(response.totalPages);
+            setCurrentPage(response.currentPage);
+            setTotalElements(response.totalElements);
+        } catch (error) {
+            console.error("Error al cargar las solicitudes:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
-        const fetchMockData = () => {
-            setTimeout(() => {
-                setSolicitudes(mockSolicitudes);
-                setLoading(false);
-            }, 500);
-        };
-        fetchMockData();
-    }, []);
+        if (funcionario && funcionario.rut) {
+            fetSolicitudesByRut(currentPage, pageSize);
+        }
+    }, [funcionario, currentPage, pageSize]);
 
     const handleToggleDetail = (id) => {
         setOpenDetailId(openDetailId === id ? null : id);
@@ -91,63 +59,28 @@ const MisSolicitudes = () => {
                         {funcionario?.nombre && <span className="text-muted"> - {funcionario.nombre} {funcionario.apellidoPaterno} {funcionario.apellidoMaterno} </span>}
                     </h5>
                 </div>
-                <div className="card-body p-0"> {/* Remove padding from card-body */}
+                <div className="card-body p-0">
                     {loading ? (
-                        <div className="text-center p-4">
-                            <div className="spinner-border text-primary" role="status">
-                                <span className="visually-hidden">Cargando...</span>
-                            </div>
-                        </div>
+                        <MisSolicitudesLoadingSpinner />
                     ) : (
-                        <div className="table-responsive">
-                            <table className="table table-hover mb-0">
-                                <thead className="bg-light">
-                                    <tr>
-                                        <th>ID Solicitud</th>
-                                        <th>Tipo de Solicitud</th>
-                                        <th>Fecha de Creación</th>
-                                        <th>Estado</th>
-                                        <th className="text-center">Detalle</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {solicitudes.map((solicitud) => (
-                                        <>
-                                            <tr key={solicitud.id}>
-                                                <td>{solicitud.id}</td>
-                                                <td>{solicitud.tipoSolicitud}</td>
-                                                <td>{formatFecha(solicitud.fechaSolicitud)}</td>
-                                                <td>
-                                                    <span className={getStatusBadge(solicitud.estadoSolicitud)}>
-                                                        {solicitud.estadoSolicitud}
-                                                    </span>
-                                                </td>
-                                                <td className="text-center">
-                                                    <button 
-                                                        className="btn btn-sm btn-outline-primary"
-                                                        onClick={() => handleToggleDetail(solicitud.id)}
-                                                    >
-                                                        <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            {openDetailId === solicitud.id && (
-                                                <tr>
-                                                    <td colSpan="5" className="p-0">
-                                                        <DetalleMiSolicitud solicitud={solicitud} />
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        solicitudes.length === 0 ? (
+                            <MisSolicitudesNoDataMessage />
+                        ) : (
+                            <MisSolicitudesTable
+                                solicitudes={solicitudes}
+                                openDetailId={openDetailId}
+                                handleToggleDetail={handleToggleDetail}
+                            />
+                        )
                     )}
                 </div>
-                <div className="card-footer text-muted">
-                    Mostrando {solicitudes.length} solicitudes.
-                </div>
+                <MisSolicitudesPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    setCurrentPage={setCurrentPage}
+                    solicitudesLength={solicitudes.length}
+                    totalElements={totalElements}
+                />
             </div>
         </div>
     );
