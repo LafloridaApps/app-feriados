@@ -19,13 +19,10 @@ const jornadas = ['AM', 'PM'];
 
 const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer }) => {
 
-
     const { verificar } = useIsJefe();
     const [esJefe, setEsJefe] = useState(false);
     const [esDirector, setEsDirector] = useState(false);
     const [mostrarInfoSubrogante, setMostrarInfoSubrogante] = useState(false);
-
-
 
     const {
         tipo, setTipo,
@@ -97,13 +94,12 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     id="fechaInicio"
                                     type="date"
                                     className="form-control"
-                                    min={new Date().getDate() > 7 ? calcularPrimerDiaDelMes() : calcularPrimerDiaMesAnterior }
+                                    min={new Date().getDate() > 7 ? calcularPrimerDiaDelMes() : calcularPrimerDiaMesAnterior}
                                     value={fechaInicio}
                                     onChange={handlerFechaInicio}
                                     onKeyDown={(e) => e.preventDefault()}
                                 />
                             </div>
-
                             <div className="mb-3">
                                 <label htmlFor="fechaFin" className="form-label">
                                     <i className="bi bi-calendar-date"></i> Fecha Hasta
@@ -119,7 +115,6 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     onKeyDown={(e) => e.preventDefault()}
                                 />
                             </div>
-
                             {tipo === 'ADMINISTRATIVO' && (
                                 <div className="row">
                                     <div className="col">
@@ -142,7 +137,6 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     </div>
                                 </div>
                             )}
-
                             <div className="mt-4 text-end">
                                 <button
                                     type="submit"
@@ -165,7 +159,6 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                         </button>
                                     </div>
                                 )}
-
                             </div>
                         </form>
                     </div>

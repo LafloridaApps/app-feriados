@@ -10,7 +10,6 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
     const [selectedFuncionario, setSelectedFuncionario] = useState(null);
     const [error, setError] = useState('');
 
-    // Limpiar estados cuando el modal se cierra
     useEffect(() => {
         if (!show) {
             setSearchTerm('');
@@ -22,25 +21,22 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
 
     const handleSearch = async () => {
         const funcionarios = await subroganciaService.buscarPorNombre(searchTerm, fechaInicio, fechaFin, 0, deptoFuncionario)
-        
 
         setFilteredFuncionarios(funcionarios);
 
         setError('');
         setSelectedFuncionario(null);
-
-
     };
 
     const handleSelectFuncionario = (funcionario) => {
         setSelectedFuncionario(funcionario);
-        setError(''); // Limpiar cualquier error al seleccionar
+        setError('');
     };
 
     const handleConfirm = () => {
         if (selectedFuncionario) {
             onFuncionarioSelected(selectedFuncionario);
-            onClose(); // Cerrar este modal
+            onClose();
         } else {
             setError('Por favor, seleccione un funcionario de la lista.');
         }
@@ -48,7 +44,7 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
 
     return (
         <div className={`modal fade ${show ? 'show d-block' : ''}`} tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <div className="modal-dialog modal-lg"> {/* Modal más grande para la tabla */}
+            <div className="modal-dialog modal-lg">
                 <div className="modal-content shadow">
                     <div className="modal-header">
                         <h5 className="modal-title">Buscar Funcionario por Nombre</h5>
@@ -71,7 +67,6 @@ const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFunci
                                 </button>
                             </div>
                         </div>
-
                         {error && (
                             <div className="alert alert-danger mt-3">
                                 {error}

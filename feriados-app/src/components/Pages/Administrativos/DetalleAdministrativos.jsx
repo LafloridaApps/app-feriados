@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import {  formatFechaString } from "../../../services/utils";
+import { formatFechaString } from "../../../services/utils";
 
 const DetalleAdministrativos = ({ detalle }) => {
 

@@ -3,6 +3,8 @@ import { formatFecha } from '../../../services/utils';
 
 const DetalleMiSolicitud = ({ solicitud }) => {
 
+    
+
     const timelineItemStyle = {
         position: 'relative',
         paddingLeft: '30px',
@@ -32,13 +34,14 @@ const DetalleMiSolicitud = ({ solicitud }) => {
                 return 'bi bi-check-circle-fill';
             case 'APROBACIÓN':
                 return 'bi bi-patch-check-fill';
-            case 'RECHAZO':
+            case 'POSTERGACIÓN':
                 return 'bi bi-x-circle-fill';
             default:
                 return 'bi bi-info-lg';
         }
     };
 
+    
     return (
         <div className="p-3 bg-light rounded">
             <div className="row">
@@ -61,6 +64,7 @@ const DetalleMiSolicitud = ({ solicitud }) => {
                                     <p className="text-muted small mb-0">{formatFecha(evento.fecha)} por {evento.usuario}</p>
                                     {evento.departamento && <p className="small text-muted mt-1">Departamento: {evento.departamento}</p>}
                                     {evento.estado && <p className="small text-muted mt-1">Estado: {evento.estado}</p>}
+                                    {evento.estado =="POSTERGADA" && <p className='small text-muted mt-1'> Glosa : {evento.glosa}</p>}
                                 </div>
                             </div>
                         ))}

@@ -6,7 +6,7 @@ const getStatusBadge = (status) => {
     switch (status) {
         case 'APROBADA':
             return 'badge bg-success';
-        case 'RECHAZADA':
+        case 'POSTERGADA':
             return 'badge bg-danger';
         case 'PENDIENTE':
             return 'badge bg-warning text-dark';
@@ -31,21 +31,26 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                     </tr>
                 </thead>
                 <tbody>
-                    {solicitudes.map((solicitud) => (
-                        <React.Fragment key={solicitud.id}>
-                            <tr >
-                                <td>{solicitud.id}</td>
-                                <td>{solicitud.tipoSolicitud}</td>
-                                <td>{formatFecha(solicitud.fechaSolicitud)}</td>
+                    {solicitudes.map((solicitud, index) => (
+                        <React.Fragment key={solicitud?.id || index}>
+                            <tr>
+                                <td>{solicitud?.id || 'N/A'}</td>
+                                <td>{solicitud?.tipoSolicitud || 'No especificado'}</td>
+                                <td>{solicitud?.fechaSolicitud ? formatFecha(solicitud.fechaSolicitud) : 'Fecha no disponible'}</td>
                                 <td>
-                                    <span className={getStatusBadge(solicitud.estadoSolicitud)}>
-                                        {solicitud.estadoSolicitud}
-                                    </span>
+                                    {solicitud?.estadoSolicitud ? (
+                                        <span className={getStatusBadge(solicitud.estadoSolicitud)}>
+                                            {solicitud.estadoSolicitud}
+                                        </span>
+                                    ) : (
+                                        <span className={getStatusBadge('')}>No especificado</span>
+                                    )}
                                 </td>
                                 <td className="text-center">
                                     <button
                                         className="btn btn-sm btn-outline-primary"
                                         onClick={() => handleToggleDetail(solicitud.id)}
+                                        disabled={!solicitud?.id}
                                     >
                                         <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                                     </button>

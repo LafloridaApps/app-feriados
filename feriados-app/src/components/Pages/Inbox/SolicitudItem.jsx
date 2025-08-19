@@ -1,7 +1,13 @@
+import { useContext } from 'react';
+import Swal from 'sweetalert2';
 import DetalleSolicitud from './DetalleSolicitud';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import PropTypes from 'prop-types';
 import { formatFecha } from '../../../services/utils';
+import { UsuarioContext } from '../../../context/UsuarioContext';
+import { savePostergacion } from '../../../services/postergacionService';
+import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
+
 
 const SolicitudItem = ({
     solicitud,
@@ -14,6 +20,10 @@ const SolicitudItem = ({
     handleVerDetalleClick
 }) => {
 
+    const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
+
+
+
     const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo } = solicitud;
 
     const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
@@ -21,9 +31,7 @@ const SolicitudItem = ({
 
     const derivaciones = solicitud?.derivaciones;
 
-
     const tieneDerivaciones = derivaciones && derivaciones.length > 0;
-
 
     const tipoMovimiento = tieneDerivaciones ? derivaciones[0].tipoMovimiento : null;
 
@@ -33,8 +41,39 @@ const SolicitudItem = ({
 
     const recepcionada = tieneDerivaciones ? derivaciones[0].recepcionada : null;
 
+    const handlePostergar = async () => {
+        const { value: motivo, isConfirmed } = await Swal.fire({
+            title: '¿Está seguro de postergar?',
+            text: "Por favor, ingrese el motivo de la postergación:",
+            input: 'textarea',
+            inputPlaceholder: 'Escriba el motivo aquí...',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, postergar',
+            cancelButtonText: 'Cancelar',
+            inputValidator: (value) => {
+                if (!value) {
+                    return '¡Necesita escribir un motivo!'
+                }
+            }
+        });
 
-  
+        if (isConfirmed && motivo) {
+            try {
+                const datosPostergacion = {
+                    idSolicitud: id,
+                    motivo: motivo,
+                    postergadoPor: rutFuncionario
+                };
+                await savePostergacion(datosPostergacion);
+                mostrarAlertaExito('Éxito', 'La solicitud ha sido postergada correctamente.');
+                onActualizarSolicitud();
+            } catch (error) {
+                console.error('Error al postergar la solicitud:', error);
+                mostrarAlertaError('No se pudo postergar la solicitud.');
+            }
+        }
+    };
+
 
     return (
         <>
@@ -56,18 +95,30 @@ const SolicitudItem = ({
                                     onClick={() => handlerEntrada(idDerivacion)}
                                     title="Recibir"
                                 >
-                                    Recibir  <i className="bi bi-check-circle-fill"></i>
+                                    Recibir  <i className="bi bi-box-arrow-in-down"></i>
+                                </button>
+                            )
+                        }
+                        {
+                            recepcionada && estadoDerivacion != "DERIVADA" && estadoDerivacion != "FINALIZADA" && 
+                             estadoDerivacion != "POSTERGADA" &&(
+                                <button
+                                    className="btn btn-warning btn-sm mr-2"
+                                    title="Postergar"
+                                    onClick={handlePostergar}
+                                >
+                                    Postergar <i className="bi bi-clock-history"></i>
                                 </button>
                             )
                         }
                         {
                             recepcionada && tipoMovimiento === "VISACION" && estadoDerivacion === "PENDIENTE" && (
                                 <button
-                                    className="btn btn-outline-primary btn-sm mr-2"
+                                    className="btn btn-primary btn-sm mr-2"
                                     onClick={() => handlerVisar(idDerivacion)}
                                     title="Visar"
                                 >
-                                    Visar <i className="bi bi-file-earmark-check-fill"></i>
+                                    Visar <i className="bi bi-check-all"></i>
                                 </button>
                             )
                         }
@@ -78,17 +129,22 @@ const SolicitudItem = ({
                         {
                             recepcionada && tipoMovimiento === "FIRMA" && estadoDerivacion === "PENDIENTE" && (
                                 <button
-                                    onClick={()=>handlerAprobar(idDerivacion)}
+                                    onClick={() => handlerAprobar(idDerivacion)}
                                     className="btn btn-success btn-sm"
                                     title="Firmar"
                                 >
 
-                                    Firmar <i className="bi bi-pencil-square"></i>
+                                    Firmar <i className="bi bi-patch-check-fill"></i>
                                 </button>
                             )
-                        }{
+                        }
+                        {
                             recepcionada && estadoDerivacion === "FINALIZADA" &&
                             (<p className='text-success'><strong>FIRMADA</strong></p>)
+                        }
+                        {
+                            recepcionada && estadoDerivacion === "POSTERGADA" &&
+                            (<p className='text-danger'><strong>POSTERGADA</strong></p>)
                         }
                     </div>
                 </td>
@@ -121,9 +177,9 @@ const SolicitudItem = ({
                         solicitud={solicitud}
                         handlerAprobar={handlerAprobar}
                         handlerVisar={handlerVisar}
-                        handlerEntrada={(id) => handlerEntrada(id)}         
+                        handlerEntrada={(id) => handlerEntrada(id)}
                         onActualizarSolicitud={onActualizarSolicitud}
-                        rutFuncionario={rutFuncionario}          
+                        rutFuncionario={rutFuncionario}
                         open={open}
                         handleVerDetalleClick={handleVerDetalleClick}
                     />

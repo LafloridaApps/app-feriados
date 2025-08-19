@@ -3,23 +3,19 @@ import { UsuarioContext } from '../../../context/UsuarioContext';
 import { formatFecha } from '../../../services/utils';
 import DetalleMiSolicitud from './DetalleMiSolicitud';
 import { getSolicitudesByRut } from '../../../services/misSolicitudesService';
-
-
-
 import MisSolicitudesLoadingSpinner from './MisSolicitudesLoadingSpinner';
 import MisSolicitudesNoDataMessage from './MisSolicitudesNoDataMessage';
 import MisSolicitudesTable from './MisSolicitudesTable';
 import MisSolicitudesPagination from './MisSolicitudesPagination';
 
-const MisSolicitudes =  () => {
+const MisSolicitudes = () => {
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [openDetailId, setOpenDetailId] = useState(null);
     const funcionario = useContext(UsuarioContext);
 
-    // Estados para paginación
-    const [currentPage, setCurrentPage] = useState(0); // Backend usa 0-based index
-    const [pageSize, setPageSize] = useState(10); // Tamaño de página por defecto
+    const [currentPage, setCurrentPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
 
@@ -48,6 +44,8 @@ const MisSolicitudes =  () => {
     const handleToggleDetail = (id) => {
         setOpenDetailId(openDetailId === id ? null : id);
     };
+
+    console.log(solicitudes)
 
     return (
         <div className="container-fluid mt-4">

@@ -107,7 +107,7 @@ const NodoDepartamentoConector = ({
                             onSeleccionarDepartamento={onSeleccionarDepartamento}
                             departamentoSeleccionado={departamentoSeleccionado}
                             depth={depth + 1}
-                            onEditarDepartamento={onEditarDepartamento} 
+                            onEditarDepartamento={onEditarDepartamento}
                         />
                     ))}
                 </ul>
@@ -122,17 +122,17 @@ NodoDepartamentoConector.propTypes = {
         nombre: PropTypes.string.isRequired,
         nivel: PropTypes.string.isRequired,
         dependencias: PropTypes.array,
-        [PropTypes.string]: PropTypes.any, 
+        [PropTypes.string]: PropTypes.any,
     }).isRequired,
     nodosExpandidos: PropTypes.object.isRequired,
     onToggleNodo: PropTypes.func.isRequired,
     onSeleccionarDepartamento: PropTypes.func.isRequired,
     departamentoSeleccionado: PropTypes.shape({
         id: PropTypes.any,
-        [PropTypes.string]: PropTypes.any, 
+        [PropTypes.string]: PropTypes.any,
     }),
     depth: PropTypes.number.isRequired,
-    onEditarDepartamento: PropTypes.func.isRequired, 
+    onEditarDepartamento: PropTypes.func.isRequired,
 };
 
 export default NodoDepartamentoConector;

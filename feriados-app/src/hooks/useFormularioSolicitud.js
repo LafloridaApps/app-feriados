@@ -172,28 +172,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     }, [errorSaldo, errorFecha, errorFeriado, errorRangoFechas, mostrarAlertaError]);
 
 
-    const handlerDirectorSubrogante = async (id) => {
-
-        try {
-            const dataDirector = await searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud(id, fechaInicio, fechaInicio)
-
-            if (dataDirector) {
-                const subrogancia = {
-                    rutSubrogante: dataDirector.rut,
-                    rutJefe: funcionario.rut,
-                    nombreSubrogante: dataDirector.nombre,
-                    departamentoSubrogante: dataDirector.departamento,
-                    vrutSubrogante: dataDirector.vrut
-
-                }
-                setSubrogancia(subrogancia);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-
-    }
+    
 
 
     const handleSaveSolicitud = useCallback(async () => {
@@ -271,32 +250,38 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                 return;
             }
 
+            // Si es Director, la subrogancia es obligatoria.
             if (esJefe && esDirector && !subrogancia) {
                 setMostrarModalSubrogante(true);
+                setEnviando(false);
                 return;
             }
 
+            // Si es Jefe pero NO Director, y no hay subrogante, preguntar.
             if (esJefe && !esDirector && !subrogancia) {
-                const { isConfirmed, isDismissed } = await Swal.fire({
-                    icon: 'question',
-                    title: '¿Deseas agregar un subrogante?',
-                    text: 'Puedes agregar un subrogante o dejar que firme el director.',
-                    confirmButtonText: 'Agregar subrogante',
-                    cancelButtonText: 'Firmará el director',
+                const confirm = await Swal.fire({
+                    title: '¿Continuar sin subrogante?',
+                    text: "Estás por enviar una solicitud sin designar un subrogante. ¿Deseas continuar?",
+                    icon: 'warning',
                     showCancelButton: true,
-                    allowEscapeKey: false,
-                    allowOutsideClick: false
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, continuar sin subrogante',
+                    cancelButtonText: 'No, designar subrogante'
                 });
 
-                if (isConfirmed) {
+                if (confirm.isConfirmed) {
+                    // El usuario eligió continuar sin subrogante, proceder a guardar.
+                    await handleSaveSolicitud();
+                } else {
+                    // El usuario eligió designar un subrogante, mostramos el modal
                     setMostrarModalSubrogante(true);
-                    return;
-                } else if (isDismissed) {
-                    handlerDirectorSubrogante(depto)
-                    return;
+                    setEnviando(false);
                 }
+                return; 
             }
 
+            
             await handleSaveSolicitud();
 
         } catch (error) {

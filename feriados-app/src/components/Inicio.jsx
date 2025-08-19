@@ -9,7 +9,6 @@ const Inicio = () => {
 
     if (!funcionario) return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
 
-
     const { nombre, departamento, foto, nombreJefe } = funcionario;
     const fotoUrl = foto ? `data:image/jpeg;base64,${foto}` : '';
 

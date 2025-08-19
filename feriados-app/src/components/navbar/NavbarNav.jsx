@@ -5,9 +5,7 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas }) => {
     const { pathname } = useLocation();
 
     const getLinkClass = (path) => {
-        // Comprueba si la ruta actual coincide exactamente con el path del enlace
         const isActive = pathname === path;
-        // Define las clases para el estado activo y el normal
         const activeClass = 'active fw-bold text-primary border-bottom border-primary border-2';
         const normalClass = 'text-dark'; // Clase para texto oscuro en estado normal
 

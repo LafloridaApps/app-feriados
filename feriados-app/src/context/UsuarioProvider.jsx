@@ -6,12 +6,10 @@ import { UsuarioContext } from "./UsuarioContext";
 export const UsuarioProvider = ({ children }) => {
 	const [funcionario, setFuncionario] = useState(null);
 
-	
-
 	useEffect(() => {
 		const fetchFuncionario = async () => {
 			try {
-				const data = await getFuncionarioByRutAndVrut(19280310,1);
+				const data = await getFuncionarioByRutAndVrut(13890844,5);
 				setFuncionario(data);
 			} catch (error) {
 				console.error("Error al obtener funcionario:", error);
@@ -40,3 +38,4 @@ UsuarioProvider.propTypes = {
 //19280310,1 fuenzalida contabilidad
 //10067570,6 pamela perez
 //10735521,9 jorge poveda
+//18740165,8 jorge rementeria

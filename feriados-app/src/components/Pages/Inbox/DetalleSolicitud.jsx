@@ -5,21 +5,16 @@ const DetalleSolicitud = ({ detalle }) => {
 
     const { nombreDepartamento, fechaInicio, fechaFin, cantidadDias, jornadaInicio, jornadaFin, tipoSolicitud } = detalle;
 
-
     let jornada = null;
 
     if (tipoSolicitud == 'ADMINISTRATIVO') {
-
-
         if (jornadaInicio == 'AM' && jornadaFin == 'AM') {
-            jornada ="AM"
+            jornada = "AM"
         } else if (jornadaInicio == 'PM' && jornadaFin == 'PM') {
             jornada = "PM"
         } else {
-            jornada ="Completa"
-
+            jornada = "Completa"
         }
-
     }
 
     return (

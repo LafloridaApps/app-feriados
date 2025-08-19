@@ -78,6 +78,6 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
     return {
         handlerEntrada,
         handlerVisar,
-        handlerAprobar
+        handlerAprobar,
     };
 };

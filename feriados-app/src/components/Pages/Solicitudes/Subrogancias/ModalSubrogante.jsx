@@ -18,7 +18,7 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
             };
             onSubroganteSelected(subrogancia);
             onClose();
-        } 
+        }
     };
 
     const handleFuncionarioSelectedFromSearch = (selectedFunc) => {
@@ -42,7 +42,7 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
                                 onSubroganteSelect={setSubrogante}
                                 subrogante={subrogante}
                             />
-                             <button className="btn btn-link" onClick={() => setShowBuscarPorNombreModal(true)}>Buscar por nombre</button>
+                            <button className="btn btn-link" onClick={() => setShowBuscarPorNombreModal(true)}>Buscar por nombre</button>
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-secondary" onClick={() => { setSubrogante(null); onClose(); }}>Cancelar</button>

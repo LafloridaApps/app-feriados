@@ -59,7 +59,8 @@ const InboxSolicitudes = () => {
         refetch();
     };
 
-    const { handlerEntrada, handlerVisar, handlerAprobar } = useAccionesSolicitud(rutFuncionario, handleActualizarSolicitud, refetch);
+    const { handlerEntrada, handlerVisar, handlerAprobar }
+        = useAccionesSolicitud(rutFuncionario, handleActualizarSolicitud, refetch);
 
     useEffect(() => {
         if (funcionario) {
@@ -193,6 +194,8 @@ const InboxSolicitudes = () => {
                                             handlerEntrada={handlerEntrada}
                                             handlerVisar={handlerVisar}
                                             handlerAprobar={handlerAprobar}
+                                            rutFuncionario={rutFuncionario}
+                                            onActualizarSolicitud={handleActualizarSolicitud}
                                             handleVerDetalleClick={() => handleVerDetalleClick(solicitud.id)}
                                         />
                                     ))}

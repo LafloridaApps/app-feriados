@@ -14,7 +14,7 @@ const DepartamentosPage = () => {
         const fetchDepartamentos = async () => {
             try {
                 const response = await getDepartamentosList();
-                if (Array.isArray(response.data)) { 
+                if (Array.isArray(response.data)) {
                     setDepartamentos(response.data);
                 } else {
                     console.error("Error: La respuesta de departamentos no es un array", response);

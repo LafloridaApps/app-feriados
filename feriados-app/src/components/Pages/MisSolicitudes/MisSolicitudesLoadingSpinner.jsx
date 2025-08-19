@@ -1,5 +1,3 @@
-import React from 'react';
-
 const MisSolicitudesLoadingSpinner = () => {
     return (
         <div className="text-center p-4">

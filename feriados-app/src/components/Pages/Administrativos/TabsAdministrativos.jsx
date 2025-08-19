@@ -10,7 +10,7 @@ const TabsAdministrativos = ({ resumen, detalle }) => {
 
 
     useEffect(() => {
-        const availableYears = detalle.map((r) =>new Date(r.fechaInicio).getFullYear());
+        const availableYears = detalle.map((r) => new Date(r.fechaInicio).getFullYear());
         if (availableYears.includes(currentYear)) {
             setActiveYear(currentYear);
         } else if (availableYears.length > 0) {
@@ -34,7 +34,6 @@ const TabsAdministrativos = ({ resumen, detalle }) => {
     const years = Object.keys(resumenPorAnio)
         .map(Number)
         .sort((a, b) => b - a);
-
 
     return (
         <>

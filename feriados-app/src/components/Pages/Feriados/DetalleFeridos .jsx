@@ -3,7 +3,6 @@ import { formatFechaString } from "../../../services/utils";
 
 const DetalleFeridos = ({ detalle }) => {
 
-  
     return (
         <div className="card">
             <div className="card-body">

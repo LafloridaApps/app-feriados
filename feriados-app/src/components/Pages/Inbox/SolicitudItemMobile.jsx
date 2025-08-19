@@ -1,18 +1,29 @@
 // SolicitudItemMobile.jsx
+import { useContext } from 'react';
+import Swal from 'sweetalert2';
 import DetalleSolicitud from './DetalleSolicitud';
 import PropTypes from 'prop-types';
+import { UsuarioContext } from '../../../context/UsuarioContext';
+import { savePostergacion } from '../../../services/postergacionService';
+import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
+
 
 function SolicitudItemMobile({
     solicitud,
     handlerAprobar,
     handlerVisar,
+    rutFuncionario,
     handlerEntrada,
+    onActualizarSolicitud,
     open,
     handleVerDetalleClick
 
 }) {
 
-    const { subroganciaInfo, nombreFuncionario } = solicitud;
+
+    const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
+
+    const { id, subroganciaInfo, nombreFuncionario } = solicitud;
     const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
     const subroganciaText = isSubrogada ? `(Subrogando a ${subroganciaInfo[0].nombreDeptoSubrogado})` : '';
 
@@ -26,10 +37,41 @@ function SolicitudItemMobile({
 
     const estadoDerivacion = tieneDerivaciones ? derivaciones[0].estadoDerivacion : null;
 
-
     const recepcionada = tieneDerivaciones ? derivaciones[0].recepcionada : null;
 
-
+    const handlePostergar = () => {
+        Swal.fire({
+            title: '¿Está seguro de postergar?',
+            text: "Por favor, ingrese el motivo de la postergación:",
+            input: 'textarea',
+            inputPlaceholder: 'Escriba el motivo aquí...',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, postergar',
+            cancelButtonText: 'Cancelar',
+            inputValidator: (value) => {
+                if (!value) {
+                    return '¡Necesita escribir un motivo!';
+                }
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const datosPostergacion = {
+                        idSolicitud: id,
+                        motivo: result.value,
+                        postergadoPor: rutFuncionario
+                    };
+                    console.log(datosPostergacion);
+                    await savePostergacion(datosPostergacion);
+                    mostrarAlertaExito('Éxito', 'La solicitud ha sido postergada correctamente.');
+                    onActualizarSolicitud();
+                } catch (error) {
+                    console.error("Error al postergar la solicitud:", error);
+                    mostrarAlertaError('No se pudo postergar la solicitud.');
+                }
+            }
+        });
+    };
 
     return (
         <div className="card shadow-sm mb-3">
@@ -53,6 +95,18 @@ function SolicitudItemMobile({
                         )
                     }
                     {
+                        recepcionada && estadoDerivacion != "DERIVADA" && estadoDerivacion != "FINALIZADA" &&
+                        estadoDerivacion != "POSTERGADA" && (
+                            <button
+                                className="btn btn-warning btn-sm mr-2"
+                                title="Postergar"
+                                onClick={handlePostergar}
+                            >
+                                Postergar <i className="bi bi-clock-history"></i>
+                            </button>
+                        )
+                    }
+                    {
                         recepcionada && tipoMovimiento === "VISACION" && estadoDerivacion === "PENDIENTE" && (
                             <button
                                 onClick={() => handlerVisar(idDerivacion)}
@@ -62,6 +116,10 @@ function SolicitudItemMobile({
                         )
                     }
                     {
+                        recepcionada && estadoDerivacion === "DERIVADA" &&
+                        (<p className='text-success'><strong>DERIVADA</strong></p>)
+                    }
+                    {
                         recepcionada && tipoMovimiento === "FIRMA" && estadoDerivacion === "PENDIENTE" && (
                             <button
                                 onClick={() => handlerAprobar(idDerivacion)}
@@ -69,6 +127,14 @@ function SolicitudItemMobile({
                                 Firmar
                             </button>
                         )
+                    }
+                    {
+                        recepcionada && estadoDerivacion === "FINALIZADA" &&
+                        (<p className='text-success'><strong>FIRMADA</strong></p>)
+                    }
+                    {
+                        recepcionada && estadoDerivacion === "POSTERGADA" &&
+                        (<p className='text-danger'><strong>POSTERGADA</strong></p>)
                     }
                 </div>
                 <button
@@ -111,6 +177,7 @@ SolicitudItemMobile.propTypes = {
     handlerAprobar: PropTypes.func.isRequired,
     handlerVisar: PropTypes.func.isRequired,
     handlerEntrada: PropTypes.func.isRequired,
+    onActualizarSolicitud: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     handleVerDetalleClick: PropTypes.func.isRequired
 };

@@ -4,23 +4,21 @@ import ResumenFeridos from "./ResumenFeridos ";
 import DetalleFeridos from "./DetalleFeridos ";
 
 const TabsFeridos = ({ resumen, detalle }) => {
+
     const currentYear = new Date().getFullYear();
     const [activeYear, setActiveYear] = useState(null);
 
-   
-
-   useEffect(() => {
-        const availableYears = detalle.map((r) =>new Date(r.fechaInicio).getFullYear());
+    useEffect(() => {
+        const availableYears = detalle.map((r) => new Date(r.fechaInicio).getFullYear());
         if (availableYears.includes(currentYear)) {
             setActiveYear(currentYear);
         } else if (availableYears.length > 0) {
             setActiveYear(availableYears[0]);
         }
 
-
     }, [currentYear, detalle]);
 
-     const resumenPorAnio = detalle.reduce((acc, r) => {
+    const resumenPorAnio = detalle.reduce((acc, r) => {
         acc[new Date(r.fechaResolucion).getFullYear()] = r;
         return acc;
     }, {});

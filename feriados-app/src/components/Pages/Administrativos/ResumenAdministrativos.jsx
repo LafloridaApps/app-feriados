@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 const ResumenAdministrativos = ({ resumen }) => {
 
     const { anio, maximo, usados, saldo } = resumen || {};
+    
     return (
         <div className="table-responsive mb-4">
             <table className="table table-bordered table-hover table-striped align-middle">
@@ -15,7 +16,6 @@ const ResumenAdministrativos = ({ resumen }) => {
                     </tr>
                 </thead>
                 <tbody>
-
                     <tr key={anio}>
                         <td>{anio}</td>
                         <td>{maximo}</td>

@@ -17,7 +17,6 @@ const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect, subrogante 
         buscarSubrogante();
     };
 
-
     return (
         <div>
             <form onSubmit={handleBuscar}>

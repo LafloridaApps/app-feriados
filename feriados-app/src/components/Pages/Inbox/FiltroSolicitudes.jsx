@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
 
 const FiltrosSolicitudes = ({ onFiltrar }) => {
+    
     const [anio, setAnio] = useState('');
     const [fechaInicio, setFechaInicio] = useState('');
     const [fechaFin, setFechaFin] = useState('');
@@ -14,14 +15,12 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
 
     const handleAnioChange = (e) => {
         const value = e.target.value;
-        // Permitir solo números y limitar a 4 caracteres
         if (/^\d*$/.test(value) && value.length <= 4) {
             setAnio(value);
         }
     };
 
     const handleFiltrar = () => {
-        // Validar que si el año no está vacío, tenga 4 dígitos
         if (anio && anio.length !== 4) {
             mostrarAlertaError('El año ingresado no es válido. Por favor, ingrese un año con 4 dígitos.');
             return;
@@ -49,7 +48,6 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
     const toggleCollapse = () => {
         setIsOpen(!isOpen);
     };
-
 
     return (
         <div className="card shadow-sm mb-4">

@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 
 const ResumenFeridos = ({ resumen }) => {
 
-
     const {
         total,
         diasCorresponden,
@@ -27,8 +26,6 @@ const ResumenFeridos = ({ resumen }) => {
                             </tr>
                         </thead>
                         <tbody>
-
-
                             <tr key={anio}>
                                 <td>{total}</td>
                                 <td>{diasCorresponden}</td>
@@ -36,8 +33,6 @@ const ResumenFeridos = ({ resumen }) => {
                                 <td>{diasTomados}</td>
                                 <td>{diasPendientes}</td>
                             </tr>
-
-
                         </tbody>
                     </table>
                 </div>

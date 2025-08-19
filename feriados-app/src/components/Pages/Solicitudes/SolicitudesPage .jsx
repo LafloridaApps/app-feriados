@@ -9,20 +9,13 @@ import { UsuarioContext } from '../../../context/UsuarioContext';
 
 const SolicitudesPage = () => {
 
-
     const funcionario = useContext(UsuarioContext);
-
     const [dataAdm, setDataAdm] = useState(null)
     const [dataFer, setDataFer] = useState(null)
-
     const { resumen: resumenAdm } = dataAdm || {};
-
     const { resumen: resumenFer } = dataFer || {};
-
     const { detalle: detalleAdm } = dataAdm || {};
-
     const { detalle: detalleFer } = dataFer || {};
-
 
     useEffect(() => {
         if (!funcionario) return;
@@ -40,7 +33,6 @@ const SolicitudesPage = () => {
                     anio: response?.anio || anioActual
 
                 }
-
 
                 const detalleFiltrado = response.detalle?.filter(item => {
                     const fecha = new Date(item.fechaInicio);

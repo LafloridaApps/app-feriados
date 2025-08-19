@@ -1,5 +1,3 @@
-import React from 'react';
-
 const MisSolicitudesPagination = ({ currentPage, totalPages, setCurrentPage, solicitudesLength, totalElements }) => {
     return (
         <div className="card-footer text-muted d-flex justify-content-between align-items-center">
