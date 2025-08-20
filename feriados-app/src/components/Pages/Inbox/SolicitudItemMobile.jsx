@@ -1,43 +1,28 @@
-// SolicitudItemMobile.jsx
-import { useContext } from 'react';
 import Swal from 'sweetalert2';
 import DetalleSolicitud from './DetalleSolicitud';
 import PropTypes from 'prop-types';
-import { UsuarioContext } from '../../../context/UsuarioContext';
 import { savePostergacion } from '../../../services/postergacionService';
 import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
-
+import { useGestionAcciones } from '../../../hooks/useGestionAcciones';
 
 function SolicitudItemMobile({
     solicitud,
     handlerAprobar,
     handlerVisar,
-    rutFuncionario,
     handlerEntrada,
     onActualizarSolicitud,
+    rutFuncionario, // rutFuncionario is needed for postergacion
     open,
     handleVerDetalleClick
-
 }) {
-
-
     const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
-
     const { id, subroganciaInfo, nombreFuncionario } = solicitud;
+
+    // Use the centralized hook
+    const acciones = useGestionAcciones(solicitud.derivaciones?.[0]);
+
     const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
     const subroganciaText = isSubrogada ? `(Subrogando a ${subroganciaInfo[0].nombreDeptoSubrogado})` : '';
-
-    const derivaciones = solicitud?.derivaciones;
-
-    const tieneDerivaciones = derivaciones && derivaciones.length > 0;
-
-    const idDerivacion = tieneDerivaciones ? derivaciones[0].id : null;
-
-    const tipoMovimiento = tieneDerivaciones ? derivaciones[0].tipoMovimiento : null;
-
-    const estadoDerivacion = tieneDerivaciones ? derivaciones[0].estadoDerivacion : null;
-
-    const recepcionada = tieneDerivaciones ? derivaciones[0].recepcionada : null;
 
     const handlePostergar = () => {
         Swal.fire({
@@ -54,14 +39,13 @@ function SolicitudItemMobile({
                 }
             }
         }).then(async (result) => {
-            if (result.isConfirmed) {
+            if (result.isConfirmed && result.value) {
                 try {
                     const datosPostergacion = {
                         idSolicitud: id,
                         motivo: result.value,
                         postergadoPor: rutFuncionario
                     };
-                    console.log(datosPostergacion);
                     await savePostergacion(datosPostergacion);
                     mostrarAlertaExito('Éxito', 'La solicitud ha sido postergada correctamente.');
                     onActualizarSolicitud();
@@ -81,61 +65,49 @@ function SolicitudItemMobile({
                     {isSubrogada && <small className="d-block text-info">{subroganciaText}</small>}
                 </h6>
                 <div className="d-flex justify-content-end mb-2">
-                    {
-                        !recepcionada && (
-                            <button
-                                className="btn btn-success btn-sm mr-2"
-                                onClick={() => {
-                                    handlerEntrada(idDerivacion);
-                                }}
-                                title="Recibir"
-                            >
-                                Recibir  <i className="bi bi-check-circle-fill"></i>
-                            </button>
-                        )
-                    }
-                    {
-                        recepcionada && estadoDerivacion != "DERIVADA" && estadoDerivacion != "FINALIZADA" &&
-                        estadoDerivacion != "POSTERGADA" && (
-                            <button
-                                className="btn btn-warning btn-sm mr-2"
-                                title="Postergar"
-                                onClick={handlePostergar}
-                            >
-                                Postergar <i className="bi bi-clock-history"></i>
-                            </button>
-                        )
-                    }
-                    {
-                        recepcionada && tipoMovimiento === "VISACION" && estadoDerivacion === "PENDIENTE" && (
-                            <button
-                                onClick={() => handlerVisar(idDerivacion)}
-                                className="btn btn-outline-primary btn-sm mr-2">
-                                Visar
-                            </button>
-                        )
-                    }
-                    {
-                        recepcionada && estadoDerivacion === "DERIVADA" &&
-                        (<p className='text-success'><strong>DERIVADA</strong></p>)
-                    }
-                    {
-                        recepcionada && tipoMovimiento === "FIRMA" && estadoDerivacion === "PENDIENTE" && (
-                            <button
-                                onClick={() => handlerAprobar(idDerivacion)}
-                                className="btn btn-primary btn-sm">
-                                Firmar
-                            </button>
-                        )
-                    }
-                    {
-                        recepcionada && estadoDerivacion === "FINALIZADA" &&
-                        (<p className='text-success'><strong>FIRMADA</strong></p>)
-                    }
-                    {
-                        recepcionada && estadoDerivacion === "POSTERGADA" &&
-                        (<p className='text-danger'><strong>POSTERGADA</strong></p>)
-                    }
+                    {acciones.puedeRecibir && (
+                        <button
+                            className="btn btn-success btn-sm mr-2"
+                            onClick={() => handlerEntrada(acciones.idDerivacion)}
+                            title="Recibir"
+                        >
+                            Recibir <i className="bi bi-check-circle-fill"></i>
+                        </button>
+                    )}
+                    {acciones.puedePostergar && (
+                        <button
+                            className="btn btn-warning btn-sm mr-2"
+                            title="Postergar"
+                            onClick={handlePostergar}
+                        >
+                            Postergar <i className="bi bi-clock-history"></i>
+                        </button>
+                    )}
+                    {acciones.puedeVisar && (
+                        <button
+                            onClick={() => handlerVisar(acciones.idDerivacion)}
+                            className="btn btn-outline-primary btn-sm mr-2"
+                        >
+                            Visar
+                        </button>
+                    )}
+                    {acciones.esDerivada && (
+                        <p className='text-success'><strong>DERIVADA</strong></p>
+                    )}
+                    {acciones.puedeFirmar && (
+                        <button
+                            onClick={() => handlerAprobar(acciones.idDerivacion)}
+                            className="btn btn-primary btn-sm"
+                        >
+                            Firmar
+                        </button>
+                    )}
+                    {acciones.esFinalizada && (
+                        <p className='text-success'><strong>FIRMADA</strong></p>
+                    )}
+                    {acciones.esPostergada && (
+                        <p className='text-danger'><strong>POSTERGADA</strong></p>
+                    )}
                 </div>
                 <button
                     onClick={handleVerDetalleClick}
@@ -171,6 +143,7 @@ SolicitudItemMobile.propTypes = {
                 id: PropTypes.number.isRequired,
                 tipoMovimiento: PropTypes.string.isRequired,
                 estadoDerivacion: PropTypes.string.isRequired,
+                recepcionada: PropTypes.bool.isRequired,
             })
         ),
     }).isRequired,
@@ -178,6 +151,7 @@ SolicitudItemMobile.propTypes = {
     handlerVisar: PropTypes.func.isRequired,
     handlerEntrada: PropTypes.func.isRequired,
     onActualizarSolicitud: PropTypes.func.isRequired,
+    rutFuncionario: PropTypes.string.isRequired,
     open: PropTypes.bool.isRequired,
     handleVerDetalleClick: PropTypes.func.isRequired
 };

@@ -1,13 +1,11 @@
-import { useContext } from 'react';
 import Swal from 'sweetalert2';
 import DetalleSolicitud from './DetalleSolicitud';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import PropTypes from 'prop-types';
 import { formatFecha } from '../../../services/utils';
-import { UsuarioContext } from '../../../context/UsuarioContext';
 import { savePostergacion } from '../../../services/postergacionService';
 import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
-
+import { useGestionAcciones } from '../../../hooks/useGestionAcciones';
 
 const SolicitudItem = ({
     solicitud,
@@ -19,30 +17,16 @@ const SolicitudItem = ({
     open,
     handleVerDetalleClick
 }) => {
-
     const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
-
-
-
     const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo } = solicitud;
+
+    const acciones = useGestionAcciones(solicitud.derivaciones?.[0]);
 
     const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
     const subroganciaText = isSubrogada ? `(Subrogando a ${subroganciaInfo[0].nombreDeptoSubrogado})` : '';
 
-    const derivaciones = solicitud?.derivaciones;
-
-    const tieneDerivaciones = derivaciones && derivaciones.length > 0;
-
-    const tipoMovimiento = tieneDerivaciones ? derivaciones[0].tipoMovimiento : null;
-
-    const idDerivacion = tieneDerivaciones ? derivaciones[0].id : null;
-
-    const estadoDerivacion = tieneDerivaciones ? derivaciones[0].estadoDerivacion : null;
-
-    const recepcionada = tieneDerivaciones ? derivaciones[0].recepcionada : null;
-
-    const handlePostergar = async () => {
-        const { value: motivo, isConfirmed } = await Swal.fire({
+    const handlePostergar = () => {
+        Swal.fire({
             title: '¿Está seguro de postergar?',
             text: "Por favor, ingrese el motivo de la postergación:",
             input: 'textarea',
@@ -52,33 +36,32 @@ const SolicitudItem = ({
             cancelButtonText: 'Cancelar',
             inputValidator: (value) => {
                 if (!value) {
-                    return '¡Necesita escribir un motivo!'
+                    return '¡Necesita escribir un motivo!';
+                }
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed && result.value) {
+                try {
+                    const datosPostergacion = {
+                        idSolicitud: id,
+                        motivo: result.value,
+                        postergadoPor: rutFuncionario
+                    };
+                    await savePostergacion(datosPostergacion);
+                    mostrarAlertaExito('Éxito', 'La solicitud ha sido postergada correctamente.');
+                    onActualizarSolicitud();
+                } catch (error) {
+                    console.error('Error al postergar la solicitud:', error);
+                    mostrarAlertaError('No se pudo postergar la solicitud.');
                 }
             }
         });
-
-        if (isConfirmed && motivo) {
-            try {
-                const datosPostergacion = {
-                    idSolicitud: id,
-                    motivo: motivo,
-                    postergadoPor: rutFuncionario
-                };
-                await savePostergacion(datosPostergacion);
-                mostrarAlertaExito('Éxito', 'La solicitud ha sido postergada correctamente.');
-                onActualizarSolicitud();
-            } catch (error) {
-                console.error('Error al postergar la solicitud:', error);
-                mostrarAlertaError('No se pudo postergar la solicitud.');
-            }
-        }
     };
-
 
     return (
         <>
-            <tr className={`d-none d-md-table-row align-middle ${!recepcionada ? 'fw-bold' : ''}`}>
-                <td >{id}</td>
+            <tr className={`d-none d-md-table-row align-middle ${acciones.puedeRecibir ? 'fw-bold' : ''}`}>
+                <td>{id}</td>
                 <td className="text-truncate" style={{ maxWidth: '250px' }}>
                     {nombreFuncionario}
                     {isSubrogada && <small className="d-block text-info">{subroganciaText}</small>}
@@ -88,64 +71,51 @@ const SolicitudItem = ({
                 <td>{estadoSolicitud}</td>
                 <td className="text-right">
                     <div className="d-flex justify-content-start">
-                        {
-                            !recepcionada && (
-                                <button
-                                    className="btn btn-success btn-sm mr-2"
-                                    onClick={() => handlerEntrada(idDerivacion)}
-                                    title="Recibir"
-                                >
-                                    Recibir  <i className="bi bi-box-arrow-in-down"></i>
-                                </button>
-                            )
-                        }
-                        {
-                            recepcionada && estadoDerivacion != "DERIVADA" && estadoDerivacion != "FINALIZADA" && 
-                             estadoDerivacion != "POSTERGADA" &&(
-                                <button
-                                    className="btn btn-warning btn-sm mr-2"
-                                    title="Postergar"
-                                    onClick={handlePostergar}
-                                >
-                                    Postergar <i className="bi bi-clock-history"></i>
-                                </button>
-                            )
-                        }
-                        {
-                            recepcionada && tipoMovimiento === "VISACION" && estadoDerivacion === "PENDIENTE" && (
-                                <button
-                                    className="btn btn-primary btn-sm mr-2"
-                                    onClick={() => handlerVisar(idDerivacion)}
-                                    title="Visar"
-                                >
-                                    Visar <i className="bi bi-check-all"></i>
-                                </button>
-                            )
-                        }
-                        {
-                            recepcionada && estadoDerivacion === "DERIVADA" &&
-                            (<p className='text-success'><strong>DERIVADA</strong></p>)
-                        }
-                        {
-                            recepcionada && tipoMovimiento === "FIRMA" && estadoDerivacion === "PENDIENTE" && (
-                                <button
-                                    onClick={() => handlerAprobar(idDerivacion)}
-                                    className="btn btn-success btn-sm"
-                                    title="Firmar"
-                                >
-
-                                    Firmar <i className="bi bi-patch-check-fill"></i>
-                                </button>
-                            )
-                        }
-                        {
-                            recepcionada && estadoDerivacion === "FINALIZADA" &&
-                            (<p className='text-success'><strong>FIRMADA</strong></p>)
-                        }
-                        {
-                            recepcionada && estadoDerivacion === "POSTERGADA" &&
-                            (<p className='text-danger'><strong>POSTERGADA</strong></p>)
-                        }
+                        {acciones.puedeRecibir && (
+                            <button
+                                className="btn btn-success btn-sm mr-2"
+                                onClick={() => handlerEntrada(acciones.idDerivacion)}
+                                title="Recibir"
+                            >
+                                Recibir <i className="bi bi-box-arrow-in-down"></i>
+                            </button>
+                        )}
+                        {acciones.puedePostergar && (
+                            <button
+                                className="btn btn-warning btn-sm mr-2"
+                                title="Postergar"
+                                onClick={handlePostergar}
+                            >
+                                Postergar <i className="bi bi-clock-history"></i>
+                            </button>
+                        )}
+                        {acciones.puedeVisar && (
+                            <button
+                                className="btn btn-primary btn-sm mr-2"
+                                onClick={() => handlerVisar(acciones.idDerivacion)}
+                                title="Visar"
+                            >
+                                Visar <i className="bi bi-check-all"></i>
+                            </button>
+                        )}
+                        {acciones.esDerivada && (
+                            <p className='text-success'><strong>DERIVADA</strong></p>
+                        )}
+                        {acciones.puedeFirmar && (
+                            <button
+                                onClick={() => handlerAprobar(acciones.idDerivacion)}
+                                className="btn btn-success btn-sm"
+                                title="Firmar"
+                            >
+                                Firmar <i className="bi bi-patch-check-fill"></i>
+                            </button>
+                        )}
+                        {acciones.esFinalizada && (
+                            <p className='text-success'><strong>FIRMADA</strong></p>
+                        )}
+                        {acciones.esPostergada && (
+                            <p className='text-danger'><strong>POSTERGADA</strong></p>
+                        )}
                     </div>
                 </td>
                 <td className="text-right">
@@ -177,7 +147,7 @@ const SolicitudItem = ({
                         solicitud={solicitud}
                         handlerAprobar={handlerAprobar}
                         handlerVisar={handlerVisar}
-                        handlerEntrada={(id) => handlerEntrada(id)}
+                        handlerEntrada={handlerEntrada}
                         onActualizarSolicitud={onActualizarSolicitud}
                         rutFuncionario={rutFuncionario}
                         open={open}
@@ -208,6 +178,7 @@ SolicitudItem.propTypes = {
                 id: PropTypes.number.isRequired,
                 tipoMovimiento: PropTypes.string.isRequired,
                 estadoDerivacion: PropTypes.string.isRequired,
+                recepcionada: PropTypes.bool.isRequired,
             })
         ),
     }).isRequired,
