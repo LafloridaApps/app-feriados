@@ -24,6 +24,16 @@ const Navbar = () => {
         }
     }, [codDepto, rut, funcionario, verificar]);
 
+    useEffect(() => {
+        // Ensure window.bootstrap is available before trying to initialize
+        if (window.bootstrap && window.bootstrap.Dropdown) {
+            const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            dropdownElements.forEach(dropdownEl => {
+                new window.bootstrap.Dropdown(dropdownEl);
+            });
+        }
+    }, []); // Empty dependency array means this runs once after initial render
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
             <div className="container-fluid">

@@ -2,26 +2,29 @@ import PropTypes from "prop-types";
 import { useLocation } from 'react-router-dom';
 
 const NavbarNav = ({ esJefe, cantidadNoLeidas }) => {
-    const { pathname } = useLocation();
+    const { rutaActual } = useLocation();
 
-    const getLinkClass = (path) => {
-        const isActive = pathname === path;
-        const activeClass = 'active fw-bold text-primary border-bottom border-primary border-2';
-        const normalClass = 'text-dark'; // Clase para texto oscuro en estado normal
+    const obtenerClaseEnlace = (ruta) => {
+        const estaActivo = rutaActual === ruta;
+        const claseActiva = 'active fw-bold text-primary border-bottom border-primary border-2';
+        const claseNormal = 'text-dark'; // Clase para texto oscuro en estado normal
 
-        return `nav-link ${isActive ? activeClass : normalClass}`;
+        return `nav-link ${estaActivo ? claseActiva : claseNormal}`;
     };
 
     return (
         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-                <a className={getLinkClass('/')} href="/">Inicio</a>
+                <a className={obtenerClaseEnlace('/')} href="/">Inicio</a>
             </li>
             <li className="nav-item">
-                <a className={getLinkClass('/mis-solicitudes')} href="/mis-solicitudes">Mis Solicitudes</a>
+                <a className={obtenerClaseEnlace('/dashboard')} href="/dashboard">Dashboard</a>
             </li>
             <li className="nav-item">
-                <a className={getLinkClass('/solicitudes')} href="/solicitudes">Nueva Solicitud</a>
+                <a className={obtenerClaseEnlace('/mis-solicitudes')} href="/mis-solicitudes">Mis Solicitudes</a>
+            </li>
+            <li className="nav-item">
+                <a className={obtenerClaseEnlace('/solicitudes')} href="/solicitudes">Nueva Solicitud</a>
             </li>
             <li className="nav-item dropdown">
                 <button
@@ -33,13 +36,13 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas }) => {
                     Información Ausencias
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="rrhhDropdown">
-                    <li><a className={`dropdown-item ${pathname === '/feriados' ? 'active' : ''}`} href="/feriados">Feriados Legales</a></li>
-                    <li><a className={`dropdown-item ${pathname === '/administrativos' ? 'active' : ''}`} href="/administrativos">Administrativos</a></li>
+                    <li><a className={`dropdown-item ${rutaActual === '/feriados' ? 'active' : ''}`} href="/feriados">Feriados Legales</a></li>
+                    <li><a className={`dropdown-item ${rutaActual === '/administrativos' ? 'active' : ''}`} href="/administrativos">Administrativos</a></li>
                 </ul>
             </li>
             {esJefe && (
                 <li className="nav-item">
-                    <a className={`${getLinkClass('/inbox')} d-flex align-items-center justify-content-between`} href="/inbox">
+                    <a className={`${obtenerClaseEnlace('/inbox')} d-flex align-items-center justify-content-between`} href="/inbox">
                         Bandeja de Solicitudes
                         {cantidadNoLeidas > 0 && (
                             <span className="badge bg-danger rounded-pill ms-2">
@@ -52,6 +55,19 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas }) => {
             <li className="nav-item dropdown">
                 <button
                     className="nav-link dropdown-toggle btn btn-link text-dark"
+                    id="rrhhGenDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    RRHH
+                </button>
+                <ul className="dropdown-menu" aria-labelledby="rrhhGenDropdown">
+                    <li><a className={`dropdown-item ${rutaActual === '/rrhh' ? 'active' : ''}`} href="/rrhh">Generador Decretos</a></li>
+                </ul>
+            </li>
+            <li className="nav-item dropdown">
+                <button
+                    className="nav-link dropdown-toggle btn btn-link text-dark"
                     id="paramDropdown"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
@@ -59,7 +75,8 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas }) => {
                     Parametros
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="rrhhDropdown">
-                    <li><a className={`dropdown-item ${pathname === '/deptos' ? 'active' : ''}`} href="/deptos">Departamentos</a></li>
+                    <li><a className={`dropdown-item ${rutaActual === '/deptos' ? 'active' : ''}`} href="/deptos">Departamentos</a></li>
+                    <li><a className={`dropdown-item ${rutaActual === '/parametros/documentos' ? 'active' : ''}`} href="/parametros/documentos">Gestión de Documentos</a></li>
                 </ul>
             </li>
         </ul>

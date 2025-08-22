@@ -14,29 +14,32 @@ const NodoDepartamentoConector = ({
     const [nombreEditado, setNombreEditado] = useState(departamento.nombre);
     const tieneDependencias = departamento.dependencias && departamento.dependencias.length > 0;
     const estaExpandido = nodosExpandidos[departamento.id] || false;
-    const paddingLeft = depth * 20;
     const esDepartamentoSeleccionado = departamento?.id === departamentoSeleccionado?.id;
 
     const handleSeleccion = () => {
         onSeleccionarDepartamento(departamento);
     };
 
-    const handleToggle = () => {
+    const handleToggle = (e) => {
+        e.stopPropagation(); // Evita que el clic se propague al contenedor del nodo
         if (tieneDependencias) {
             onToggleNodo(departamento.id);
         }
     };
 
-    const handleEditarClick = () => {
+    const handleEditarClick = (e) => {
+        e.stopPropagation();
         setEnEdicion(true);
     };
 
-    const handleGuardarEdicion = () => {
+    const handleGuardarEdicion = (e) => {
+        e.stopPropagation();
         onEditarDepartamento(departamento.id, nombreEditado);
         setEnEdicion(false);
     };
 
-    const handleCancelarEdicion = () => {
+    const handleCancelarEdicion = (e) => {
+        e.stopPropagation();
         setNombreEditado(departamento.nombre);
         setEnEdicion(false);
     };
@@ -45,59 +48,51 @@ const NodoDepartamentoConector = ({
         setNombreEditado(e.target.value);
     };
 
+    const nodeClasses = `tree-node-mejorado ${estaExpandido ? 'expanded' : ''} ${esDepartamentoSeleccionado ? 'active' : ''}`;
+
     return (
-        <li className={`tree-node ${esDepartamentoSeleccionado ? 'active' : ''}`} style={{ paddingLeft: `${paddingLeft}px` }}>
-            <div className="d-flex align-items-center">
-                {tieneDependencias ? (
-                    <button
-                        className={`bi ${estaExpandido ? 'bi-chevron-down' : 'bi-chevron-right'} me-2 btn btn-link p-0 align-items-center justify-content-center`}
-                        style={{ cursor: 'pointer', fontSize: '1rem', border: 'none', outline: 'none' }}
+        <li className={nodeClasses}>
+            <div className="tree-node-mejorado-content" onClick={handleSeleccion}>
+                {tieneDependencias && (
+                    <span
+                        className={`tree-toggler-mejorado ${estaExpandido ? 'expanded' : ''}`}
                         onClick={handleToggle}
-                        aria-expanded={estaExpandido}
-                        aria-label={`${estaExpandido ? 'Contraer' : 'Expandir'} ${departamento.nombre}`}
                     />
-                ) : (
-                    <span className="me-2" style={{ width: '1em' }}></span>
                 )}
-                {enEdicion ? (
-                    <>
+                <span style={{ marginLeft: tieneDependencias ? '5px' : '25px' }}>
+                    {enEdicion ? (
                         <input
                             type="text"
-                            className="form-control form-control-sm me-2"
+                            className="form-control form-control-sm"
                             value={nombreEditado}
                             onChange={handleNombreChange}
+                            onClick={(e) => e.stopPropagation()} // Evita que se seleccione al hacer clic en el input
                         />
+                    ) : (
+                        departamento.nombre
+                    )}
+                </span>
+                {esDepartamentoSeleccionado && !enEdicion && (
+                    <button
+                        className="btn btn-sm btn-light ms-auto"
+                        onClick={handleEditarClick}
+                    >
+                        <i className="bi bi-pencil-fill"></i>
+                    </button>
+                )}
+                {enEdicion && (
+                    <div className="ms-auto">
                         <button className="btn btn-sm btn-success me-1" onClick={handleGuardarEdicion}>
                             <i className="bi bi-check-lg"></i>
                         </button>
                         <button className="btn btn-sm btn-secondary" onClick={handleCancelarEdicion}>
                             <i className="bi bi-x-lg"></i>
                         </button>
-                    </>
-                ) : (
-                    <>
-                        <button
-                            style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0, outline: 'none', textAlign: 'left', marginRight: '5px' }}
-                            onClick={handleSeleccion}
-                            aria-label={`Seleccionar ${departamento.nombre}`}
-                        >
-                            {departamento.nombre}
-                        </button>
-                        <span className="ms-1" style={{ fontSize: '0.8rem', color: '#6c757d' }}>({departamento.nivel})</span>
-                        {esDepartamentoSeleccionado && (
-                            <button
-                                className="btn btn-sm btn-outline-primary ms-2"
-                                onClick={handleEditarClick}
-                                aria-label={`Editar nombre de ${departamento.nombre}`}
-                            >
-                                <i className="bi bi-pencil-fill"></i>
-                            </button>
-                        )}
-                    </>
+                    </div>
                 )}
             </div>
             {estaExpandido && tieneDependencias && (
-                <ul className="tree-children">
+                <ul className="tree-children-mejorado">
                     {departamento.dependencias.map(dep => (
                         <NodoDepartamentoConector
                             key={dep.id}
@@ -117,20 +112,11 @@ const NodoDepartamentoConector = ({
 };
 
 NodoDepartamentoConector.propTypes = {
-    departamento: PropTypes.shape({
-        id: PropTypes.any.isRequired,
-        nombre: PropTypes.string.isRequired,
-        nivel: PropTypes.string.isRequired,
-        dependencias: PropTypes.array,
-        [PropTypes.string]: PropTypes.any,
-    }).isRequired,
+    departamento: PropTypes.object.isRequired,
     nodosExpandidos: PropTypes.object.isRequired,
     onToggleNodo: PropTypes.func.isRequired,
     onSeleccionarDepartamento: PropTypes.func.isRequired,
-    departamentoSeleccionado: PropTypes.shape({
-        id: PropTypes.any,
-        [PropTypes.string]: PropTypes.any,
-    }),
+    departamentoSeleccionado: PropTypes.object,
     depth: PropTypes.number.isRequired,
     onEditarDepartamento: PropTypes.func.isRequired,
 };

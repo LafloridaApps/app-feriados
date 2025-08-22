@@ -45,7 +45,6 @@ const MisSolicitudes = () => {
         setOpenDetailId(openDetailId === id ? null : id);
     };
 
-    console.log(solicitudes)
 
     return (
         <div className="container-fluid mt-4">

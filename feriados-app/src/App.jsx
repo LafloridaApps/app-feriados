@@ -8,6 +8,9 @@ import { AppContextProvider } from "./context/AppContextProvider";
 import InboxSolicitudes from "./components/Pages/Inbox/InboxSolicitudes";
 import DepartamentosPage from "./components/Pages/Departamentos/DepartamentosPage";
 import MisSolicitudes from "./components/Pages/MisSolicitudes/MisSolicitudes";
+import RRHHPage from "./components/Pages/RRHH/RRHHPage";
+import ParametrosPage from "./components/Pages/Parametros/ParametrosPage";
+import PaginaDashboard from "./components/Pages/Dashboard/PaginaDashboard";
 
 function App() {
     return (
@@ -23,6 +26,9 @@ function App() {
                         <Route path="/inbox" element={<InboxSolicitudes />} />
                         <Route path="/deptos" element={<DepartamentosPage />} />
                         <Route path="/mis-solicitudes" element={<MisSolicitudes />} />
+                        <Route path="/rrhh" element={<RRHHPage />} />
+                        <Route path="/parametros/documentos" element={<ParametrosPage />} />
+                        <Route path="/dashboard" element={<PaginaDashboard />} />
                     </Routes>
                 </div>
             </AppContextProvider>

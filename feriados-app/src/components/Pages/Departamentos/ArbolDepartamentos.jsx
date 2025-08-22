@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './ArbolDepartamentos.css'; // Importamos el CSS
+import './ArbolDepartamentosMejorado.css'; // Importamos el CSS mejorado
 import NodoDepartamentoConector from './NodoDepartamentoConector';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
@@ -10,33 +10,33 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
     const [nodosExpandidos, setNodosExpandidos] = useState({});
 
     const handleToggleNodo = (id) => {
-        setNodosExpandidos({
-            ...nodosExpandidos,
-            [id]: !nodosExpandidos[id],
-        });
+        setNodosExpandidos(prev => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
     };
 
     const onEditarDepartamento = (id, nuevoNombre) => {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: `¿Quieres editar el departamento ${id} a ${nuevoNombre}?`,
+            text: `¿Quieres cambiar el nombre del departamento?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sí, editar',
+            confirmButtonText: 'Sí, cambiar',
             cancelButtonText: 'Cancelar'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await updateJefeDeptoById(id, nuevoNombre);
                     Swal.fire(
-                        'Editado!',
-                        `El departamento ${id} ha sido editado a ${nuevoNombre}.`,
+                        '¡Cambiado!',
+                        `El nombre del departamento ha sido actualizado.`,
                         'success'
                     );
                 } catch (error) {
                     Swal.fire(
                         'Error',
-                        `Hubo un error al editar el departamento ${id}: ${error.message}`,
+                        `Hubo un error al cambiar el nombre: ${error.message}`,
                         'error'
                     );
                 }
@@ -45,7 +45,7 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
     }
 
     return (
-        <ul className="tree-container">
+        <ul className="tree-container-mejorado">
             {Array.isArray(departamentos) && departamentos.map(departamento => (
                 <NodoDepartamentoConector
                     key={departamento.id}
