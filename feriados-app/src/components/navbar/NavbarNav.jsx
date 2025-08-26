@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useLocation } from 'react-router-dom';
 
 const NavbarNav = ({ esJefe, cantidadNoLeidas }) => {
-    const { rutaActual } = useLocation();
+    const { pathname: rutaActual } = useLocation();
 
     const obtenerClaseEnlace = (ruta) => {
         const estaActivo = rutaActual === ruta;

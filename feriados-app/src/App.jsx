@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Inicio from "./components/Inicio";
 import Navbar from "./components/navbar/Nabbar";
 import AdministrativosPage from "./components/Pages/Administrativos/AdministrativosPage";
 import FeridosPage from "./components/Pages/Feriados/FeriadosPage";
@@ -11,6 +10,7 @@ import MisSolicitudes from "./components/Pages/MisSolicitudes/MisSolicitudes";
 import RRHHPage from "./components/Pages/RRHH/RRHHPage";
 import ParametrosPage from "./components/Pages/Parametros/ParametrosPage";
 import PaginaDashboard from "./components/Pages/Dashboard/PaginaDashboard";
+import Inicio from "./components/Pages/Inicio/Inicio";
 
 function App() {
     return (

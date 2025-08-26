@@ -7,9 +7,6 @@ const PaginaDashboard = () => {
     const [mesActual, setMesActual] = useState(new Date());
     const [ausencias, setAusencias] = useState({});
     const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
-    const [filtroGraficoFechaInicio, setFiltroGraficoFechaInicio] = useState('');
-    const [filtroGraficoFechaFin, setFiltroGraficoFechaFin] = useState('');
-    const [filtroGraficoDireccion, setFiltroGraficoDireccion] = useState('global');
     const [mostrarModalEmpleado, setMostrarModalEmpleado] = useState(false);
     const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
 
@@ -54,17 +51,6 @@ const PaginaDashboard = () => {
         const anio = fecha.getFullYear();
         const mes = fecha.getMonth();
         return new Date(anio, mes, 1).getDay();
-    };
-
-    const estaFechaEnRango = (fecha, fechaInicio, fechaFin) => {
-        const d = new Date(fecha);
-        const inicio = new Date(fechaInicio);
-        const fin = new Date(fechaFin);
-        // Set hours to 0 to compare dates only
-        d.setHours(0, 0, 0, 0);
-        inicio.setHours(0, 0, 0, 0);
-        fin.setHours(0, 0, 0, 0);
-        return d >= inicio && d <= fin;
     };
 
     const filtrarAusenciasPorNivel = (datos) => {
@@ -144,8 +130,6 @@ const PaginaDashboard = () => {
     };
 
     const detallesFechaSeleccionada = fechaSeleccionada ? filtrarAusenciasPorNivel(ausencias[fechaSeleccionada]) : null;
-
-    const datosGraficoFiltrados = DATOS_GRAFICO_MOCK; // Replace with actual filtering logic
 
     const renderizarMiniCalendario = (periodo) => {
         const inicio = new Date(periodo.fechaInicio);
