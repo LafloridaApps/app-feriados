@@ -22,26 +22,36 @@ export function fechaActual() {
 }
 
 
-export async function calculoDiasAusar(fechaInicio, fechaFin, tipoSolicitud, jornadaInicio = null, jornadaFin = null) {
-	const inicio = new Date(fechaInicio + "T00:00:00");
-	const fin = new Date(fechaFin + "T00:00:00");
+function parseDateAsLocal(dateString) {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+export function calculoDiasAusar(fechaInicio, fechaFin, tipoSolicitud, fechasFeriadas, jornadaInicio = null, jornadaFin = null) {
+	const inicio = parseDateAsLocal(fechaInicio);
+	const fin = parseDateAsLocal(fechaFin);
 
 	if (inicio > fin) return 0;
 
 	let count = 0;
-	let current = new Date(inicio);
+	const feriados = fechasFeriadas || [];
 
-	const feriadosResponse = await obtenerFeriados();
-	const feriados = feriadosResponse.map(f => f.fecha);
+    const oneDay = 1000 * 60 * 60 * 24;
+    const totalDays = Math.round(Math.abs((fin.getTime() - inicio.getTime()) / oneDay)) + 1;
 
-	while (current <= fin) {
-		if (esDiaHabil(current, feriados)) {
-			count++;
-		}
-		current.setDate(current.getDate() + 1);
-	}
+    let current = new Date(inicio); // Start with the beginning date
+    for (let i = 0; i < totalDays; i++) {
+        // Check the current day
+        const dia = current.getDay(); // 0 = domingo, 6 = sábado
+        const fechaStr = current.toISOString().split("T")[0];
+        if (dia !== 0 && dia !== 6 && !feriados.includes(fechaStr)) {
+            count++;
+        }
+        // Move to the next day for the next iteration
+        current.setDate(current.getDate() + 1);
+    }
 
-	if (tipoSolicitud === "ADMINISTRATIVO") {
+	    if (tipoSolicitud === "ADMINISTRATIVO") {
 		if (fechaInicio === fechaFin) {
 			return calcularDiasAdministrativoMismoDia(jornadaInicio, jornadaFin);
 		}

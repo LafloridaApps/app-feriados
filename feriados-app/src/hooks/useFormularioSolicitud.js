@@ -17,7 +17,7 @@ const initialState = {
 };
 
 export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer }) => {
-    const [tipo, setTipo] = useState("FERIADO");
+    const [tipo, setTipo] = useState("");
     const [fechaInicio, setFechaInicio] = useState(fechaActual());
     const [fechaFin, setFechaFin] = useState(fechaActual());
     const [diasUsarFeriado, setDiasUsarFeriado] = useState(null);
@@ -27,153 +27,147 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     const [enviando, setEnviando] = useState(false);
     const [subrogancia, setSubrogancia] = useState(null);
     const [mostrarModalSubrogante, setMostrarModalSubrogante] = useState(false);
-    const [fechaEditada, setFechaEditada] = useState("inicio");
     const [solicitud, setSolicitud] = useState(initialState);
     const [jornadaInicio, setJornadaInicio] = useState("AM");
     const [jornadaFin, setJornadaFin] = useState("PM");
     const [errorSaldo, setErrorSaldo] = useState("");
-
-
+    const [minDateInicio, setMinDateInicio] = useState('');
+    const [maxDateFin, setMaxDateFin] = useState('');
+    const [fechaEditada, setFechaEditada] = useState('inicio'); // Control which date is being edited
 
     const funcionario = useContext(UsuarioContext);
     const feriados = useContext(FeriadosContext);
     const fechasFeriadas = feriados.map(f => f.fecha);
     const rut = funcionario?.rut;
     const depto = funcionario?.codDepto;
-    const codDeptoJefe = funcionario?.codDeptoJefe
+    const codDeptoJefe = funcionario?.codDeptoJefe;
 
-    const {
-        errorFecha,
-        errorFeriado,
-        errorRangoFechas,
-        validarFechas,
-        resetErrors
-    } = useDateValidation(fechasFeriadas, detalleFer, detalleAdm, tipo, fechaInicio);
+    const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas, detalleFer, detalleAdm, tipo, fechaInicio);
 
+    const parseDateAsLocal = (dateString) => {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    };
 
-
-    const calcularFechaFinPropuesta = useCallback(async (inicio, cantidadDias) => {
+    const calcularFechaFinPropuesta = useCallback((inicio, cantidadDias) => {
         if (!inicio || cantidadDias <= 0) return inicio;
-        let fecha = new Date(inicio);
-        let sumados = 0;
+        let fecha = parseDateAsLocal(inicio);
+        let diasRestantes = cantidadDias - 1;
+        if (diasRestantes < 0) diasRestantes = 0;
 
-        while (sumados < cantidadDias) {
+        const esDiaHabil = (d) => {
+            const dia = d.getDay();
+            const fechaStr = d.toISOString().split('T')[0];
+            return dia !== 0 && dia !== 6 && !fechasFeriadas.includes(fechaStr);
+        }
+
+        if (!esDiaHabil(fecha)) {
+            diasRestantes++;
+        }
+
+        while (diasRestantes > 0) {
             fecha.setDate(fecha.getDate() + 1);
-            const iso = fecha.toISOString().split("T")[0];
-            const esFeriado = fechasFeriadas.includes(iso);
-            const esFinDeSemana = fecha.getDay() === 0 || fecha.getDay() === 6;
-            if (!esFeriado && !esFinDeSemana) sumados++;
+            if (esDiaHabil(fecha)) {
+                diasRestantes--;
+            }
         }
-
         return fecha.toISOString().split("T")[0];
     }, [fechasFeriadas]);
 
-    const calcularFechaInicioPropuesta = useCallback(async (fin, cantidadDias) => {
-        if (!fin || cantidadDias <= 0) return fin;
-        let fecha = new Date(fin);
-        let restados = 0;
-
-        while (restados < cantidadDias) {
-            fecha.setDate(fecha.getDate() - 1);
-            const iso = fecha.toISOString().split("T")[0];
-            const esFeriado = fechasFeriadas.includes(iso);
-            const esFinDeSemana = fecha.getDay() === 0 || fecha.getDay() === 6;
-            if (!esFeriado && !esFinDeSemana) restados++;
+    useEffect(() => {
+        const today = new Date();
+        const dayOfMonth = today.getDate();
+        let minDate;
+        if (dayOfMonth > 7) {
+            minDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        } else {
+            minDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         }
-
-        return fecha.toISOString().split("T")[0];
-    }, [fechasFeriadas]);
+        setMinDateInicio(minDate.toISOString().split('T')[0]);
+    }, []);
 
     const diasUsar = tipo === "FERIADO" ? diasUsarFeriado : diasUsarAdministrativo;
     const saldo = tipo === "FERIADO" ? saldoFeriado : saldoAdministrativo;
 
     useEffect(() => {
-        const actualizar = async () => {
-            const diasDisponibles = tipo === "FERIADO"
-                ? resumenFer?.dias_pendientes
-                : resumenAdm?.saldo;
-
-            if (diasDisponibles == null) return;
-
-            if (diasDisponibles <= 0) {
-                if (tipo === "FERIADO") {
-                    setDiasUsarFeriado(null);
-                    setSaldoFeriado(0);
-                } else {
-                    setDiasUsarAdministrativo(null);
-                    setSaldoAdministrativo(0);
-                }
+        const actualizar = () => {
+            if (!tipo) { // Only run if a type is selected
+                setDiasUsarFeriado(null);
+                setDiasUsarAdministrativo(null);
+                setErrorSaldo("");
                 return;
             }
 
-            let nuevaInicio = fechaInicio;
-            let nuevaFin = fechaFin;
+            const diasDisponibles = tipo === "FERIADO" ? resumenFer?.dias_pendientes : resumenAdm?.saldo;
+            if (diasDisponibles == null) return;
 
-            if (fechaEditada === "inicio") {
-                nuevaFin = await calcularFechaFinPropuesta(fechaInicio, diasDisponibles - 1);
-                setFechaFin(nuevaFin);
+            let currentFechaFin = fechaFin; // Use a local variable for current fechaFin
+
+            const fechaFinMaxima = calcularFechaFinPropuesta(fechaInicio, diasDisponibles);
+            setMaxDateFin(fechaFinMaxima);
+
+            // If it's an initial load or type/fechaInicio change, set fechaFin to max
+            if (fechaEditada === 'inicio' || fechaEditada === 'tipo') {
+                if (currentFechaFin !== fechaFinMaxima) { // Only set if different
+                    setFechaFin(fechaFinMaxima);
+                    currentFechaFin = fechaFinMaxima; // Update local variable for immediate calculation
+                }
+                if (fechaEditada === 'tipo') setFechaEditada('inicio'); // Reset after type change
+            } else if (new Date(currentFechaFin) > new Date(fechaFinMaxima)) {
+                // If user selected beyond max, cap it
+                setFechaFin(fechaFinMaxima);
+                currentFechaFin = fechaFinMaxima; // Update local variable for immediate calculation
             }
 
-            const total = await calculoDiasAusar(nuevaInicio, nuevaFin, tipo, jornadaInicio, jornadaFin);
+            // Calculate diasSolicitados using the potentially updated currentFechaFin
+            const diasSolicitados = calculoDiasAusar(fechaInicio, currentFechaFin, tipo, fechasFeriadas, jornadaInicio, jornadaFin);
 
             if (tipo === "FERIADO") {
-                setDiasUsarFeriado(total);
-                const nuevo = resumenFer.dias_pendientes - total;
-                setSaldoFeriado(nuevo);
-                setErrorSaldo(nuevo < 0 ? "No tienes saldo suficiente para este permiso." : "");
+                setDiasUsarFeriado(diasSolicitados);
+                const nuevoSaldo = resumenFer.dias_pendientes - diasSolicitados;
+                setSaldoFeriado(nuevoSaldo);
+                setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
             } else {
-                setDiasUsarAdministrativo(total);
-                const nuevo = resumenAdm.saldo - total;
-                setSaldoAdministrativo(nuevo);
-                setErrorSaldo(nuevo < 0 ? "No tienes saldo suficiente para este permiso." : "");
+                setDiasUsarAdministrativo(diasSolicitados);
+                const nuevoSaldo = resumenAdm.saldo - diasSolicitados;
+                setSaldoAdministrativo(nuevoSaldo);
+                setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
             }
-
-            validarFechas(nuevaInicio, nuevaFin);
+            validarFechas(fechaInicio, currentFechaFin); // Use currentFechaFin for validation
         };
-
         actualizar();
-    }, [
-        fechaInicio,
-        fechaFin,
-        fechaEditada,
-        tipo,
-        jornadaInicio,
-        jornadaFin,
-        resumenFer,
-        resumenAdm,
-        calcularFechaFinPropuesta,
-        calcularFechaInicioPropuesta,
-        validarFechas
-    ]);
-
-    useEffect(() => {
-        setFechaEditada("inicio");
-    }, [tipo]);
+    }, [fechaInicio, fechaFin, tipo, resumenFer, resumenAdm, calcularFechaFinPropuesta, validarFechas, fechasFeriadas, jornadaInicio, jornadaFin, fechaEditada]);
 
     const handlerFechaInicio = useCallback((e) => {
         setFechaInicio(e.target.value);
-        setFechaEditada("inicio");
+        setFechaEditada('inicio');
     }, []);
 
     const handlerFechaFin = useCallback((e) => {
         setFechaFin(e.target.value);
-        setFechaEditada("fin");
+        setFechaEditada('fin');
+    }, []);
+
+    const handlerTipo = useCallback((e) => {
+        const newTipo = e.target.value;
+        setTipo(newTipo);
+        setFechaEditada('tipo');
+        if (newTipo === '') {
+            setFechaInicio('');
+            setFechaFin('');
+        }
     }, []);
 
     const mostrarAlertaError = useCallback((mensaje) => {
-        Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
+        if (mensaje) Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
     }, []);
 
     useEffect(() => {
-        if (errorSaldo) mostrarAlertaError(errorSaldo);
-        if (errorFecha) mostrarAlertaError(errorFecha);
-        if (errorFeriado) mostrarAlertaError(errorFeriado);
-        if (errorRangoFechas) mostrarAlertaError(errorRangoFechas);
+        mostrarAlertaError(errorSaldo);
+        mostrarAlertaError(errorFecha);
+        mostrarAlertaError(errorFeriado);
+        mostrarAlertaError(errorRangoFechas);
     }, [errorSaldo, errorFecha, errorFeriado, errorRangoFechas, mostrarAlertaError]);
-
-
-    
-
 
     const handleSaveSolicitud = useCallback(async () => {
         const nuevaSolicitud = {
@@ -206,6 +200,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         if (!confirm.isConfirmed) return;
 
         try {
+            setEnviando(true);
             const res = await saveSolicitud(nuevaSolicitud);
             await Swal.fire({
                 icon: 'success',
@@ -230,15 +225,14 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
     const submitForm = async (e, esJefe, esDirector) => {
         e.preventDefault();
-        setEnviando(true);
+        
+        const isValid = validarFechas(fechaInicio, fechaFin);
+        if (!isValid || errorSaldo) {
+            mostrarAlertaError(errorSaldo || 'Existen errores en las fechas seleccionadas.');
+            return;
+        }
 
         try {
-            const isValid = validarFechas(fechaInicio, fechaFin);
-            if (!isValid || errorSaldo) {
-                setEnviando(false);
-                return;
-            }
-
             const existe = await getSolicitudByFechaInicioAndTipo(rut, fechaInicio, tipo);
             if (existe) {
                 await Swal.fire({
@@ -246,18 +240,14 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                     title: 'Ya existe una solicitud',
                     text: 'Tienes una solicitud en este mismo rango de fechas.',
                 });
-                setEnviando(false);
                 return;
             }
 
-            // Si es Director, la subrogancia es obligatoria.
             if (esJefe && esDirector && !subrogancia) {
                 setMostrarModalSubrogante(true);
-                setEnviando(false);
                 return;
             }
 
-            // Si es Jefe pero NO Director, y no hay subrogante, preguntar.
             if (esJefe && !esDirector && !subrogancia) {
                 const confirm = await Swal.fire({
                     title: '¿Continuar sin subrogante?',
@@ -266,21 +256,17 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, continuar sin subrogante',
+                    confirmButtonText: 'Sí, continuar',
                     cancelButtonText: 'No, designar subrogante'
                 });
 
                 if (confirm.isConfirmed) {
-                    // El usuario eligió continuar sin subrogante, proceder a guardar.
                     await handleSaveSolicitud();
                 } else {
-                    // El usuario eligió designar un subrogante, mostramos el modal
                     setMostrarModalSubrogante(true);
-                    setEnviando(false);
                 }
                 return; 
             }
-
             
             await handleSaveSolicitud();
 
@@ -291,17 +277,10 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                 title: 'Error inesperado',
                 text: 'Ocurrió un problema al enviar la solicitud. Intenta nuevamente.',
             });
-        } finally {
-            setEnviando(false);
         }
     };
 
-
     const handleSubroganteSelected = (subrogancia) => {
-        subrogancia = {
-            ...subrogancia
-        };
-
         setSubrogancia(subrogancia);
         setMostrarModalSubrogante(false);
     };
@@ -313,14 +292,12 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
     const closeSubroganteModal = () => {
         setMostrarModalSubrogante(false);
-        setEnviando(false);
     };
 
     const hasErrors = !!errorSaldo || !!errorFecha || !!errorFeriado || !!errorRangoFechas;
 
-
     return {
-        tipo, setTipo,
+        tipo, handlerTipo, // Return new handler
         fechaInicio, handlerFechaInicio,
         fechaFin, handlerFechaFin,
         jornadaInicio, setJornadaInicio,
@@ -337,6 +314,8 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         depto,
         subrogancia,
         codDeptoJefe,
-        hanglerEliminarSubrogancia
+        hanglerEliminarSubrogancia,
+        minDateInicio,
+        maxDateFin
     };
 };

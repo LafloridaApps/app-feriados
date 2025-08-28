@@ -12,7 +12,7 @@ const DetalleSolicitud = ({ fechaInicio, fechaFin, tipo, diasUsar, saldo }) => {
                     <li className="list-group-item"><strong><i className="bi bi-tag-fill me-2"></i> Tipo de Solicitud:</strong> {tipo}</li>
                     <li className="list-group-item"><strong><i className="bi bi-calendar-date-fill me-2"></i> Desde:</strong> {formatFecha(fechaInicio)}</li>
                     <li className="list-group-item"><strong><i className="bi bi-calendar-date-fill me-2"></i> Hasta:</strong> {formatFecha(fechaFin)}</li>
-                    <li className="list-group-item"><strong><i className="bi bi-hourglass-split me-2"></i> Dias a usar:</strong> {diasUsar}</li>
+                    <li className="list-group-item"><strong><i className="bi bi-hourglass-split me-2"></i> Dias a usar:</strong> {diasUsar ?? '-'}</li>
                     <li className="list-group-item"><strong><i className="bi bi-arrow-left-right me-2"></i> Saldo:</strong> {saldo}</li>
                 </ul>
             </div>
@@ -26,6 +26,6 @@ DetalleSolicitud.propTypes = {
     fechaInicio: PropTypes.string.isRequired,
     fechaFin: PropTypes.string.isRequired,
     tipo: PropTypes.string.isRequired,
-    diasUsar: PropTypes.number.isRequired,
+    diasUsar: PropTypes.number,
     saldo: PropTypes.number.isRequired
 };

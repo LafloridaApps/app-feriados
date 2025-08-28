@@ -10,6 +10,7 @@ import { calcularPrimerDiaDelMes, calcularPrimerDiaMesAnterior } from '../../../
 
 const tiposPermiso = [
 
+    { value: '', label: 'Seleccione el tipo' }, // New default option
     { value: 'FERIADO', label: 'Feriado' },
     { value: 'ADMINISTRATIVO', label: 'Administrativo' }
 
@@ -25,7 +26,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
     const [mostrarInfoSubrogante, setMostrarInfoSubrogante] = useState(false);
 
     const {
-        tipo, setTipo,
+        tipo, handlerTipo,
         fechaInicio, handlerFechaInicio,
         fechaFin, handlerFechaFin,
         jornadaInicio, setJornadaInicio,
@@ -38,7 +39,9 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         hanglerEliminarSubrogancia,
         closeSubroganteModal,
         rut, depto,
-        subrogancia
+        subrogancia,
+        minDateInicio,
+        maxDateFin
     } = useFormularioSolicitud({ resumenAdm, resumenFer, detalleAdm, detalleFer });
 
 
@@ -82,7 +85,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                 'tipoPermiso',
                                 <><i className="bi bi-question-circle"></i> Tipo de Permiso</>,
                                 tipo,
-                                (e) => setTipo(e.target.value),
+                                handlerTipo,
                                 tiposPermiso
                             )}
 
@@ -94,10 +97,11 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     id="fechaInicio"
                                     type="date"
                                     className="form-control"
-                                    min={new Date().getDate() > 7 ? calcularPrimerDiaDelMes() : calcularPrimerDiaMesAnterior}
+                                    min={minDateInicio}
                                     value={fechaInicio}
                                     onChange={handlerFechaInicio}
                                     onKeyDown={(e) => e.preventDefault()}
+                                    disabled={tipo === ''} // Change this line
                                 />
                             </div>
                             <div className="mb-3">
@@ -109,10 +113,11 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                     type="date"
                                     className="form-control"
                                     min={fechaInicio}
-                                    max={fechaFin}
+                                    max={maxDateFin}
                                     value={fechaFin}
                                     onChange={handlerFechaFin}
                                     onKeyDown={(e) => e.preventDefault()}
+                                    disabled={tipo === ''} // Change this line
                                 />
                             </div>
                             {tipo === 'ADMINISTRATIVO' && (

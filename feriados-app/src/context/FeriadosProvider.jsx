@@ -11,7 +11,9 @@ export const FeriadosProvider = ({ children }) => {
 		const fetchFeriados = async () => {
 			try {
 				const data = await getTablaFeriados();
-				setTablaFeriados(data);
+				// Temporary fix: Filter out the incorrect holiday
+				const filteredData = data.filter(feriado => feriado.fecha.trim() !== '2025-09-08');
+				setTablaFeriados(filteredData);
 			} catch (error) {
 				console.error("Error al obtener feriados:", error);
 			}
