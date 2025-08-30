@@ -5,26 +5,26 @@ export const useRrhhSelection = (currentAprobaciones) => {
 
     useEffect(() => {
         setSelectedItems(prevSelected =>
-            prevSelected.filter(id => currentAprobaciones.some(item => item.id === id))
+            prevSelected.filter(id => currentAprobaciones.some(item => item.idSolicitud === id))
         );
     }, [currentAprobaciones]);
 
-    const handleSelectItem = (id) => {
+    const handleSelectItem = (idSolicitud) => {
         setSelectedItems(prevSelected => {
-            if (prevSelected.includes(id)) {
-                return prevSelected.filter(itemId => itemId !== id);
+            if (prevSelected.includes(idSolicitud)) {
+                return prevSelected.filter(itemId => itemId !== idSolicitud);
             } else {
-                return [...prevSelected, id];
+                return [...prevSelected, idSolicitud];
             }
         });
     };
 
     const handleSelectAll = () => {
-        const allCurrentIds = currentAprobaciones.map(item => item.id);
-        const allCurrentlySelected = allCurrentIds.every(id => selectedItems.includes(id));
+        const allCurrentIds = currentAprobaciones.map(item => item.idSolicitud);
+        const allCurrentlySelected = allCurrentIds.every(idSolicitud => selectedItems.includes(idSolicitud));
 
         if (allCurrentlySelected) {
-            setSelectedItems(prevSelected => prevSelected.filter(id => !allCurrentIds.includes(id)));
+            setSelectedItems(prevSelected => prevSelected.filter(idSolicitud => !allCurrentIds.includes(idSolicitud)));
         } else {
             setSelectedItems(prevSelected => {
                 const newSelected = new Set([...prevSelected, ...allCurrentIds]);

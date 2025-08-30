@@ -163,4 +163,48 @@ export function calcularPrimerDiaMesAnterior() {
 	const mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
 	const dia = fechaActual.getDate().toString().padStart(2, '0');
 	return `${anio}-${mes}-${dia}`;
+
 }
+
+import ExcelJS from 'exceljs';
+
+export const exportToExcel = async (data, filename) => {
+    try {
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Decretos");
+
+        // Add headers
+        if (data.length > 0) {
+            const headers = Object.keys(data[0]);
+            worksheet.addRow(headers);
+            console.log('Headers added:', headers);
+        } else {
+            console.log('No data to add headers.');
+        }
+
+        // Add data rows
+        data.forEach(row => {
+            worksheet.addRow(Object.values(row));
+        });
+
+        // Write to file
+        const buffer = await workbook.xlsx.writeBuffer();
+
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${filename}.xlsx`;
+        document.body.appendChild(a); // Append to body to ensure it's clickable
+        a.click();
+        document.body.removeChild(a); // Clean up
+        window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error('Error in exportToExcel:', error);
+        // Re-throw the error so it can be caught by the caller (handleGenerarDecreto)
+        throw error;
+    }
+};

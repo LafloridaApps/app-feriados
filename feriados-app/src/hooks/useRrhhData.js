@@ -1,19 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
 
-export const useRrhhData = (initialData, selectedTipoSolicitud, selectedTipoContrato, searchRut, searchNombre) => {
+export const useRrhhData = (initialData, selectedTipoSolicitud, selectedTipoContrato, searchRut, searchNombre, searchIdSolicitud, sortConfig) => {
     const [filteredAprobaciones, setFilteredAprobaciones] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Number of items per page
 
     useEffect(() => {
-        let tempFiltered = initialData;
+        let tempFiltered = initialData || [];
 
         if (selectedTipoSolicitud) {
             tempFiltered = tempFiltered.filter(item => item.tipoSolicitud === selectedTipoSolicitud);
         }
 
         if (selectedTipoContrato.length > 0) {
-            tempFiltered = tempFiltered.filter(item => selectedTipoContrato.includes(item.contrato));
+            tempFiltered = tempFiltered.filter(item => selectedTipoContrato.includes(item.tipoContrato));
         }
 
         if (searchRut) {
@@ -26,13 +26,58 @@ export const useRrhhData = (initialData, selectedTipoSolicitud, selectedTipoCont
         if (searchNombre) {
             const lowerCaseSearchNombre = searchNombre.toLowerCase();
             tempFiltered = tempFiltered.filter(item =>
-                item.nombre.toLowerCase().includes(lowerCaseSearchNombre)
+                item.nombres.toLowerCase().includes(lowerCaseSearchNombre)
             );
         }
 
-        setFilteredAprobaciones(tempFiltered);
+        if (searchIdSolicitud) {
+            tempFiltered = tempFiltered.filter(item =>
+                String(item.idSolicitud).includes(searchIdSolicitud)
+            );
+        }
+
+        let sortedData = [...tempFiltered];
+        if (sortConfig.key) {
+            const dateKeys = ['desde', 'hasta', 'fechaSolicitud'];
+            const parseDate = (dateString) => {
+                if (!dateString) return new Date(0);
+                const parts = dateString.split('-');
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+            };
+
+            sortedData.sort((a, b) => {
+                const valA = a[sortConfig.key];
+                const valB = b[sortConfig.key];
+
+                // Handle null/undefined values
+                if (valA == null) return 1;
+                if (valB == null) return -1;
+
+                if (dateKeys.includes(sortConfig.key)) {
+                    const dateA = parseDate(valA);
+                    const dateB = parseDate(valB);
+                    if (dateA < dateB) {
+                        return sortConfig.direction === 'ascending' ? -1 : 1;
+                    }
+                    if (dateA > dateB) {
+                        return sortConfig.direction === 'ascending' ? 1 : -1;
+                    }
+                    return 0;
+                }
+
+                if (valA < valB) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (valA > valB) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+
+        setFilteredAprobaciones(sortedData);
         setCurrentPage(1);
-    }, [initialData, selectedTipoSolicitud, selectedTipoContrato, searchRut, searchNombre]); // Add new dependencies
+    }, [initialData, selectedTipoSolicitud, selectedTipoContrato, searchRut, searchNombre, searchIdSolicitud, sortConfig]); // Add new dependencies
 
     const currentAprobaciones = useMemo(() => {
         const indexOfLastItem = currentPage * itemsPerPage;

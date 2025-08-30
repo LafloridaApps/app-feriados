@@ -14,10 +14,13 @@ const RrhhFilters = ({
     setSearchRut,
     searchNombre,
     setSearchNombre,
+    searchIdSolicitud,
+    setSearchIdSolicitud,
     handleCargarAprobaciones,
     handleLimpiarFiltros,
     tipoSolicitudOptions,
     tipoContratoOptions,
+    loading
 }) => {
     return (
         <div>
@@ -47,8 +50,16 @@ const RrhhFilters = ({
                     <button
                         className="btn btn-primary w-100"
                         onClick={handleCargarAprobaciones}
+                        disabled={loading}
                     >
-                        Cargar Aprobaciones
+                        {loading ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span className="visually-hidden">Cargando...</span>
+                            </>
+                        ) : (
+                            'Cargar Aprobaciones'
+                        )}
                     </button>
                 </div>
                 <div className="col-md-3 mb-3">
@@ -120,7 +131,7 @@ const RrhhFilters = ({
             </p>
             <div className="collapse" id="collapseSearchFilters">
                 <div className="row">
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-4 mb-3">
                         <label htmlFor="searchRut" className="form-label">Buscar por Rut</label>
                         <input
                             type="text"
@@ -131,7 +142,7 @@ const RrhhFilters = ({
                             placeholder="Ej: 12.345.678-9"
                         />
                     </div>
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-4 mb-3">
                         <label htmlFor="searchNombre" className="form-label">Buscar por Nombre</label>
                         <input
                             type="text"
@@ -140,6 +151,17 @@ const RrhhFilters = ({
                             value={searchNombre}
                             onChange={(e) => setSearchNombre(e.target.value)}
                             placeholder="Ej: Juan Perez"
+                        />
+                    </div>
+                    <div className="col-md-4 mb-3">
+                        <label htmlFor="searchIdSolicitud" className="form-label">Buscar por Id Solicitud</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="searchIdSolicitud"
+                            value={searchIdSolicitud}
+                            onChange={(e) => setSearchIdSolicitud(e.target.value)}
+                            placeholder="Ej: 123"
                         />
                     </div>
                 </div>
@@ -161,10 +183,13 @@ RrhhFilters.propTypes = {
     setSearchRut: PropTypes.func.isRequired,
     searchNombre: PropTypes.string.isRequired,
     setSearchNombre: PropTypes.func.isRequired,
+    searchIdSolicitud: PropTypes.string.isRequired,
+    setSearchIdSolicitud: PropTypes.func.isRequired,
     handleCargarAprobaciones: PropTypes.func.isRequired,
     handleLimpiarFiltros: PropTypes.func.isRequired,
     tipoSolicitudOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
     tipoContratoOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
+    loading: PropTypes.bool.isRequired
 };
 
 export default RrhhFilters;

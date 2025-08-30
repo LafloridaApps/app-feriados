@@ -9,7 +9,7 @@ const GeneradorDecretos = (props) => {
         fechaDesde, setFechaDesde, fechaHasta, setFechaHasta,
         selectedTipoSolicitud, setSelectedTipoSolicitud,
         selectedTipoContrato, handleTipoContratoChange,
-        searchRut, setSearchRut, searchNombre, setSearchNombre,
+        searchRut, setSearchRut, searchNombre, setSearchNombre, searchIdSolicitud, setSearchIdSolicitud,
         handleCargarAprobaciones, handleLimpiarFiltros,
         tipoSolicitudOptions, tipoContratoOptions,
 
@@ -17,7 +17,8 @@ const GeneradorDecretos = (props) => {
         selectedItemsCount, handleExportToExcel, handleGenerarDecreto,
 
         // Data state
-        allAprobaciones
+        allAprobaciones,
+        loading
     } = props;
 
     return (
@@ -43,10 +44,13 @@ const GeneradorDecretos = (props) => {
                             setSearchRut={setSearchRut}
                             searchNombre={searchNombre}
                             setSearchNombre={setSearchNombre}
+                            searchIdSolicitud={searchIdSolicitud}
+                            setSearchIdSolicitud={setSearchIdSolicitud}
                             handleCargarAprobaciones={handleCargarAprobaciones}
                             handleLimpiarFiltros={handleLimpiarFiltros}
                             tipoSolicitudOptions={tipoSolicitudOptions}
                             tipoContratoOptions={tipoContratoOptions}
+                            loading={loading}
                         />
                     </div>
                 </div>
@@ -97,6 +101,8 @@ GeneradorDecretos.propTypes = {
     setSearchRut: PropTypes.func,
     searchNombre: PropTypes.string,
     setSearchNombre: PropTypes.func,
+    searchIdSolicitud: PropTypes.string,
+    setSearchIdSolicitud: PropTypes.func,
     handleCargarAprobaciones: PropTypes.func.isRequired,
     handleLimpiarFiltros: PropTypes.func.isRequired,
     tipoSolicitudOptions: PropTypes.array.isRequired,
@@ -105,6 +111,7 @@ GeneradorDecretos.propTypes = {
     handleExportToExcel: PropTypes.func.isRequired,
     handleGenerarDecreto: PropTypes.func.isRequired,
     allAprobaciones: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
 };
 
 export default GeneradorDecretos;
