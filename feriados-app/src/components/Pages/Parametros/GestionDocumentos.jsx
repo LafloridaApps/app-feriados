@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { uploadFileTemplate } from '../../../services/templateService';
+import { listTemplates, uploadFileTemplate, viewTemplate } from '../../../services/templateService';
 
 const GestionDocumentos = () => {
-    // Mocked state for existing templates
-
-
     const [selectedFile, setSelectedFile] = useState(null);
     const [feedbackMessage, setFeedbackMessage] = useState('');
-    const [nombrePlantilla, setNombrePlantilla] = useState(null);
+    const [nombrePlantilla, setNombrePlantilla] = useState('');
+    const [templates, setTemplates] = useState([]);
+    const [fileInputKey, setFileInputKey] = useState(Date.now());
+
+    const fetchTemplates = async () => {
+        try {
+            const templatesData = await listTemplates();
+            setTemplates(templatesData);
+        } catch (error) {
+            console.error("Error al obtener plantillas:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error al cargar plantillas",
+                text: "No se pudieron obtener las plantillas existentes.",
+            });
+        }
+    };
+
+    useEffect(() => {
+        fetchTemplates();
+    }, []);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        if (file && (file.name.endsWith('.docx'))) {
+        if (file && file.name.endsWith('.docx')) {
             setSelectedFile(file);
             setFeedbackMessage('');
         } else {
@@ -22,55 +39,85 @@ const GestionDocumentos = () => {
     };
 
     const handleUpload = async () => {
-        if (!selectedFile) {
-            setFeedbackMessage("No hay ningún archivo seleccionado.");
+        if (!selectedFile || !nombrePlantilla) {
+            setFeedbackMessage("Por favor, ingresa el nombre de la plantilla y selecciona un archivo.");
             return;
         }
 
-        let loadingSwal;
+        Swal.fire({
+            title: "Subiendo Plantilla",
+            text: "Por favor, espera...",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
         try {
-            // Mostrar loading
-            loadingSwal = Swal.fire({
-                title: "Subiendo Plantilla",
-                text: "Por favor, espera mientras se sube la plantilla.",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-            // Subida del archivo
             const response = await uploadFileTemplate(selectedFile, nombrePlantilla);
-
-            // Cerrar loading antes de mostrar éxito
             Swal.close();
-
             Swal.fire({
                 icon: "success",
                 title: "Plantilla subida",
                 text: `La plantilla "${response}" se subió con éxito.`,
-                confirmButtonText: "Aceptar",
             });
 
-            // Resetar formulario
             setSelectedFile(null);
-            setNombrePlantilla("");
+            setNombrePlantilla('');
+            setFileInputKey(Date.now());
+            fetchTemplates();
         } catch (error) {
-            // Cerrar loading si ocurre error
             Swal.close();
-
             Swal.fire({
                 icon: "error",
                 title: "Error al subir",
                 text: "No se pudo subir la plantilla. Intenta nuevamente.",
-                confirmButtonText: "Aceptar",
             });
-
             console.error("Error al subir plantilla:", error);
         }
     };
 
+    const handleEdit = (template) => {
+        console.log("Editar:", template);
+        Swal.fire('En desarrollo', 'La funcionalidad de editar aún no está implementada.', 'info');
+    };
+
+    const handleView = async (docFile, nombrePlantilla) => {
+        if (!docFile) {
+            Swal.fire('Error', 'No hay un archivo asociado para ver.', 'error');
+            return;
+        }
+
+        Swal.fire({
+            title: 'Descargando documento',
+            text: 'Por favor, espera un momento...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
+        try {
+            const blob = await viewTemplate(docFile);
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            // Usa el nombre de la plantilla para el archivo, asegurando que termine en .docx
+            const fileName = nombrePlantilla.toLowerCase().endsWith('.docx') ? nombrePlantilla : `${nombrePlantilla}.docx`;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            Swal.close();
+        } catch (error) {
+            Swal.close();
+            Swal.fire(
+                'Error de descarga',
+                'No se pudo descargar el documento. Por favor, inténtalo de nuevo.',
+                'error'
+            );
+            console.error("Error en handleView:", error);
+        }
+    };
 
     return (
         <div className="card shadow-sm">
@@ -85,10 +132,11 @@ const GestionDocumentos = () => {
                             type="text"
                             className="form-control"
                             placeholder="Nombre de la Plantilla"
+                            value={nombrePlantilla}
                             onChange={(e) => setNombrePlantilla(e.target.value)}
-
                         />
                         <input
+                            key={fileInputKey}
                             type="file"
                             className="form-control"
                             accept=".docx"
@@ -97,24 +145,57 @@ const GestionDocumentos = () => {
                         <button
                             className="btn btn-primary"
                             onClick={handleUpload}
-                            disabled={!selectedFile}
+                            disabled={!selectedFile || !nombrePlantilla}
                         >
-                            Subir Plantilla
+                            <i className="bi bi-upload me-2"></i>Subir Plantilla
                         </button>
                     </div>
-                    {feedbackMessage && <div className="form-text mt-2">{feedbackMessage}</div>}
+                    {feedbackMessage && <div className="form-text text-danger mt-2">{feedbackMessage}</div>}
                 </div>
 
                 <div>
                     <h5>Plantillas Existentes</h5>
-                    <ul className="list-group">
-                        {/* {templates.map(template => (
-                            <li key={template.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i className="bi bi-file-earmark-word-fill me-2"></i>{template.name}</span>
-                                <button className="btn btn-outline-danger btn-sm">Eliminar</button>
-                            </li>
-                        ))} */}
-                    </ul>
+                    <div className="table-responsive">
+                        <table className="table table-striped table-hover">
+                            <thead className="table-dark">
+                                <tr>
+                                    <th>Nombre Plantilla</th>
+                                    <th>Nombre Documento</th>
+                                    <th className="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {templates.length > 0 ? (
+                                    templates.map(template => (
+                                        <tr key={template.id}>
+                                            <td>{template.nombre}</td>
+                                            <td>{template.docFile || 'No especificado'}</td>
+                                            <td className="text-center">
+                                                <button
+                                                    className="btn btn-outline-primary btn-sm me-2"
+                                                    onClick={() => handleView(template.docFile, template.nombre)}
+                                                    title="Ver Documento"
+                                                >
+                                                    <i className="bi bi-eye-fill"></i>
+                                                </button>
+                                                <button
+                                                    className="btn btn-outline-secondary btn-sm"
+                                                    onClick={() => handleEdit(template)}
+                                                    title="Editar"
+                                                >
+                                                    <i className="bi bi-pencil-fill"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3" className="text-center">No hay plantillas existentes.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
