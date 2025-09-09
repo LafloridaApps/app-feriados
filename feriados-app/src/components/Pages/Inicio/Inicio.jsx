@@ -1,41 +1,25 @@
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { UsuarioContext } from '../../../context/UsuarioContext';
-import { getResumenInicioByRut } from '../../../services/resumenFuncService';
 
 import WelcomeWidget from './components/WelcomeWidget';
 import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
 import SolicitudesMesWidget from './components/SolicitudesMesWidget';
-import JefeWidgets from './components/JefeWidgets';
+import JefeDashboard from './components/JefeDashboard';
+import { useIsJefe } from '../../../hooks/useIsJefe';
+import { useJefeDashboard } from '../../../hooks/useJefeDashboard';
 
 const Inicio = () => {
     const funcionario = useContext(UsuarioContext);
-    const [resumenFunc, setResumenFunc] = useState(null);
-
-    const getResumen = async () => {
-        if (funcionario && funcionario.rut) {
-            try {
-                const response = await getResumenInicioByRut(funcionario.rut);
-                setResumenFunc(response);
-            } catch (error) {
-                console.error("Error fetching resumen:", error);
-                // Handle error appropriately, maybe show a message to the user
-            }
-        }
-    };
-
-    useEffect(() => {
-        getResumen();
-    }, [funcionario]);
+    const { codDepto, rut } = funcionario || {};
+    const { esJefe } = useIsJefe(codDepto, rut);
+    const { resumenFunc } = useJefeDashboard();
 
     if (!funcionario) {
         return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
     }
 
-    // Mock data for jefe widgets, as it was in the original component
-    const solicitudesPendientes = 3; // Example
-    const ausenciasEquipo = 2; // Example
 
     return (
         <div className="container mt-5">
@@ -46,12 +30,7 @@ const Inicio = () => {
 
                 <div className="col-md-8">
                     <div className="row">
-                        <JefeWidgets 
-                            esJefe={funcionario.esJefe}
-                            solicitudesPendientes={solicitudesPendientes} 
-                            ausenciasEquipo={ausenciasEquipo} 
-                        />
-                        <SaldosWidget 
+                        <SaldosWidget
                             saldoFeriado={resumenFunc?.saldoFeriado}
                             saldoAdministrativo={resumenFunc?.saldoAdministrativo}
                             idUltimaSolicitud={resumenFunc?.idUltimaSolicitud}
@@ -59,6 +38,7 @@ const Inicio = () => {
                         />
                         <AccionesRapidasWidget />
                         <SolicitudesMesWidget solicitudes={resumenFunc?.solicitudMes} />
+                        {esJefe && <JefeDashboard />}
                     </div>
                 </div>
             </div>

@@ -1,23 +1,29 @@
-// src/hooks/useIsJefe.js
-import { useCallback } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { searchIsJefeByCodDeptoAndRut } from '../services/jefeService';
 
-export function useIsJefe() {
-    const verificar = useCallback(async (codDepto, rut) => {
-        try {
-            const response = await searchIsJefeByCodDeptoAndRut(codDepto, rut);
-            
-            return response;
-        } catch (error) {
-            console.error('Error al verificar si es jefe:', error);
-            throw error;
-        }
-    }, []);
+export const useIsJefe = (codDepto, rut) => {
+    const [esJefe, setEsJefe] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    return { verificar };
-}
-useIsJefe.propTypes = {
-    codEx: PropTypes.string.isRequired,
-    rut: PropTypes.string.isRequired,
+    useEffect(() => {
+        if (codDepto && rut) {
+            const verificar = async () => {
+                try {
+                    setLoading(true);
+                    const response = await searchIsJefeByCodDeptoAndRut(codDepto, rut);
+                    setEsJefe(response.esJefe);
+                } catch (err) {
+                    setError(err);
+                    setEsJefe(false);
+                    console.error('Error al verificar si es jefe:', err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            verificar();
+        }
+    }, [codDepto, rut]);
+
+    return { esJefe, loading, error };
 };

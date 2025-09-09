@@ -1,4 +1,3 @@
-// components/FormularioSolicitud.jsx
 import { PropTypes } from 'prop-types';
 import DetalleSolicitud from './DetalleSolicitud';
 import ModalSubrogante from './Subrogancias/ModalSubrogante';
@@ -20,9 +19,6 @@ const jornadas = ['AM', 'PM'];
 
 const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer }) => {
 
-    const { verificar } = useIsJefe();
-    const [esJefe, setEsJefe] = useState(false);
-    const [esDirector, setEsDirector] = useState(false);
     const [mostrarInfoSubrogante, setMostrarInfoSubrogante] = useState(false);
 
     const {
@@ -44,17 +40,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         maxDateFin
     } = useFormularioSolicitud({ resumenAdm, resumenFer, detalleAdm, detalleFer });
 
-
-    useEffect(() => {
-        if (depto && rut) {
-            verificar(depto, rut)
-                .then(response => {
-                    setEsJefe(response.esJefe);
-                    setEsDirector(response.esDirector);
-                })
-                .catch(() => setEsJefe(false));
-        }
-    }, [depto, rut, verificar]);
+    const { esJefe, esDirector } = useIsJefe(depto, rut);
 
     const handleSubmit = (e) => submitForm(e, esJefe, esDirector, fechaInicio);
 
