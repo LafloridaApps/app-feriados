@@ -1,40 +1,10 @@
-import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import ResumenFeridos from "./ResumenFeridos ";
 import DetalleFeridos from "./DetalleFeridos ";
+import { useFeriadosTabs } from "../../../hooks/useFeriadosTabs";
 
 const TabsFeridos = ({ resumen, detalle }) => {
-
-    const currentYear = new Date().getFullYear();
-    const [activeYear, setActiveYear] = useState(null);
-
-    useEffect(() => {
-        const availableYears = detalle.map((r) => new Date(r.fechaInicio).getFullYear());
-        if (availableYears.includes(currentYear)) {
-            setActiveYear(currentYear);
-        } else if (availableYears.length > 0) {
-            setActiveYear(availableYears[0]);
-        }
-
-    }, [currentYear, detalle]);
-
-    const resumenPorAnio = detalle.reduce((acc, r) => {
-        acc[new Date(r.fechaResolucion).getFullYear()] = r;
-        return acc;
-    }, {});
-
-
-    const detallePorAnio = detalle.reduce((acc, d) => {
-        const anio = new Date(d.fechaResolucion).getFullYear();
-        if (!acc[anio]) acc[anio] = [];
-        acc[anio].push(d);
-        return acc;
-    }, {});
-
-
-    const years = Object.keys(resumenPorAnio)
-        .map(Number)
-        .sort((a, b) => b - a);
+    const { activeYear, setActiveYear, detallePorAnio, years } = useFeriadosTabs(detalle);
 
     return (
         <>

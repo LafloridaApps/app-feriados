@@ -1,11 +1,9 @@
-import Swal from 'sweetalert2';
 import DetalleSolicitud from './DetalleSolicitud';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import PropTypes from 'prop-types';
 import { formatFecha } from '../../../services/utils';
-import { savePostergacion } from '../../../services/postergacionService';
-import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
 import { useGestionAcciones } from '../../../hooks/useGestionAcciones';
+import { usePostergacion } from '../../../hooks/usePostergacion';
 
 const SolicitudItem = ({
     solicitud,
@@ -17,46 +15,13 @@ const SolicitudItem = ({
     open,
     handleVerDetalleClick
 }) => {
-    const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
     const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo } = solicitud;
 
     const acciones = useGestionAcciones(solicitud.derivaciones?.[0]);
+    const { handlePostergar } = usePostergacion(solicitud, rutFuncionario, onActualizarSolicitud);
 
     const isSubrogada = subroganciaInfo && subroganciaInfo.length > 0;
     const subroganciaText = isSubrogada ? `(Subrogando a ${subroganciaInfo[0].nombreDeptoSubrogado})` : '';
-
-    const handlePostergar = () => {
-        Swal.fire({
-            title: '¿Está seguro de postergar?',
-            text: "Por favor, ingrese el motivo de la postergación:",
-            input: 'textarea',
-            inputPlaceholder: 'Escriba el motivo aquí...',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, postergar',
-            cancelButtonText: 'Cancelar',
-            inputValidator: (value) => {
-                if (!value) {
-                    return '¡Necesita escribir un motivo!';
-                }
-            }
-        }).then(async (result) => {
-            if (result.isConfirmed && result.value) {
-                try {
-                    const datosPostergacion = {
-                        idSolicitud: id,
-                        motivo: result.value,
-                        postergadoPor: rutFuncionario
-                    };
-                    await savePostergacion(datosPostergacion);
-                    mostrarAlertaExito('Éxito', 'La solicitud ha sido postergada correctamente.');
-                    onActualizarSolicitud();
-                } catch (error) {
-                    console.error('Error al postergar la solicitud:', error);
-                    mostrarAlertaError('No se pudo postergar la solicitud.');
-                }
-            }
-        });
-    };
 
     return (
         <>

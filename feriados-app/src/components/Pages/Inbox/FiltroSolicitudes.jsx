@@ -1,53 +1,23 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
+import { useFiltroSolicitudes } from '../../../hooks/useFiltroSolicitudes';
 
 const FiltrosSolicitudes = ({ onFiltrar }) => {
-    
-    const [anio, setAnio] = useState('');
-    const [fechaInicio, setFechaInicio] = useState('');
-    const [fechaFin, setFechaFin] = useState('');
-    const [nombreSolicitante, setNombreSolicitante] = useState('');
-    const [rutSolicitante, setRutSolicitante] = useState('');
-    const [isOpen, setIsOpen] = useState(false);
-
-    const { mostrarAlertaError } = useAlertaSweetAlert();
-
-    const handleAnioChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value) && value.length <= 4) {
-            setAnio(value);
-        }
-    };
-
-    const handleFiltrar = () => {
-        if (anio && anio.length !== 4) {
-            mostrarAlertaError('El año ingresado no es válido. Por favor, ingrese un año con 4 dígitos.');
-            return;
-        }
-
-        const filtros = {
-            anio,
-            fechaInicio,
-            fechaFin,
-            nombreSolicitante,
-            rutSolicitante,
-        };
-        onFiltrar(filtros);
-    };
-
-    const handleLimpiarFiltros = () => {
-        setAnio('');
-        setFechaInicio('');
-        setFechaFin('');
-        setNombreSolicitante('');
-        setRutSolicitante('');
-        onFiltrar({});
-    };
-
-    const toggleCollapse = () => {
-        setIsOpen(!isOpen);
-    };
+    const {
+        anio,
+        fechaInicio,
+        fechaFin,
+        nombreSolicitante,
+        rutSolicitante,
+        isOpen,
+        handleAnioChange,
+        handleFiltrar,
+        handleLimpiarFiltros,
+        toggleCollapse,
+        setFechaInicio,
+        setFechaFin,
+        setNombreSolicitante,
+        setRutSolicitante
+    } = useFiltroSolicitudes(onFiltrar);
 
     return (
         <div className="card shadow-sm mb-4">

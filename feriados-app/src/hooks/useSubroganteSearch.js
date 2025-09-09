@@ -1,5 +1,6 @@
 
 import { useSubrogante } from "./useSubrogante";
+import { useFuncionario } from "./useFuncionario";
 
 export const useSubroganteSearch = (setSubrogante, setErrors) => {
     const { consultarRut } = useFuncionario();
