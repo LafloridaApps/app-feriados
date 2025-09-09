@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { listTemplates, uploadFileTemplate, viewTemplate } from '../../../services/templateService';
+import { deleteTemplate, listTemplates, uploadFileTemplate, viewTemplate } from '../../../services/templateService';
 
 const GestionDocumentos = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -58,7 +58,7 @@ const GestionDocumentos = () => {
             Swal.fire({
                 icon: "success",
                 title: "Plantilla subida",
-                text: `La plantilla "${response}" se subió con éxito.`,
+                text: response.message,
             });
 
             setSelectedFile(null);
@@ -76,10 +76,38 @@ const GestionDocumentos = () => {
         }
     };
 
-    const handleEdit = (template) => {
-        console.log("Editar:", template);
-        Swal.fire('En desarrollo', 'La funcionalidad de editar aún no está implementada.', 'info');
-    };
+    const handleDelete = async (id) =>{
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await deleteTemplate(id);
+                    Swal.fire(
+                        'Eliminado!',
+                        response.message,
+                        'success'
+                    );
+                    fetchTemplates();
+                } catch (error) {
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo eliminar la plantilla.',
+                        'error'
+                    );
+                }
+            }
+        });
+    }
+
+
 
     const handleView = async (docFile, nombrePlantilla) => {
         if (!docFile) {
@@ -180,10 +208,10 @@ const GestionDocumentos = () => {
                                                 </button>
                                                 <button
                                                     className="btn btn-outline-secondary btn-sm"
-                                                    onClick={() => handleEdit(template)}
-                                                    title="Editar"
+                                                    onClick={() => handleDelete(template.id)}
+                                                    title="Eliminar"
                                                 >
-                                                    <i className="bi bi-pencil-fill"></i>
+                                                    <i className="bi bi-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>

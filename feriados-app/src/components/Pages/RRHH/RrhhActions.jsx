@@ -3,18 +3,11 @@ import PropTypes from 'prop-types';
 
 const RrhhActions = ({
     selectedItemsCount,
-    handleExportToExcel,
     handleGenerarDecreto,
 }) => {
     return (
         <div className="d-flex justify-content-end mb-3">
-            <button
-                className="btn btn-success me-2"
-                onClick={handleExportToExcel}
-                disabled={selectedItemsCount === 0}
-            >
-                Exportar a Excel ({selectedItemsCount})
-            </button>
+
             <button
                 className="btn btn-primary"
                 onClick={handleGenerarDecreto}

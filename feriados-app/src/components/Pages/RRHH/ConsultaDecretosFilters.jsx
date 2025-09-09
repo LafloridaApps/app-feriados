@@ -39,39 +39,51 @@ const ConsultaDecretosFilters = ({
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaNombre" className="form-label">Nombre Funcionario</label>
+            <label htmlFor="consultaNombreFuncionario" className="form-label">Nombre Funcionario</label>
             <input
               type="text"
               className="form-control"
-              id="consultaNombre"
-              name="nombre"
-              value={filters.nombre}
+              id="consultaNombreFuncionario"
+              name="nombreFuncionario"
+              value={filters.nombreFuncionario}
               onChange={onInputChange}
               placeholder="Buscar por nombre..."
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaIdAprobacion" className="form-label">ID Aprobación</label>
+            <label htmlFor="consultaIdSolicitud" className="form-label">ID Solicitud</label>
             <input
               type="text"
               className="form-control"
-              id="consultaIdAprobacion"
-              name="idAprobacion"
-              value={filters.idAprobacion}
+              id="consultaIdSolicitud"
+              name="idSolicitud" 
+              value={filters.idSolicitud}
               onChange={onInputChange}
               placeholder="Buscar por ID..."
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaIdDecreto" className="form-label">ID Decreto</label>
+            <label htmlFor="consultaId" className="form-label">ID Decreto</label>
             <input
               type="text"
               className="form-control"
-              id="consultaIdDecreto"
-              name="idDecreto"
-              value={filters.idDecreto}
+              id="consultaId"
+              name="id"
+              value={filters.id}
               onChange={onInputChange}
               placeholder="Buscar por ID..."
+            />
+          </div>
+          <div className="col-md-2">
+            <label htmlFor="consultaRut" className="form-label">RUT Funcionario</label>
+            <input
+              type="text"
+              className="form-control"
+              id="consultaRut"
+              name="rut"
+              value={filters.rut}
+              onChange={onInputChange}
+              placeholder="Buscar por RUT..."
             />
           </div>
           <div className="col-md-2 d-flex">

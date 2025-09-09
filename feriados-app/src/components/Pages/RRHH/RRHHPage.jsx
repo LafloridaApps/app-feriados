@@ -10,11 +10,15 @@ import ConsultaDecretosFilters from './ConsultaDecretosFilters';
 import ConsultaDecretosResults from './ConsultaDecretosResults';
 import { getAprobacionesBetweenDates } from '../../../services/aprobacionListService';
 import { decretar } from '../../../services/decretarService';
+import { getDocDecreto } from '../../../services/docService.js';
+import { listTemplates } from '../../../services/templateService';
 import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
 import { useContext } from 'react';
 import { UsuarioContext } from '../../../context/UsuarioContext';
 import { exportToExcel } from '../../../services/utils';
 import EliminarGeneracionDecretos from './EliminarGeneracionDecretos';
+import { TemplateSelectionModal } from './TemplateSelectionModal';
+import { searchDecretos } from '../../../services/consultaDecretoService';
 
 const RRHHPage = () => {
     const [activeTab, setActiveTab] = useState('generar');
@@ -32,12 +36,19 @@ const RRHHPage = () => {
     const [tipoContratoOptions, setTipoContratoOptions] = useState([]);
     const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showTemplateModal, setShowTemplateModal] = useState(false);
+    const [templates, setTemplates] = useState([]);
+    const [selectedTemplate, setSelectedTemplate] = useState('');
 
     // State for "Consultar Decretos" Tab
-    const [consultaFilters, setConsultaFilters] = useState({ nombre: '', idAprobacion: '', idDecreto: '', fechaDesde: '', fechaHasta: '' });
+    const [consultaFilters, setConsultaFilters] = useState({ id: '', fechaDesde: '', fechaHasta: '', rut: '', idSolicitud: '', nombreFuncionario: '' });
     const [consultaResults, setConsultaResults] = useState([]);
     const [searchPerformed, setSearchPerformed] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [currentPageConsulta, setCurrentPageConsulta] = useState(0); // Pageable usa 0-based index
+    const [itemsPerPageConsulta, setItemsPerPageConsulta] = useState(10);
+    const [totalItemsConsulta, setTotalItemsConsulta] = useState(0);
+
 
     const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
     const funcionario = useContext(UsuarioContext);
@@ -103,37 +114,93 @@ const RRHHPage = () => {
         setAprobacionesSearchPerformed(false);
     };
 
-    const handleExportToExcel = () => { /* ... existing logic ... */ };
-    const handleGenerarDecreto = async () => {
+
+    const handleOpenTemplateModal = async () => {
+        if (selectedItems.length === 0) {
+            mostrarAlertaError('Debe seleccionar al menos una aprobación.');
+            return;
+        }
+        try {
+            setLoading(true);
+            const templateList = await listTemplates();
+            setTemplates(templateList);
+            if (templateList.length > 0) {
+                setSelectedTemplate(templateList[0].nombre); 
+            }
+            setShowTemplateModal(true);
+        } catch (error) {
+            mostrarAlertaError('Error al cargar las plantillas.', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGenerarDecreto = async (templateName) => {
+        if (!templateName) {
+            mostrarAlertaError('Debe seleccionar una plantilla.');
+            return;
+        }
         if (selectedItems.length === 0) {
             mostrarAlertaError('Debe seleccionar al menos una aprobación para generar un decreto.');
             return;
         }
-
         if (!funcionario || !funcionario.rut) {
             mostrarAlertaError('No se pudo obtener el RUT del usuario para generar el decreto.');
             return;
         }
 
         setLoading(true);
+        setShowTemplateModal(false);
         try {
             const decretos = {
                 ids: selectedItems,
-                rut: funcionario.rut
-            }
+                rut: funcionario.rut,
+                template: templateName
+            };
 
             const response = await decretar(decretos);
 
             if (response && response.length > 0) {
+                let excelSuccess = false;
                 try {
                     await exportToExcel(response, 'decretos_generados');
-                    mostrarAlertaExito('Generación de Decreto', 'Decretos generados con éxito y exportados a Excel.');
+                    excelSuccess = true;
                 } catch (excelError) {
                     mostrarAlertaError('Error al exportar a Excel.', excelError.message || 'Ocurrió un error al exportar el archivo Excel.');
                     console.error('Error exporting to Excel:', excelError);
                 }
+
+                let wordSuccess = false;
+                try {
+                    const nroDecreto = response[0].nroDecreto;
+                    if (!nroDecreto) {
+                        throw new Error("No se encontró el 'nroDecreto' en la respuesta para generar el documento Word.");
+                    }
+                    const wordResponse = await getDocDecreto(nroDecreto);
+                    const url = window.URL.createObjectURL(wordResponse.data);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `decreto_${nroDecreto}.docx`);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
+                    wordSuccess = true;
+                } catch (wordError) {
+                    mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
+                    console.error('Error downloading Word document:', wordError);
+                }
+
+                if (excelSuccess && wordSuccess) {
+                    mostrarAlertaExito('Generación Exitosa', 'Decretos generados. Archivos Excel y Word descargados.');
+                } else if (excelSuccess) {
+                    mostrarAlertaExito('Generación Parcial', 'Decretos generados y exportados a Excel, pero falló la descarga del Word.');
+                } else if (wordSuccess) {
+                    mostrarAlertaExito('Generación Parcial', 'El documento Word fue descargado, pero falló la exportación a Excel.');
+                }
+
             } else {
-                mostrarAlertaError('No se recibieron datos para generar el Excel o la generación no fue exitosa.');
+                mostrarAlertaError('No se recibieron datos para generar los archivos o la generación no fue exitosa.');
             }
         } catch (error) {
             mostrarAlertaError('Error al generar el decreto.', error.message || 'Ocurrió un error inesperado.');
@@ -148,36 +215,41 @@ const RRHHPage = () => {
     };
 
     // --- Handlers for "Consultar Decretos" ---
-    const handleConsultaSearch = () => {
-        const { nombre, idAprobacion, idDecreto, fechaDesde, fechaHasta } = consultaFilters;
-        let results = [];
-
-        if (fechaDesde && fechaHasta) {
-            results = results.filter(decreto => {
-                const itemDate = new Date(decreto.fechaDecreto.split('-').reverse().join('-'));
-                const from = new Date(fechaDesde);
-                const to = new Date(fechaHasta);
-                return itemDate >= from && itemDate <= to;
-            });
+    const handleConsultaSearch = async (page = 0) => {
+        setLoading(true);
+        setSearchPerformed(false);
+        try {
+            const pageable = {
+                page: page,
+                size: itemsPerPageConsulta,
+                sort: sortConfig.key ? `${sortConfig.key},${sortConfig.direction === 'ascending' ? 'asc' : 'desc'}` : ''
+            };
+            const response = await searchDecretos(consultaFilters, pageable);
+            setConsultaResults(response.content);
+            setTotalItemsConsulta(response.page.totalElements); // <-- Corrección aquí
+            setCurrentPageConsulta(response.page.number); // <-- También corregir el número de página
+            setSearchPerformed(true);
+        } catch (error) {
+            mostrarAlertaError('Error al buscar decretos.', error.message || 'Ocurrió un error inesperado.');
+            console.error('Error al buscar decretos:', error);
+            setConsultaResults([]);
+            setTotalItemsConsulta(0);
+        } finally {
+            setLoading(false);
         }
-
-        results = results.filter(decreto => {
-            return (
-                (nombre ? decreto.nombre.toLowerCase().includes(nombre.toLowerCase()) : true) &&
-                (idAprobacion ? decreto.id.toString() === idAprobacion : true) &&
-                (idDecreto ? decreto.decretoId.toLowerCase().includes(idDecreto.toLowerCase()) : true)
-            );
-        });
-
-        setConsultaResults(results);
-        setSearchPerformed(true);
     };
 
     const handleConsultaClear = () => {
-        setConsultaFilters({ nombre: '', idAprobacion: '', idDecreto: '', fechaDesde: '', fechaHasta: '' });
+        setConsultaFilters({ id: '', fechaDesde: '', fechaHasta: '', rut: '', idSolicitud: '', nombreFuncionario: '' });
         setConsultaResults([]);
         setSearchPerformed(false);
+        setCurrentPageConsulta(0);
+        setTotalItemsConsulta(0);
     };
+
+    const paginateConsulta = (pageNumber) => setCurrentPageConsulta(pageNumber);
+    const nextPageConsulta = () => setCurrentPageConsulta(prev => prev + 1);
+    const prevPageConsulta = () => setCurrentPageConsulta(prev => prev - 1);
 
     // --- Static Options ---
 
@@ -220,8 +292,7 @@ const RRHHPage = () => {
                             tipoSolicitudOptions={tipoSolicitudOptions}
                             tipoContratoOptions={tipoContratoOptions}
                             selectedItemsCount={selectedItems.length}
-                            handleExportToExcel={handleExportToExcel}
-                            handleGenerarDecreto={handleGenerarDecreto}
+                            handleGenerarDecreto={handleOpenTemplateModal}
                             allAprobaciones={allAprobaciones}
                             loading={loading}
                         />
@@ -261,8 +332,34 @@ const RRHHPage = () => {
 
                 {activeTab === 'consultar' && (
                     <div className="tab-pane fade show active">
-                        <ConsultaDecretosFilters filters={consultaFilters} setFilters={setConsultaFilters} handleSearch={handleConsultaSearch} handleClear={handleConsultaClear} />
-                        {searchPerformed && <ConsultaDecretosResults data={consultaResults} />}
+                        <ConsultaDecretosFilters filters={consultaFilters} setFilters={setConsultaFilters} handleSearch={() => handleConsultaSearch(0)} handleClear={handleConsultaClear} />
+                        {console.log('searchPerformed:', searchPerformed, 'totalItemsConsulta:', totalItemsConsulta)} 
+                        {loading && (
+                            <div className="d-flex justify-content-center mt-4">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        )}
+                        {searchPerformed && totalItemsConsulta > 0 && (
+                            <>
+                                <ConsultaDecretosResults data={consultaResults} />
+                                <RrhhPagination
+                                    itemsPerPage={itemsPerPageConsulta}
+                                    totalItems={totalItemsConsulta}
+                                    paginate={paginateConsulta}
+                                    currentPage={currentPageConsulta}
+                                    nextPage={nextPageConsulta}
+                                    prevPage={prevPageConsulta}
+                                />
+                            </>
+                        )}
+                        {searchPerformed && totalItemsConsulta === 0 && (
+                            <div className="alert alert-info mt-4" role="alert">No se encontraron decretos con los filtros aplicados.</div>
+                        )}
+                        {!searchPerformed && (
+                            <div className="alert alert-secondary mt-4" role="alert">Complete los filtros y haga clic en <strong>Buscar</strong> para ver los resultados.</div>
+                        )}
                     </div>
                 )}
 
@@ -272,6 +369,14 @@ const RRHHPage = () => {
                     </div>
                 )}
             </div>
+            <TemplateSelectionModal
+                show={showTemplateModal}
+                onHide={() => setShowTemplateModal(false)}
+                templates={templates}
+                selectedTemplate={selectedTemplate}
+                onTemplateChange={setSelectedTemplate}
+                onConfirm={handleGenerarDecreto}
+            />
         </div>
     );
 };

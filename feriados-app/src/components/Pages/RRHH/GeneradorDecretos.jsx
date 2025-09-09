@@ -14,7 +14,7 @@ const GeneradorDecretos = (props) => {
         tipoSolicitudOptions, tipoContratoOptions,
 
         // Action props
-        selectedItemsCount, handleExportToExcel, handleGenerarDecreto,
+        selectedItemsCount,  handleGenerarDecreto,
 
         // Data state
         allAprobaciones,
@@ -78,7 +78,7 @@ const GeneradorDecretos = (props) => {
                     <div className="accordion-body">
                         <RrhhActions
                             selectedItemsCount={selectedItemsCount}
-                            handleExportToExcel={handleExportToExcel}
+                            
                             handleGenerarDecreto={handleGenerarDecreto}
                         />
                     </div>

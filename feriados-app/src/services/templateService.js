@@ -47,3 +47,14 @@ export const viewTemplate = async (filename) => {
     }
 };
 
+export const deleteTemplate = async (id) => {
+    try {
+        const response = await api.delete('/delete', { params: { id } })
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al descargar el archivo:", error);
+        throw error;
+    }
+};
+
