@@ -9,17 +9,17 @@ import SolicitudesMesWidget from './components/SolicitudesMesWidget';
 import JefeDashboard from './components/JefeDashboard';
 import { useIsJefe } from '../../../hooks/useIsJefe';
 import { useJefeDashboard } from '../../../hooks/useJefeDashboard';
+import { useFuncionarioResumen } from '../../../hooks/useFuncionarioResumen'; // New import
 
 const Inicio = () => {
     const funcionario = useContext(UsuarioContext);
     const { codDepto, rut } = funcionario || {};
     const { esJefe } = useIsJefe(codDepto, rut);
-    const { resumenFunc } = useJefeDashboard();
+    const { resumenFunc } = useFuncionarioResumen(); // Get resumenFunc from the new hook
 
     if (!funcionario) {
         return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
     }
-
 
     return (
         <div className="container mt-5">

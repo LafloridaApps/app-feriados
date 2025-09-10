@@ -12,10 +12,9 @@ const JefeDashboard = () => {
     if (error) {
         return <div className="alert alert-danger">Error al cargar los datos del dashboard.</div>;
 
-   
+
     }
 
-    console.log(subrogatedDepartments)
 
     return (
         <div className="col-12 mt-2">

@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 
 const SaldosWidget = ({ saldoFeriado, saldoAdministrativo, idUltimaSolicitud, estadoUltimaSolicitud }) => {
+
     return (
         <div className="col-12 col-md-6 col-lg-4 mb-4">
             <div className="card shadow-sm rounded-3 p-3 h-100 d-flex flex-column justify-content-between" style={{ backgroundColor: '#f8f9fa' }}>

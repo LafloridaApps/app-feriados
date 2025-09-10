@@ -35,7 +35,7 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
 
     const handlerVisar = async (idDerivacion) => {
         const result = await Swal.fire({
-            title: '¿Quieres visar esta solicitud?',
+            title: '¿Estás seguro de que quieres visar esta solicitud?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, visar',
@@ -54,23 +54,33 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
 
     const handlerAprobar = async (idDerivacion) => {
         const result = await Swal.fire({
-            title: '¿Quieres aprobar esta solicitud?',
+            title: '¿Quieres firmar esta solicitud?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sí, aprobar',
+            confirmButtonText: 'Sí, firmar',
+            cancelButtonText: 'Cancelar'
         });
 
         if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Firmando tu documento digitalmente',
+                text: 'Esto puede tardar unos minutos...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             try {
                 const aprobacion = {
                     idDerivacion: idDerivacion,
                     aprobadoPor: rutFuncionario,
                 };
                 await saveAprobacion(aprobacion);
-                Swal.fire('¡Aprobado!', 'La solicitud ha sido aprobada.', 'success');
+                Swal.fire('¡Firmado!', 'La solicitud ha sido firmada digitalmente.', 'success');
                 onActualizarSolicitud();
             } catch (error) {
-                Swal.fire('¡Error!', 'Error al aprobar: ' + error?.data || error, 'error');
+                Swal.fire('¡Error!', 'Error al firmar: ' + (error?.response?.data?.message || error.message || 'Error desconocido'), 'error');
             }
         }
     };

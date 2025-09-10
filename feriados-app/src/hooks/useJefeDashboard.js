@@ -10,7 +10,6 @@ export const useJefeDashboard = () => {
     const [upcomingAbsences, setUpcomingAbsences] = useState([]);
     const [todayAbsences, setTodayAbsences] = useState(0);
     const [subrogatedDepartments, setSubrogatedDepartments] = useState([]);
-    const [resumenFunc, setResumenFunc] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,13 +24,6 @@ export const useJefeDashboard = () => {
                     setUpcomingAbsences(resumen.proximasAusencias || []);
                     setTodayAbsences(resumen.ausenciasEquipoHoy || 0);
                     setSubrogatedDepartments(resumen.departamentosSubrogados || []);
-                    setResumenFunc({ // Assuming resumenFunc data is part of the summary
-                        saldoFeriado: resumen.saldoFeriado,
-                        saldoAdministrativo: resumen.saldoAdministrativo,
-                        idUltimaSolicitud: resumen.idUltimaSolicitud,
-                        estadoUltimaSolicitud: resumen.estadoUltimaSolicitud,
-                        solicitudMes: resumen.solicitudMes,
-                    });
 
                 } catch (err) {
                     setError(err);
@@ -45,5 +37,5 @@ export const useJefeDashboard = () => {
         }
     }, [codDepto, rut]); // Dependencies updated
 
-    return { pendingSolicitudes, upcomingAbsences, todayAbsences, subrogatedDepartments, resumenFunc, loading, error };
+    return { pendingSolicitudes, upcomingAbsences, todayAbsences, subrogatedDepartments, loading, error };
 };
