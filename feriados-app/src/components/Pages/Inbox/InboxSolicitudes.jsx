@@ -34,6 +34,8 @@ const InboxSolicitudes = () => {
             : <i className="bi bi-sort-down ms-1"></i>;
     };
 
+
+
     return (
         <div className="container-fluid mt-4">
             <FiltrosSolicitudes onFiltrar={handleFiltrarSolicitudes} />
@@ -67,6 +69,7 @@ const InboxSolicitudes = () => {
                                             </th>
                                             <th className="text-right"><i className="bi bi-gear-fill me-2"></i> Acciones</th>
                                             <th className="text-right"><i className="bi bi-info-circle-fill me-2"></i> Detalle</th>
+                                            <th className='text-right'><i class="bi bi-file-earmark-pdf me-23"> Pdf</i></th>
                                         </tr>
                                     </thead>
                                     <tbody>

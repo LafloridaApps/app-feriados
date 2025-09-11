@@ -45,7 +45,7 @@ export const useTemplates = () => {
                 } catch (error) {
                     Swal.fire(
                         'Error!',
-                        'No se pudo eliminar la plantilla.',
+                        error.data,
                         'error'
                     );
                 }

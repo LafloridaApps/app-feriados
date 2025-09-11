@@ -8,7 +8,6 @@ import AccionesRapidasWidget from './components/AccionesRapidasWidget';
 import SolicitudesMesWidget from './components/SolicitudesMesWidget';
 import JefeDashboard from './components/JefeDashboard';
 import { useIsJefe } from '../../../hooks/useIsJefe';
-import { useJefeDashboard } from '../../../hooks/useJefeDashboard';
 import { useFuncionarioResumen } from '../../../hooks/useFuncionarioResumen'; // New import
 
 const Inicio = () => {

@@ -9,7 +9,7 @@ function SolicitudItemMobile({
     handlerVisar,
     handlerEntrada,
     onActualizarSolicitud,
-    rutFuncionario, // rutFuncionario is needed for postergacion
+    rutFuncionario,
     open,
     handleVerDetalleClick
 }) {

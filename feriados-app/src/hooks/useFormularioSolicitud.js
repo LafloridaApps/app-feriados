@@ -1,11 +1,10 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import Swal from 'sweetalert2';
-import { calculoDiasAusar, fechaActual } from "../services/utils";
+import { calculoDiasAusar, fechaActual, calcularPrimerDiaDelMes, calcularPrimerDiaMesAnterior } from "../services/utils";
 import { getSolicitudByFechaInicioAndTipo, saveSolicitud } from '../services/solicitudService';
 import { UsuarioContext } from "../context/UsuarioContext";
 import { FeriadosContext } from "../context/FeriadosContext";
 import { useDateValidation } from "./useDateValidation";
-import { searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud } from "../services/funcionarioService";
 
 const initialState = {
     rut: 0,
@@ -79,11 +78,11 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
         const dayOfMonth = today.getDate();
         let minDate;
         if (dayOfMonth > 7) {
-            minDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            minDate = calcularPrimerDiaDelMes();
         } else {
-            minDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            minDate = calcularPrimerDiaMesAnterior();
         }
-        setMinDateInicio(minDate.toISOString().split('T')[0]);
+        setMinDateInicio(minDate);
     }, []);
 
     const diasUsar = tipo === "FERIADO" ? diasUsarFeriado : diasUsarAdministrativo;
@@ -225,10 +224,21 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
     const submitForm = async (e, esJefe, esDirector) => {
         e.preventDefault();
-        
+
         const isValid = validarFechas(fechaInicio, fechaFin);
         if (!isValid || errorSaldo) {
             mostrarAlertaError(errorSaldo || 'Existen errores en las fechas seleccionadas.');
+            return;
+        }
+
+        // Validacion de subrogancia para directores
+        if (esDirector && !subrogancia) {
+            await Swal.fire({
+                icon: 'info',
+                title: 'Subrogante Requerido',
+                text: 'Como director, es obligatorio que designe un subrogante.'
+            });
+            setMostrarModalSubrogante(true);
             return;
         }
 
@@ -240,11 +250,6 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                     title: 'Ya existe una solicitud',
                     text: 'Tienes una solicitud en este mismo rango de fechas.',
                 });
-                return;
-            }
-
-            if (esJefe && esDirector && !subrogancia) {
-                setMostrarModalSubrogante(true);
                 return;
             }
 
@@ -265,9 +270,9 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                 } else {
                     setMostrarModalSubrogante(true);
                 }
-                return; 
+                return;
             }
-            
+
             await handleSaveSolicitud();
 
         } catch (error) {

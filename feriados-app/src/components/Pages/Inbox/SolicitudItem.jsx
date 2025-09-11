@@ -15,7 +15,8 @@ const SolicitudItem = ({
     open,
     handleVerDetalleClick
 }) => {
-    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo } = solicitud;
+    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo, urlPdf } = solicitud;
+
 
     const acciones = useGestionAcciones(solicitud.derivaciones?.[0]);
     const { handlePostergar } = usePostergacion(solicitud, rutFuncionario, onActualizarSolicitud);
@@ -93,6 +94,20 @@ const SolicitudItem = ({
                     >
                         <i className="bi bi-list-ul"></i>
                     </button>
+
+                </td>
+                <td className='text-right'>
+                    {
+                        urlPdf && (<button
+                            className='btn btn-outline-dark'
+                            onClick={() => window.open(urlPdf, '_blank', 'noopener,noreferrer')}
+                            title="Ver Decreto PDF"
+                        >
+                            <i className="bi bi-file-earmark-pdf-fill"></i>
+                        </button>)
+                    }
+
+
                 </td>
             </tr>
             {open && (

@@ -3,27 +3,36 @@ import { searchIsJefeByCodDeptoAndRut } from '../services/jefeService';
 
 export const useIsJefe = (codDepto, rut) => {
     const [esJefe, setEsJefe] = useState(false);
+    const [esDirector, setEsDirector] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (codDepto && rut) {
-            const verificar = async () => {
-                try {
-                    setLoading(true);
-                    const response = await searchIsJefeByCodDeptoAndRut(codDepto, rut);
-                    setEsJefe(response.esJefe);
-                } catch (err) {
-                    setError(err);
-                    setEsJefe(false);
-                    console.error('Error al verificar si es jefe:', err);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            verificar();
-        }
-    }, [codDepto, rut]);
+    const shouldFetch = codDepto && rut;
 
-    return { esJefe, loading, error };
+    useEffect(() => {
+        if (!shouldFetch) {
+            setLoading(false);
+            return;
+        }
+
+        const verificar = async () => {
+            setLoading(true);
+            try {
+                const response = await searchIsJefeByCodDeptoAndRut(codDepto, rut);
+                setEsJefe(response.esJefe);
+                setEsDirector(response.esDirector);
+            } catch (err) {
+                setError(err);
+                setEsJefe(false);
+                setEsDirector(false);
+                console.error('Error al verificar si es jefe/director:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        verificar();
+    }, [shouldFetch, codDepto, rut]);
+
+    return { esJefe, esDirector, loading, error };
 };

@@ -27,7 +27,7 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                         <th>Tipo de Solicitud</th>
                         <th>Fecha de Creación</th>
                         <th>Estado</th>
-                        <th className="text-center">Detalle</th>
+                        <th className="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +53,9 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                                         disabled={!solicitud?.id}
                                     >
                                         <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                                    </button>
+                                    <button className="btn btn-sm btn-danger ms-2" title="Ver Documento PDF">
+                                        <i className="bi bi-file-earmark-pdf"></i>
                                     </button>
                                 </td>
                             </tr>

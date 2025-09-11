@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { subroganciaService } from '../../../../services/subroganciaService';
 import PropTypes from 'prop-types';
-import { searchFuncionarioByNombreAndDepto } from '../../../../services/funcionarioService';
 
 const ModalBuscarPorNombre = ({ show, onClose, onFuncionarioSelected, deptoFuncionario, fechaInicio, fechaFin }) => {
     const [searchTerm, setSearchTerm] = useState('');

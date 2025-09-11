@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
 import { UsuarioContext } from '../../../context/UsuarioContext';
-import { formatFecha } from '../../../services/utils';
 import DetalleMiSolicitud from './DetalleMiSolicitud';
 import { getSolicitudesByRut } from '../../../services/misSolicitudesService';
 import MisSolicitudesLoadingSpinner from './MisSolicitudesLoadingSpinner';
@@ -15,29 +14,29 @@ const MisSolicitudes = () => {
     const funcionario = useContext(UsuarioContext);
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
 
 
-    const fetSolicitudesByRut = async (page, size) => {
-        setLoading(true);
-        try {
-            const response = await getSolicitudesByRut(funcionario.rut, page, size);
-            setSolicitudes(Array.isArray(response.solicitudes) ? response.solicitudes : []);
-            setTotalPages(response.totalPages);
-            setCurrentPage(response.currentPage);
-            setTotalElements(response.totalElements);
-        } catch (error) {
-            console.error("Error al cargar las solicitudes:", error);
-        } finally {
-            setLoading(false);
-        }
-    }
-
     useEffect(() => {
+        const fetSolicitudesByRut = async () => {
+            setLoading(true);
+            try {
+                const response = await getSolicitudesByRut(funcionario.rut, currentPage, pageSize);
+                setSolicitudes(Array.isArray(response.solicitudes) ? response.solicitudes : []);
+                setTotalPages(response.totalPages);
+                setCurrentPage(response.currentPage);
+                setTotalElements(response.totalElements);
+            } catch {
+                // Bloque intencionalmente vacío
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (funcionario && funcionario.rut) {
-            fetSolicitudesByRut(currentPage, pageSize);
+            fetSolicitudesByRut();
         }
     }, [funcionario, currentPage, pageSize]);
 
