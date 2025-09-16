@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const BASE_URL = 'http://localhost:8082/api/aprobaciones';
 
 const api = axios.create({

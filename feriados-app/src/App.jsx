@@ -11,6 +11,7 @@ import RRHHPage from "./components/Pages/RRHH/RRHHPage";
 import ParametrosPage from "./components/Pages/Parametros/ParametrosPage";
 import PaginaDashboard from "./components/Pages/Dashboard/PaginaDashboard";
 import Inicio from "./components/Pages/Inicio/Inicio";
+import IngresoSubrogancia from "./components/Pages/RRHH/IngresoSubrogancia";
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                         <Route path="/rrhh" element={<RRHHPage />} />
                         <Route path="/parametros/documentos" element={<ParametrosPage />} />
                         <Route path="/dashboard" element={<PaginaDashboard />} />
+                        <Route path="/rrhh/subrogancia" element={<IngresoSubrogancia />} />
                     </Routes>
                 </div>
             </AppContextProvider>

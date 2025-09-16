@@ -88,7 +88,7 @@ function esDiaHabil(date, feriados) {
 	return dia !== 0 && dia !== 6 && !feriados.includes(fechaStr);
 }
 
-const obtenerFeriados = async () => {
+export const obtenerFeriados = async () => {
 	try {
 		const response = await getTablaFeriados();
 		return response;

@@ -27,3 +27,14 @@ export const subroganciaService = {
   },
   
 };
+
+export const saveSubrogancia = async (subrogancia) => {
+    try {
+        const response = await axios.post('http://localhost:8082/api/subrogancia/create', subrogancia);
+        return response;
+    } catch (error) {
+        console.error("Error al guardar la subrogancia:", error);
+        // Re-lanzamos el error para que el componente que llama pueda manejarlo.
+        throw error;
+    }
+};

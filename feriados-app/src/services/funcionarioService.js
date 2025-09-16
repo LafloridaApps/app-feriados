@@ -8,9 +8,9 @@ const api = axios.create({
 
 });
 
-export const getFuncionarioByRutAndVrut = async (rut, vRut) => {
+export const getFuncionarioByRutAndVrut = async (rut) => {
     try {
-        const { data } = await api.get('', { params: { rut, vRut } });
+        const { data } = await api.get('', { params: { rut } });
         return data;
     } catch (error) {
         console.error('Error al obtener funcionario:', error);

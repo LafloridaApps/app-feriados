@@ -1,45 +1,72 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal } from 'bootstrap'; // Import Bootstrap's Modal
-import { DATOS_AUSENCIA_MOCK, NIVEL_USUARIO_MOCK, DEPARTAMENTO_USUARIO_MOCK, DATOS_GRAFICO_MOCK } from './dashboardData';
+import { UsuarioContext } from '../../../context/UsuarioContext';
+import { getDashboardSummary } from '../../../services/dashboardService';
 
 const PaginaDashboard = () => {
+    const funcionario = useContext(UsuarioContext);
+
     const [mesActual, setMesActual] = useState(new Date());
     const [ausencias, setAusencias] = useState({});
     const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
     const [mostrarModalEmpleado, setMostrarModalEmpleado] = useState(false);
     const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const ausenciasProcesadas = {};
+        if (funcionario && funcionario.codDepto) {
+            const fetchAndProcessData = async () => {
+                try {
+                    setLoading(true);
+                    setError(null);
+                    const absenceList = await getDashboardSummary(funcionario.codDepto);
+                    
+                    if (!Array.isArray(absenceList)) {
+                        setError("Los datos recibidos no tienen el formato esperado.");
+                        setAusencias({});
+                        return;
+                    }
 
-        // Iterate through the flat mockAbsenceData array
-        DATOS_AUSENCIA_MOCK.forEach(empleado => {
-            const inicio = new Date(empleado.periodoAusencia.fechaInicio);
-            const fin = new Date(empleado.periodoAusencia.fechaFin);
-            let fechaTemporal = new Date(inicio);
+                    const ausenciasProcesadas = {};
+                    absenceList.forEach(empleado => {
+                        const inicio = new Date(empleado.periodoAusencia.fechaInicio);
+                        const fin = new Date(empleado.periodoAusencia.fechaFin);
+                        let fechaTemporal = new Date(inicio);
 
-            while (fechaTemporal <= fin) {
-                const cadenaFecha = `${fechaTemporal.getFullYear()}-${(fechaTemporal.getMonth() + 1).toString().padStart(2, '0')}-${fechaTemporal.getDate().toString().padStart(2, '0')}`;
+                        while (fechaTemporal <= fin) {
+                            const cadenaFecha = `${fechaTemporal.getFullYear()}-${(fechaTemporal.getMonth() + 1).toString().padStart(2, '0')}-${fechaTemporal.getDate().toString().padStart(2, '0')}`;
 
-                if (!ausenciasProcesadas[cadenaFecha]) {
-                    ausenciasProcesadas[cadenaFecha] = { detalles: {} };
+                            if (!ausenciasProcesadas[cadenaFecha]) {
+                                ausenciasProcesadas[cadenaFecha] = { detalles: {} };
+                            }
+
+                            const nombreGrupo = empleado.nombreGrupo;
+                            if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo]) {
+                                ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo] = [];
+                            }
+                            
+                            if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].some(e => e.rut === empleado.rut)) {
+                                ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].push(empleado);
+                            }
+                            fechaTemporal.setDate(fechaTemporal.getDate() + 1);
+                        }
+                    });
+                    setAusencias(ausenciasProcesadas);
+                } catch (err) {
+                    setError("No se pudo cargar la información de ausencias.");
+                    console.error(err);
+                } finally {
+                    setLoading(false);
                 }
+            };
 
-                const nombreGrupo = empleado.nombreGrupo; // Use the nombreGrupo directly from the empleado object
-
-                if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo]) {
-                    ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo] = [];
-                }
-                // Add empleado only if not already present (check by rut)
-                if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].some(e => e.rut === empleado.rut)) {
-                    ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].push(empleado);
-                }
-                fechaTemporal.setDate(fechaTemporal.getDate() + 1);
-            }
-        });
-        setAusencias(ausenciasProcesadas);
-    }, []); // Run only once on mount
+            fetchAndProcessData();
+        } else {
+            setLoading(false);
+            setError("No se pudo identificar al usuario o su departamento.");
+        }
+    }, [funcionario, mesActual]); // Recargar si cambia el mes o el funcionario
 
     const obtenerDiasDelMes = (fecha) => {
         const anio = fecha.getFullYear();
@@ -53,31 +80,8 @@ const PaginaDashboard = () => {
         return new Date(anio, mes, 1).getDay();
     };
 
-    const filtrarAusenciasPorNivel = (datos) => {
-        if (!datos) return null;
-
-        const detallesFiltrados = {};
-
-        switch (NIVEL_USUARIO_MOCK) {
-            case 'Director':
-                if (datos.detalles[DEPARTAMENTO_USUARIO_MOCK]) {
-                    detallesFiltrados[DEPARTAMENTO_USUARIO_MOCK] = datos.detalles[DEPARTAMENTO_USUARIO_MOCK];
-                }
-                break;
-            case 'JefeDepto':
-                if (datos.detalles[DEPARTAMENTO_USUARIO_MOCK]) {
-                    detallesFiltrados[DEPARTAMENTO_USUARIO_MOCK] = datos.detalles[DEPARTAMENTO_USUARIO_MOCK];
-                }
-                break;
-            case 'Administracion':
-                return datos.detalles;
-            case 'Alcaldia':
-                return datos.detalles;
-            default:
-                return null;
-        }
-        return detallesFiltrados;
-    };
+    // Se elimina la función `filtrarAusenciasPorNivel` ya que el backend se encarga del filtro.
+    const detallesFechaSeleccionada = fechaSeleccionada ? ausencias[fechaSeleccionada]?.detalles : null;
 
     const renderizarCalendario = () => {
         const diasEnMes = obtenerDiasDelMes(mesActual);
@@ -93,7 +97,6 @@ const PaginaDashboard = () => {
             const datosAusenciasDia = ausencias[cadenaFecha];
             const tieneAusencia = datosAusenciasDia && Object.keys(datosAusenciasDia.detalles).length > 0;
             const totalAusenciasPorDia = tieneAusencia ? Object.values(datosAusenciasDia.detalles).flat().length : 0;
-
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
 
             diasCalendario.push(
@@ -110,12 +113,14 @@ const PaginaDashboard = () => {
         }
         return diasCalendario;
     };
-
+    
     const manejarMesAnterior = () => {
+        setFechaSeleccionada(null);
         setMesActual(new Date(mesActual.getFullYear(), mesActual.getMonth() - 1, 1));
     };
 
     const manejarMesSiguiente = () => {
+        setFechaSeleccionada(null);
         setMesActual(new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 1));
     };
 
@@ -129,9 +134,8 @@ const PaginaDashboard = () => {
         setEmpleadoSeleccionado(null);
     };
 
-    const detallesFechaSeleccionada = fechaSeleccionada ? filtrarAusenciasPorNivel(ausencias[fechaSeleccionada]) : null;
-
     const renderizarMiniCalendario = (periodo) => {
+        // Esta función se mantiene igual que en tu versión original
         const inicio = new Date(periodo.fechaInicio);
         const fin = new Date(periodo.fechaFin);
         const dias = [];
@@ -180,67 +184,81 @@ const PaginaDashboard = () => {
         <div className="container-fluid mt-4">
             <h2 className="mb-4">Dashboard de Ausencias</h2>
 
-            {/* Monthly View */}
-            <div className="card mb-4">
-                <div className="card-header bg-primary text-white">
-                    <div className="d-flex justify-content-between align-items-center">
-                        <button className="btn btn-light" onClick={manejarMesAnterior}>&lt;</button>
-                        <h4>{mesActual.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h4>
-                        <button className="btn btn-light" onClick={manejarMesSiguiente}>&gt;</button>
+            {loading && (
+                <div className="text-center">
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Cargando...</span>
                     </div>
+                    <p>Cargando ausencias...</p>
                 </div>
-                <div className="card-body">
-                    <div className="row row-cols-7 text-center fw-bold mb-2">
-                        <div className="col">Dom</div>
-                        <div className="col">Lun</div>
-                        <div className="col">Mar</div>
-                        <div className="col">Mié</div>
-                        <div className="col">Jue</div>
-                        <div className="col">Vie</div>
-                        <div className="col">Sáb</div>
-                    </div>
-                    <div className="row row-cols-7 text-center">
-                        {renderizarCalendario()}
-                    </div>
-                </div>
-                {detallesFechaSeleccionada && (
-                    <div className="card-footer">
-                        <h5>Detalles para {fechaSeleccionada}:</h5>
-                        {Object.keys(detallesFechaSeleccionada).length > 0 ? (
-                            Object.entries(detallesFechaSeleccionada).map(([nombreGrupo, empleados]) => (
-                                <div key={nombreGrupo} className="mb-3">
-                                    <h6>{nombreGrupo} ({empleados.length} personas)</h6>
-                                    <ul className="list-group">
-                                        {empleados.map((persona, indice) => (
-                                            <li key={indice} className="list-group-item d-flex justify-content-between align-items-center" onClick={() => manejarClicEmpleado(persona)} style={{ cursor: 'pointer' }}>
-                                                <div>
-                                                    <strong>{persona.nombre}</strong> ({persona.rut})
-                                                </div>
-                                                <span className="badge bg-info text-dark">{persona.motivo}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No hay ausencias para este día en sus departamentos.</p>
-                        )}
-                    </div>
-                )}
-            </div>
+            )}
 
-            
+            {error && (
+                <div className="alert alert-danger" role="alert">
+                    {error}
+                </div>
+            )}
+
+            {!loading && !error && (
+                <div className="card mb-4">
+                    <div className="card-header bg-primary text-white">
+                        <div className="d-flex justify-content-between align-items-center">
+                            <button className="btn btn-light" onClick={manejarMesAnterior}>&lt;</button>
+                            <h4>{mesActual.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h4>
+                            <button className="btn btn-light" onClick={manejarMesSiguiente}>&gt;</button>
+                        </div>
+                    </div>
+                    <div className="card-body">
+                        <div className="row row-cols-7 text-center fw-bold mb-2">
+                            <div className="col">Dom</div>
+                            <div className="col">Lun</div>
+                            <div className="col">Mar</div>
+                            <div className="col">Mié</div>
+                            <div className="col">Jue</div>
+                            <div className="col">Vie</div>
+                            <div className="col">Sáb</div>
+                        </div>
+                        <div className="row row-cols-7 text-center">
+                            {renderizarCalendario()}
+                        </div>
+                    </div>
+                    {detallesFechaSeleccionada && (
+                        <div className="card-footer">
+                            <h5>Detalles para {fechaSeleccionada}:</h5>
+                            {Object.keys(detallesFechaSeleccionada).length > 0 ? (
+                                Object.entries(detallesFechaSeleccionada).map(([nombreGrupo, empleados]) => (
+                                    <div key={nombreGrupo} className="mb-3">
+                                        <h6>{nombreGrupo} ({empleados.length} personas)</h6>
+                                        <ul className="list-group">
+                                            {empleados.map((persona, indice) => (
+                                                <li key={indice} className="list-group-item d-flex justify-content-between align-items-center" onClick={() => manejarClicEmpleado(persona)} style={{ cursor: 'pointer' }}>
+                                                    <div>
+                                                        <strong>{persona.nombre}</strong> ({persona.rut})
+                                                    </div>
+                                                    <span className="badge bg-info text-dark">{persona.motivo}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No hay ausencias para este día.</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Employee Details Modal */}
-            <div className={`modal fade ${mostrarModalEmpleado ? 'show' : ''}`} style={{ display: mostrarModalEmpleado ? 'block' : 'none' }} tabIndex="-1" aria-labelledby="employeeModalLabel" aria-hidden={!mostrarModalEmpleado}>
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header bg-primary text-white">
-                            <h5 className="modal-title" id="employeeModalLabel">Detalles del Funcionario</h5>
-                            <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={manejarCerrarModal}></button>
-                        </div>
-                        <div className="modal-body">
-                            {empleadoSeleccionado && (
+            {empleadoSeleccionado && (
+                 <div className={`modal fade ${mostrarModalEmpleado ? 'show' : ''}`} style={{ display: mostrarModalEmpleado ? 'block' : 'none' }} tabIndex="-1" aria-labelledby="employeeModalLabel" aria-hidden={!mostrarModalEmpleado}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header bg-primary text-white">
+                                <h5 className="modal-title" id="employeeModalLabel">Detalles del Funcionario</h5>
+                                <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={manejarCerrarModal}></button>
+                            </div>
+                            <div className="modal-body">
                                 <div>
                                     <p><strong>Nombre:</strong> {empleadoSeleccionado.nombre}</p>
                                     <p><strong>RUT:</strong> {empleadoSeleccionado.rut}</p>
@@ -251,14 +269,14 @@ const PaginaDashboard = () => {
                                     <h6>Período de Ausencia:</h6>
                                     {renderizarMiniCalendario(empleadoSeleccionado.periodoAusencia)}
                                 </div>
-                            )}
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={manejarCerrarModal}>Cerrar</button>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={manejarCerrarModal}>Cerrar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
             {mostrarModalEmpleado && <div className="modal-backdrop fade show"></div>}
         </div>
     );

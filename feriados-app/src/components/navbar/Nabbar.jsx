@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useState, useContext } from 'react';
 import NavbarBrand from './NavbarBrand';
 import NavbarNav from './NavbarNav';
 import { UsuarioContext } from '../../context/UsuarioContext';
@@ -13,15 +13,7 @@ const Navbar = () => {
     const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 
     const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
-
-    useEffect(() => {
-        if (window.bootstrap && window.bootstrap.Dropdown) {
-            const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-            dropdownElements.forEach(dropdownEl => {
-                new window.bootstrap.Dropdown(dropdownEl);
-            });
-        }
-    }, []);
+    const closeMobileMenu = () => setIsNavCollapsed(true);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
@@ -30,14 +22,19 @@ const Navbar = () => {
                 <button
                     className="navbar-toggler"
                     type="button"
-                    onClick={handleNavCollapse}
+                    onClick={handleNavCollapse} // Usamos el manejador de React
+                    aria-controls="navbarContent"
+                    aria-expanded={!isNavCollapsed}
+                    aria-label="Toggle navigation"
                 >
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <div className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse`} id="navbarContent">
+                {/* La clase 'show' se aplica cuando el menú no está colapsado */}
+                <div className={`${isNavCollapsed ? 'collapse' : 'show'} navbar-collapse`} id="navbarContent">
                     <NavbarNav
                         esJefe={esJefe}
                         cantidadNoLeidas={cantidadNoLeidas}
+                        closeMobileMenu={closeMobileMenu} // Pasamos la función para cerrar el menú
                     />
                 </div>
             </div>
@@ -46,5 +43,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
