@@ -1,16 +1,15 @@
 import axios from 'axios';
-
-const BASE_URL = 'http://localhost:8082/api/funcionario/cargofunc';
+import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: BASE_URL
+    baseURL: `${BASE_URL}/api/funcionario/cargofunc`
 
 });
 
 export const searchIsJefeByCodDeptoAndRut = async (codDepto, rut) => {
     
     try {
-        const {data} = await api.get(BASE_URL, {
+        const {data} = await api.get('', {
             params: {
                 codDepto: codDepto,
                 rut: rut

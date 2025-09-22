@@ -1,10 +1,9 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
-const BASE_URL = 'http://localhost:8082/api/funcionario';
+import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: BASE_URL
+    baseURL: `${BASE_URL}/api/funcionario`
 
 });
 
@@ -19,7 +18,7 @@ export const getFuncionarioByRutAndVrut = async (rut) => {
 };
 
 export const getFuncionarioLocalByRut = async (rut) => {
-    const response = await axios.get(`${BASE_URL}?rut=${rut}`);
+    const response = await api.get('', { params: { rut } });
     return response;
 };
 

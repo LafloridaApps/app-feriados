@@ -1,9 +1,8 @@
 import axios from "axios";
-
-const API_URL = 'http://localhost:8082/api/funcionario';
+import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: `${BASE_URL}/api/funcionario`,
    
 });
 
@@ -30,7 +29,7 @@ export const subroganciaService = {
 
 export const saveSubrogancia = async (subrogancia) => {
     try {
-        const response = await axios.post('http://localhost:8082/api/subrogancia/create', subrogancia);
+        const response = await axios.post(`${BASE_URL}/api/subrogancia/create`, subrogancia);
         return response;
     } catch (error) {
         console.error("Error al guardar la subrogancia:", error);

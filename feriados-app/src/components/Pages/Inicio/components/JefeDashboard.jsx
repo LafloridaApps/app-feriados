@@ -4,7 +4,6 @@ import { formatFecha } from '../../../../services/utils';
 const JefeDashboard = () => {
     const { pendingSolicitudes, upcomingAbsences, todayAbsences, subrogatedDepartments, loading, error } =
         useJefeDashboard();
-        console.log(pendingSolicitudes)
 
     if (loading) {
         return <div className="text-center">Cargando datos del dashboard...</div>;

@@ -1,6 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from './url.js';
 
-const API_URL = 'http://localhost:8082/api/decretos'; // Ajusta la URL base de tu API
+const api = axios.create({
+  baseURL: `${BASE_URL}/api/decretos`
+});
 
 export const searchDecretos = async (filters, pageable) => {
     try {
@@ -11,7 +14,7 @@ export const searchDecretos = async (filters, pageable) => {
             sort: pageable.sort
         };
         console.log('Enviando filtros a la API:', params); // <-- Nuevo console.log
-        const response = await axios.get(`${API_URL}/search`, { params });
+        const response = await api.get('/search', { params });
         console.log('Respuesta de la API:', response.data); // <-- Nuevo console.log
         return response.data;
     } catch (error) {

@@ -1,9 +1,8 @@
 import axios from 'axios';
-
-const BASE_URL = 'http://localhost:8082/api/aprobaciones';
+import { BASE_URL } from './url.js';
 
 const api = axios.create({
-  baseURL: BASE_URL
+  baseURL: `${BASE_URL}/api/aprobaciones`
 });
 
 export const saveAprobacion = async (aprobacion) => {

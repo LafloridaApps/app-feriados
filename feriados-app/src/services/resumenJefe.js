@@ -1,10 +1,9 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:8082/api/resumen/jefe-departamento';
+import { BASE_URL } from './url.js';
 
 export const getResumenJefe = async (rutJefe, idDepartamento) => {
     try {
-        const { data } = await axios.get(API_URL, {
+        const { data } = await axios.get(`${BASE_URL}/api/resumen/jefe-departamento`, {
             params: {
                 rutJefe,
                 idDepartamento

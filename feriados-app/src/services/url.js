@@ -1,4 +1,1 @@
-
-
-const API_URL = "http://new-solicitudes-container:8082/";
-export default API_URL;
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL;

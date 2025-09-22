@@ -1,9 +1,8 @@
 import axios from "axios";
-
-
+import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8082/api/solicitudes/'
+    baseURL: `${BASE_URL}/api/solicitudes/`
 })
 
 export const getSolicitudesByRut = async (rut, page, size) =>{
