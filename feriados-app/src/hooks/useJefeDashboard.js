@@ -18,7 +18,9 @@ export const useJefeDashboard = () => {
             const fetchData = async () => {
                 try {
                     setLoading(true);
+                    
                     const resumen = await getResumenJefe(rut, codDepto); // Use the new function
+                    
 
                     setPendingSolicitudes(resumen.solicitudesPendientes || []);
                     setUpcomingAbsences(resumen.proximasAusencias || []);

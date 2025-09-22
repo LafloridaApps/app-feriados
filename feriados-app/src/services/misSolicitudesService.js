@@ -11,6 +11,7 @@ export const getSolicitudesByRut = async (rut, page, size) =>{
         const { data } = await api.get('/rut', { params: { rut, page, size } });
         return data;
     } catch (error) {
+        console.log(error)
         throw error;
     }
 

@@ -8,18 +8,21 @@ const TabsAdministrativos = ({ resumen, detalle }) => {
 
     return (
         <>
-            <ul className="nav nav-tabs mb-3">
-                {years.map((anio) => (
-                    <li className="nav-item" key={anio}>
-                        <button
-                            className={`nav-link ${anio === activeYear ? "active" : ""}`}
-                            onClick={() => setActiveYear(anio)}
-                        >
+            <div className="mb-3 col-md-3">
+                <label htmlFor="year-select" className="form-label">Seleccione un año:</label>
+                <select 
+                    id="year-select"
+                    className="form-select" 
+                    value={activeYear || ''} 
+                    onChange={(e) => setActiveYear(parseInt(e.target.value, 10))}
+                >
+                    {years.map((anio) => (
+                        <option key={anio} value={anio}>
                             {anio}
-                        </button>
-                    </li>
-                ))}
-            </ul>
+                        </option>
+                    ))}
+                </select>
+            </div>
             {activeYear != null && (
                 <>
                     <h5 className="text-primary"><i className="bi bi-bar-chart-line-fill me-2"></i> Resumen </h5>

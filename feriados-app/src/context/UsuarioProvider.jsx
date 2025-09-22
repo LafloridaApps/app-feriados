@@ -9,7 +9,7 @@ export const UsuarioProvider = ({ children }) => {
 	useEffect(() => {
 		const fetchFuncionario = async () => {
 			try {
-				const data = await getFuncionarioByRutAndVrut(10397956);
+				const data = await getFuncionarioByRutAndVrut(18766677);
 				setFuncionario(data);
 			} catch (error) {
 				console.error("Error al obtener funcionario:", error);
@@ -41,3 +41,4 @@ UsuarioProvider.propTypes = {
 //18740165,8 jorge rementeria
 //15700766,1 gustavo
 //18766677,5 francisco 
+//15435599 Elizabeth

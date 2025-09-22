@@ -18,6 +18,7 @@ const getStatusBadge = (status) => {
 };
 
 const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) => {
+
     return (
         <div className="table-responsive">
             <table className="table table-hover mb-0">
@@ -54,9 +55,17 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                                     >
                                         <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                                     </button>
-                                    <button className="btn btn-sm btn-danger ms-2" title="Ver Documento PDF">
-                                        <i className="bi bi-file-earmark-pdf"></i>
-                                    </button>
+                                    {solicitud.urlPdf && (
+                                        <a
+                                            href={solicitud.urlPdf}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-sm btn-danger ms-2"
+                                            title="Ver Documento PDF"
+                                        >
+                                            <i className="bi bi-file-earmark-pdf"></i>
+                                        </a>
+                                    )}
                                 </td>
                             </tr>
                             {openDetailId === solicitud.id && (
