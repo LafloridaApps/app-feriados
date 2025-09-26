@@ -3,7 +3,7 @@ import { BASE_URL } from './url.js';
 
 export const getResumenJefe = async (rutJefe, idDepartamento) => {
     try {
-        const { data } = await axios.get(`${BASE_URL}/api/resumen/jefe-departamento`, {
+        const { data } = await axios.get(`${BASE_URL}/solicitudes/resumen/jefe-departamento`, {
             params: {
                 rutJefe,
                 idDepartamento

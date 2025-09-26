@@ -21,7 +21,7 @@ const SolicitudesMesWidget = ({ solicitudes = [] }) => {
                 ) : (
                     <p className="text-muted text-center flex-grow-1 d-flex align-items-center justify-content-center">No hay solicitudes este mes.</p>
                 )}
-                <a href="/mis-solicitudes" className="btn btn-sm btn-outline-primary mt-auto">Ver Todas</a>
+                <a href="/feriados/mis-solicitudes" className="btn btn-sm btn-outline-primary mt-auto">Ver Todas</a>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import axios from "axios";
 import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: `${BASE_URL}/api/solicitudes/`
+    baseURL: `${BASE_URL}/solicitudes/solicitudes/`
 })
 
 export const getSolicitudesByRut = async (rut, page, size) =>{

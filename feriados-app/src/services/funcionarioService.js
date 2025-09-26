@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: `${BASE_URL}/api/funcionario`
+    baseURL: `${BASE_URL}/solicitudes/funcionario`
 
 });
 
@@ -49,6 +49,25 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
         return;
     }
 };
+
+export const getFuncionarioApi = async () => {
+    const url = "https://appx.laflorida.cl/apilogin/log.php";
+
+    try {
+        const response = await axios.post(url, { solicitud: "login", clave: "69" }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+
+
+    } catch (error) {
+        console.log(error);
+        return null;
+
+    }
+}
 
 
 

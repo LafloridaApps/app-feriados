@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { formatFechaString } from "../../../services/utils";
 
-const DetalleFeridos = ({ detalle }) => {
+const DetalleFeriados = ({ detalle }) => {
 
     return (
         <div className="card">
@@ -35,16 +35,16 @@ const DetalleFeridos = ({ detalle }) => {
     );
 };
 
-DetalleFeridos.propTypes = {
+DetalleFeriados.propTypes = {
     detalle: PropTypes.arrayOf(
         PropTypes.shape({
             numero: PropTypes.number.isRequired,
             periodo: PropTypes.number.isRequired,
-            fecha_resolucion: PropTypes.string.isRequired,
-            fecha_inicio: PropTypes.string.isRequired,
-            fecha_termino: PropTypes.string.isRequired,
+            fechaResolucion: PropTypes.string.isRequired,
+            fechaInicio: PropTypes.string.isRequired,
+            fechaTermino: PropTypes.string.isRequired,
         })
     ).isRequired,
 };
 
-export default DetalleFeridos;
+export default DetalleFeriados;

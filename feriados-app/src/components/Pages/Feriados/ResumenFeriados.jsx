@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const ResumenFeridos = ({ resumen }) => {
+const ResumenFeriados = ({ resumen }) => {
 
     const {
         total,
@@ -41,17 +41,16 @@ const ResumenFeridos = ({ resumen }) => {
     );
 };
 
-ResumenFeridos.propTypes = {
-    resumen: PropTypes.arrayOf(
-        PropTypes.shape({
+ResumenFeriados.propTypes = {
+    resumen: PropTypes.shape({
             total: PropTypes.number.isRequired,
-            dias_corresponden: PropTypes.number.isRequired,
-            dias_acumulados: PropTypes.number.isRequired,
-            dias_tomados: PropTypes.number.isRequired,
-            dias_perdidos: PropTypes.number,
-            dias_pendientes: PropTypes.number.isRequired,
+            diasCorresponden: PropTypes.number.isRequired,
+            diasAcumulados: PropTypes.number.isRequired,
+            diasTomados: PropTypes.number.isRequired,
+            diasPendientes: PropTypes.number.isRequired,
+            anio: PropTypes.number.isRequired,
         })
-    ).isRequired,
+    .isRequired,
 };
 
-export default ResumenFeridos;
+export default ResumenFeriados;

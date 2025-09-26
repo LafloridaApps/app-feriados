@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BASE_URL } from './url.js';
 
 const api = axios.create({
-    baseURL: `${BASE_URL}/api/dashboard`,
+    baseURL: `${BASE_URL}/solicitudes/dashboard`,
 });
 
 export const getUpcomingAbsencesByDepto = async (codDepto) => {
@@ -27,7 +27,7 @@ export const getTodayAbsencesByDepto = async (codDepto) => {
 
 export const getJefeDashboardSummary = async (rutJefe, idDepartamento) => {
     try {
-        const { data } = await axios.get(`${BASE_URL}/api/resumen/jefe-departamento`, {
+        const { data } = await axios.get(`${BASE_URL}/resumen/jefe-departamento`, {
             params: {
                 rutJefe,
                 idDepartamento

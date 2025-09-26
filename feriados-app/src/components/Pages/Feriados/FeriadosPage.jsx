@@ -1,10 +1,10 @@
 import { PropTypes } from 'prop-types';
 import { useState, useEffect, useContext } from "react";
 import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
-import TabsFeridos from "./TabsFeridos ";
+import TabsFeriados from "./TabsFeriados";
 import { UsuarioContext } from '../../../context/UsuarioContext';
 
-const FeridosPage = () => {
+const FeriadosPage = () => {
 
     const funcionario = useContext(UsuarioContext);
 
@@ -39,15 +39,15 @@ const FeridosPage = () => {
 
     return (
         <div className="container py-5">
-            <h2 className="text-center mb-4">Feridos Legales</h2>
-            <TabsFeridos resumen={resumen} detalle={detalle} />
+            <h2 className="text-center mb-4">Feriados Legales</h2>
+            <TabsFeriados resumen={resumen} detalle={detalle} />
         </div>
     );
 };
 
-export default FeridosPage;
+export default FeriadosPage;
 
-FeridosPage.propTypes = {
+FeriadosPage.propTypes = {
     funcionario: PropTypes.shape({
         rut: PropTypes.number.isRequired,
     }).isRequired,

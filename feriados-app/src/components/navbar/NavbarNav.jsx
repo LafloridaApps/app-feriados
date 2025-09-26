@@ -35,7 +35,7 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu }) => {
     return (
         <ul className="navbar-nav me-auto mb-2 mb-lg-0" ref={dropdownRef}>
             <li className="nav-item">
-                <Link className={obtenerClaseEnlace('/')} to="/" onClick={handleLinkClick}>Inicio</Link>
+                <Link className={obtenerClaseEnlace('/home')} to="/home" onClick={handleLinkClick}>Inicio</Link>
             </li>
             <li className="nav-item">
                 <Link className={obtenerClaseEnlace('/dashboard')} to="/dashboard" onClick={handleLinkClick}>Dashboard</Link>

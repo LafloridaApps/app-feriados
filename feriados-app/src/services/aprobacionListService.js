@@ -3,7 +3,7 @@ import { BASE_URL } from './url.js';
 
 
 const api = axios.create({
-    baseURL: `${BASE_URL}/api/aprobaciones`
+    baseURL: `${BASE_URL}/solicitudes/aprobaciones`
 
 });
 
