@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 
-const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu }) => {
+const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu, permisos }) => {
     const { pathname: rutaActual } = useLocation();
     const [openDropdown, setOpenDropdown] = useState(null);
+
+
     const dropdownRef = useRef(null);
 
     const toggleDropdown = (dropdownName) => {
@@ -28,6 +30,8 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu }) => {
         };
     }, []);
 
+
+
     const obtenerClaseEnlace = (ruta) => {
         return `nav-link ${rutaActual === ruta ? 'active fw-bold text-primary border-bottom border-primary border-2' : 'text-dark'}`;
     };
@@ -37,9 +41,14 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu }) => {
             <li className="nav-item">
                 <Link className={obtenerClaseEnlace('/home')} to="/home" onClick={handleLinkClick}>Inicio</Link>
             </li>
-            <li className="nav-item">
-                <Link className={obtenerClaseEnlace('/dashboard')} to="/dashboard" onClick={handleLinkClick}>Dashboard</Link>
-            </li>
+            {
+                permisos.some(p => p.nombre == 'DASHBOARD') && (
+                    <li className="nav-item">
+                        <Link className={obtenerClaseEnlace('/dashboard')} to="/dashboard" onClick={handleLinkClick}>Dashboard</Link>
+                    </li>
+                )
+            }
+
             <li className="nav-item">
                 <Link className={obtenerClaseEnlace('/mis-solicitudes')} to="/mis-solicitudes" onClick={handleLinkClick}>Mis Solicitudes</Link>
             </li>
@@ -63,24 +72,55 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu }) => {
                     </Link>
                 </li>
             )}
-            <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle text-dark" href="#" role="button" onClick={() => toggleDropdown('rrhh')} aria-expanded={openDropdown === 'rrhh'}>
-                    RRHH
-                </a>
-                <ul className={`dropdown-menu ${openDropdown === 'rrhh' ? 'show' : ''}`}>
-                    <li><Link className={`dropdown-item ${rutaActual === '/rrhh' ? 'active' : ''}`} to="/rrhh" onClick={handleLinkClick}>Generador Decretos</Link></li>
-                    <li><Link className={`dropdown-item ${rutaActual === '/rrhh/subrogancia' ? 'active' : ''}`} to="/rrhh/subrogancia" onClick={handleLinkClick}>Ingreso Subrogancia</Link></li>
-                </ul>
-            </li>
-            <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle text-dark" href="#" role="button" onClick={() => toggleDropdown('parametros')} aria-expanded={openDropdown === 'parametros'}>
-                    Parámetros
-                </a>
-                <ul className={`dropdown-menu ${openDropdown === 'parametros' ? 'show' : ''}`}>
-                    <li><Link className={`dropdown-item ${rutaActual === '/deptos' ? 'active' : ''}`} to="/deptos" onClick={handleLinkClick}>Departamentos</Link></li>
-                    <li><Link className={`dropdown-item ${rutaActual === '/parametros/documentos' ? 'active' : ''}`} to="/parametros/documentos" onClick={handleLinkClick}>Gestión de Documentos</Link></li>
-                </ul>
-            </li>
+
+            {
+                permisos.some(p => p.nombre == 'RRHH') && (
+                    <li className="nav-item dropdown">
+                        <a className="nav-link dropdown-toggle text-dark" href="#" role="button" onClick={() => toggleDropdown('rrhh')} aria-expanded={openDropdown === 'rrhh'}>
+                            RRHH
+                        </a>
+                        <ul className={`dropdown-menu ${openDropdown === 'rrhh' ? 'show' : ''}`}>
+                            <li><Link className={`dropdown-item ${rutaActual === '/rrhh' ? 'active' : ''}`} to="/rrhh" onClick={handleLinkClick}>Generador Decretos</Link></li>
+                            <li><Link className={`dropdown-item ${rutaActual === '/rrhh/subrogancia' ? 'active' : ''}`} to="/rrhh/subrogancia" onClick={handleLinkClick}>Ingreso Subrogancia</Link></li>
+                        </ul>
+                    </li>
+
+                )
+
+            }
+            {
+                permisos.some(p => p.nombre == 'PARAMETROS') && (
+                    <li className="nav-item dropdown">
+                        <a className="nav-link dropdown-toggle text-dark" href="#" role="button" onClick={() => toggleDropdown('parametros')} aria-expanded={openDropdown === 'parametros'}>
+                            Parámetros
+                        </a>
+                        <ul className={`dropdown-menu ${openDropdown === 'parametros' ? 'show' : ''}`}>
+                            <li><Link className={`dropdown-item ${rutaActual === '/deptos' ? 'active' : ''}`} to="/deptos" onClick={handleLinkClick}>Departamentos</Link></li>
+                            <li><Link className={`dropdown-item ${rutaActual === '/parametros/documentos' ? 'active' : ''}`} to="/parametros/documentos" onClick={handleLinkClick}>Gestión de Documentos</Link></li>
+                        </ul>
+                    </li>
+
+                )
+
+            }
+            {
+                permisos.some(p => p.nombre == 'ADMINISTRACION') && (
+                    <li className="nav-item dropdown">
+                        <a className="nav-link dropdown-toggle text-dark" href="#" role="button" onClick={() => toggleDropdown('administracion')} aria-expanded={openDropdown === 'administracion'}>
+                            Administración
+                        </a>
+                        <ul className={`dropdown-menu ${openDropdown === 'administracion' ? 'show' : ''}`}>
+                            <li><Link className={`dropdown-item ${rutaActual === '/administracion/usuarios' ? 'active' : ''}`} to="/administracion/usuarios" onClick={handleLinkClick}>Usuarios</Link></li>
+                            <li><Link className={`dropdown-item ${rutaActual === '/administracion/modulos' ? 'active' : ''}`} to="/administracion/modulos" onClick={handleLinkClick}>Módulos</Link></li>
+                        </ul>
+                    </li>
+                )
+
+
+            }
+
+
+
         </ul>
     );
 };

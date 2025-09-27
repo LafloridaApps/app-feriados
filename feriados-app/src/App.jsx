@@ -12,6 +12,8 @@ import ParametrosPage from "./components/Pages/Parametros/ParametrosPage";
 import PaginaDashboard from "./components/Pages/Dashboard/PaginaDashboard";
 import Inicio from "./components/Pages/Inicio/Inicio";
 import IngresoSubrogancia from "./components/Pages/RRHH/IngresoSubrogancia";
+import GestionUsuariosPage from "./components/Pages/Administracion/Usuarios/GestionUsuariosPage";
+import GestionModulosPage from "./components/Pages/Administracion/Modulos/GestionModulosPage";
 
 function App() {
     return (
@@ -31,6 +33,8 @@ function App() {
                     <Route path="/parametros/documentos" element={<ParametrosPage />} />
                     <Route path="/dashboard" element={<PaginaDashboard />} />
                     <Route path="/rrhh/subrogancia" element={<IngresoSubrogancia />} />
+                    <Route path="/administracion/usuarios" element={<GestionUsuariosPage />} />
+                    <Route path="/administracion/modulos" element={<GestionModulosPage />} />
                 </Routes>
             </div>
         </AppContextProvider>

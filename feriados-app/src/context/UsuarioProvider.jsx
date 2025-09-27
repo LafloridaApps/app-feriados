@@ -9,7 +9,6 @@ export const UsuarioProvider = ({ children }) => {
 
 
 	useEffect(() => {
-
 		const getFuncionarioRut = async () => {
 			try {
 				const response = await getFuncionarioApi();
@@ -20,6 +19,16 @@ export const UsuarioProvider = ({ children }) => {
 				console.error("Error al obtener el rut del funcionario:", error);
 			}
 		}
+
+		if (import.meta.env.DEV) {
+			const urlParams = new URLSearchParams(window.location.search);
+			const rutFromUrl = urlParams.get('rut');
+			if (rutFromUrl) {
+				setRut(rutFromUrl);
+				return; // Si encontramos el rut en la URL, no continuamos
+			}
+		}
+
 		getFuncionarioRut()
 	}, []);
 
