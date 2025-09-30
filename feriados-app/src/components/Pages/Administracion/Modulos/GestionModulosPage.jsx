@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { listarModulos } from '../../../../services/moduloService';
-
-
+import './GestionModulosPage.css'; // Importar el archivo CSS personalizado
 
 const GestionModulosPage = () => {
     const [modulos, setModulos] = useState([]);
@@ -46,11 +45,11 @@ const GestionModulosPage = () => {
     };
 
     return (
-        <div className="container py-5">
-            <h2 className="text-center mb-4">Gestión de Módulos</h2>
+        <div className="container py-5 gestion-modulos-container">
+            <h2 className="text-center mb-4 gestion-modulos-header">Gestión de Módulos</h2>
             <div className="row justify-content-center">
                 <div className="col-md-8">
-                    <div className="card mb-4">
+                    <div className="card mb-4 gestion-modulos-add-form-card">
                         <div className="card-header">
                             Agregar Nuevo Módulo
                         </div>
@@ -82,12 +81,12 @@ const GestionModulosPage = () => {
                         </div>
                     </div>
 
-                    <div className="card">
+                    <div className="card gestion-modulos-existing-card">
                         <div className="card-header">
                             Módulos Existentes
                         </div>
                         <div className="card-body">
-                            <table className="table table-striped">
+                            <table className="table table-striped gestion-modulos-table">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>

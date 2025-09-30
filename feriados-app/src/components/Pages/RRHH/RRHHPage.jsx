@@ -10,6 +10,7 @@ import ConsultaDecretosFilters from './ConsultaDecretosFilters';
 import ConsultaDecretosResults from './ConsultaDecretosResults';
 import EliminarGeneracionDecretos from './EliminarGeneracionDecretos';
 import { TemplateSelectionModal } from './TemplateSelectionModal';
+import './RRHHPage.css'; // Importar el archivo CSS personalizado
 
 const RRHHPage = () => {
     const [activeTab, setActiveTab] = useState('generar');
@@ -19,10 +20,10 @@ const RRHHPage = () => {
     const consultarDecretos = useConsultarDecretos(mostrarAlertaError);
 
     return (
-        <div className="container-fluid">
-            <h2 className="my-4">Gestión de Decretos RRHH</h2>
+        <div className="container-fluid rrhh-page-container">
+            <h2 className="my-4 rrhh-page-header">Gestión de Decretos RRHH</h2>
 
-            <ul className="nav nav-tabs mb-3">
+            <ul className="nav nav-tabs mb-3 rrhh-tabs-nav">
                 <li className="nav-item">
                     <button className={`nav-link ${activeTab === 'generar' ? 'active' : ''}`} onClick={() => setActiveTab('generar')}>
                         Generar Decretos
@@ -40,7 +41,7 @@ const RRHHPage = () => {
                 </li>
             </ul>
 
-            <div className="tab-content">
+            <div className="tab-content rrhh-tab-content-card">
                 {activeTab === 'generar' && (
                     <div className="tab-pane fade show active">
                         <GeneradorDecretos

@@ -18,23 +18,25 @@ const Navbar = () => {
     const closeMobileMenu = () => setIsNavCollapsed(true);
 
     useEffect(() => {
-
-
         const getPermisos = async () => {
-
-            const response = await getPermisosByUsuario(rut)
-            if (response) {
-                setUsuarioPermisos(response.modulos)
+            if (funcionario && funcionario.rut) {
+                try {
+                    const response = await getPermisosByUsuario(funcionario.rut);
+                    if (response) {
+                        setUsuarioPermisos(response.modulos);
+                    }
+                } catch (error) {
+                    console.error("Error al obtener permisos:", error);
+                }
             }
+        };
+        getPermisos();
+    }, [funcionario]);
 
-        }
-        getPermisos()
-
-    }, [rut])
 
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
+        <nav className="navbar navbar-expand-lg navbar-dark px-4" style={{ background: 'linear-gradient(to right, #009B4D, #004B8D)' }}>
             <div className="container-fluid">
                 <NavbarBrand />
                 <button

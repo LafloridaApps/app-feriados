@@ -1,0 +1,27 @@
+/* SolicitudesPageMobile.css */
+
+.solicitudes-mobile-container {
+    padding: 15px;
+}
+
+.solicitudes-mobile-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.solicitudes-mobile-card-header {
+    background-color: #f5f5f5;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: bold;
+    color: #333333; /* Gris oscuro para texto principal */
+}
+
+.solicitudes-mobile-card-body {
+    padding: 15px;
+}

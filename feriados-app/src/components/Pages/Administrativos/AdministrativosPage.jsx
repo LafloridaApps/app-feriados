@@ -3,8 +3,14 @@ import { useContext, useEffect, useState } from "react";
 import { getAdministrativoByRutAnIdent } from "../../../services/adminsitrativoService";
 import TabsAdministrativos from "./TabsAdministrativos";
 import { UsuarioContext } from '../../../context/UsuarioContext';
+import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import AdministrativosPageMobile from './AdministrativosPageMobile'; // Importar el componente móvil
+import './AdministrativosPage.css'; // Importar el archivo CSS personalizado
 
 const AdministrativosPage = () => {
+    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const isMobile = width < 768; // Definir el breakpoint para móvil
+
     const funcionario = useContext(UsuarioContext);
     const [data, setData] = useState([]);
 
@@ -34,10 +40,14 @@ const AdministrativosPage = () => {
 
 
     return (
-        <div className="container py-5">
-            <h1 className="mb-4 border-bottom pb-2 text-center">Permisos Administrativos</h1>
-            <TabsAdministrativos resumen={resumen} detalle={detalle} />
-        </div>
+        isMobile ? (
+            <AdministrativosPageMobile resumen={resumen} detalle={detalle} />
+        ) : (
+            <div className="container py-5 administrativos-page-container">
+                <h1 className="mb-4 border-bottom pb-2 text-center administrativos-page-header">Permisos Administrativos</h1>
+                <TabsAdministrativos resumen={resumen} detalle={detalle} />
+            </div>
+        )
     );
 }
 

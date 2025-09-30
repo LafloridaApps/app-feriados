@@ -1,10 +1,11 @@
 
 import PropTypes from 'prop-types';
+import './SolicitudesMesWidget.css'; // Importar el archivo CSS personalizado
 
 const SolicitudesMesWidget = ({ solicitudes = [] }) => {
     return (
         <div className="col-12 col-md-6 col-lg-4 mb-4">
-            <div className="card shadow-sm rounded-3 p-3 h-100 d-flex flex-column justify-content-between" style={{ backgroundColor: '#eef7ff' }}>
+            <div className="card shadow-sm rounded-3 p-3 h-100 d-flex flex-column justify-content-between solicitudes-mes-widget-card">
                 <div className="d-flex align-items-center mb-2">
                     <i className="bi bi-file-earmark-text-fill text-primary me-2 fs-4"></i>
                     <h5 className="card-title mb-0">Solicitudes del Mes</h5>

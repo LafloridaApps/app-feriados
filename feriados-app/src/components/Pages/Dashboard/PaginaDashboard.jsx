@@ -2,8 +2,14 @@ import { useState, useEffect, useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UsuarioContext } from '../../../context/UsuarioContext';
 import { getDashboardSummary } from '../../../services/dashboardService';
+import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import PaginaDashboardMobile from './PaginaDashboardMobile'; // Importar el componente móvil
+import './PaginaDashboard.css'; // Importar el archivo CSS personalizado
 
 const PaginaDashboard = () => {
+    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const isMobile = width < 768; // Definir el breakpoint para móvil
+
     const funcionario = useContext(UsuarioContext);
 
     const [mesActual, setMesActual] = useState(new Date());
@@ -68,48 +74,44 @@ const PaginaDashboard = () => {
         }
     }, [funcionario, mesActual]); // Recargar si cambia el mes o el funcionario
 
-    const obtenerDiasDelMes = (fecha) => {
-        const anio = fecha.getFullYear();
-        const mes = fecha.getMonth();
-        return new Date(anio, mes + 1, 0).getDate();
-    };
-
-    const obtenerPrimerDiaDelMes = (fecha) => {
-        const anio = fecha.getFullYear();
-        const mes = fecha.getMonth();
-        return new Date(anio, mes, 1).getDay();
-    };
-
     // Se elimina la función `filtrarAusenciasPorNivel` ya que el backend se encarga del filtro.
     const detallesFechaSeleccionada = fechaSeleccionada ? ausencias[fechaSeleccionada]?.detalles : null;
 
     const renderizarCalendario = () => {
-        const diasEnMes = obtenerDiasDelMes(mesActual);
-        const primerDia = obtenerPrimerDiaDelMes(mesActual);
+        const anio = mesActual.getFullYear();
+        const mes = mesActual.getMonth();
+
+        const primerDiaMesActual = new Date(anio, mes, 1);
+        const primerDiaSemana = primerDiaMesActual.getDay(); // 0 = Domingo, 1 = Lunes, etc.
+
         const diasCalendario = [];
 
-        for (let i = 0; i < primerDia; i++) {
-            diasCalendario.push(<div key={`empty-${i}`} className="col border py-2 bg-light"></div>);
-        }
+        // Calcular el día de inicio del calendario (puede ser del mes anterior)
+        const diaInicioCalendario = new Date(primerDiaMesActual);
+        diaInicioCalendario.setDate(primerDiaMesActual.getDate() - primerDiaSemana);
 
-        for (let dia = 1; dia <= diasEnMes; dia++) {
-            const cadenaFecha = `${mesActual.getFullYear()}-${(mesActual.getMonth() + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
+        // Generar 6 semanas completas (6 * 7 = 42 días)
+        for (let i = 0; i < 42; i++) { // 6 semanas * 7 días
+            const fechaActual = new Date(diaInicioCalendario);
+            const cadenaFecha = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}-${fechaActual.getDate().toString().padStart(2, '0')}`;
             const datosAusenciasDia = ausencias[cadenaFecha];
             const tieneAusencia = datosAusenciasDia && Object.keys(datosAusenciasDia.detalles).length > 0;
             const totalAusenciasPorDia = tieneAusencia ? Object.values(datosAusenciasDia.detalles).flat().length : 0;
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
+            const esDelMesActual = fechaActual.getMonth() === mes;
 
             diasCalendario.push(
                 <div
                     key={cadenaFecha}
-                    className={`col border py-2 ${tieneAusencia ? 'bg-warning text-dark' : ''} ${estaSeleccionado ? 'border-primary border-3' : ''}`}
+                    className={`col dashboard-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${!esDelMesActual ? 'text-muted bg-light' : ''}`}
                     onClick={() => setFechaSeleccionada(cadenaFecha)}
                     style={{ cursor: 'pointer' }}
                 >
-                    <strong>{dia}</strong><br/>
-                    {totalAusenciasPorDia > 0 ? `${totalAusenciasPorDia} personas` : ''}
+                    <strong>{fechaActual.getDate()}</strong>
+                    {totalAusenciasPorDia > 0 && <span className="badge bg-danger rounded-pill mt-1">{totalAusenciasPorDia}</span>}
                 </div>
             );
+            diaInicioCalendario.setDate(diaInicioCalendario.getDate() + 1);
         }
         return diasCalendario;
     };
@@ -181,8 +183,8 @@ const PaginaDashboard = () => {
     };
 
     return (
-        <div className="container-fluid mt-4">
-            <h2 className="mb-4">Dashboard de Ausencias</h2>
+        <div className="container-fluid mt-4 dashboard-container d-flex flex-column">
+            <h2 className="mb-4 dashboard-header">Calendario de Ausencias</h2>
 
             {loading && (
                 <div className="text-center">
@@ -200,53 +202,69 @@ const PaginaDashboard = () => {
             )}
 
             {!loading && !error && (
-                <div className="card mb-4">
-                    <div className="card-header bg-primary text-white">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <button className="btn btn-light" onClick={manejarMesAnterior}>&lt;</button>
-                            <h4>{mesActual.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h4>
-                            <button className="btn btn-light" onClick={manejarMesSiguiente}>&gt;</button>
+                isMobile ? (
+                    <PaginaDashboardMobile
+                        mesActual={mesActual}
+                        ausencias={ausencias}
+                        fechaSeleccionada={fechaSeleccionada}
+                        detallesFechaSeleccionada={detallesFechaSeleccionada}
+                        manejarMesAnterior={manejarMesAnterior}
+                        manejarMesSiguiente={manejarMesSiguiente}
+                        manejarClicEmpleado={manejarClicEmpleado}
+                        renderizarMiniCalendario={renderizarMiniCalendario}
+                        mostrarModalEmpleado={mostrarModalEmpleado}
+                        empleadoSeleccionado={empleadoSeleccionado}
+                        manejarCerrarModal={manejarCerrarModal}
+                    />
+                ) : (
+                    <div className="card mb-4 dashboard-card h-100">
+                        <div className="card-header dashboard-calendar-header">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <button className="btn btn-light" onClick={manejarMesAnterior}>&lt;</button>
+                                <h4>{mesActual.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h4>
+                                <button className="btn btn-light" onClick={manejarMesSiguiente}>&gt;</button>
+                            </div>
                         </div>
+                        <div className="card-body d-flex flex-column">
+                            <div className="row row-cols-7 text-center fw-bold mb-2">
+                                <div className="col">Dom</div>
+                                <div className="col">Lun</div>
+                                <div className="col">Mar</div>
+                                <div className="col">Mié</div>
+                                <div className="col">Jue</div>
+                                <div className="col">Vie</div>
+                                <div className="col">Sáb</div>
+                            </div>
+                            <div className="dashboard-calendar-grid-wrapper flex-grow-1">
+                                {renderizarCalendario()}
+                            </div>
+                        </div>
+                        {detallesFechaSeleccionada && (
+                            <div className="card-footer dashboard-details-footer">
+                                <h5>Detalles para {fechaSeleccionada}:</h5>
+                                {Object.keys(detallesFechaSeleccionada).length > 0 ? (
+                                    Object.entries(detallesFechaSeleccionada).map(([nombreGrupo, empleados]) => (
+                                        <div key={nombreGrupo} className="mb-3">
+                                            <h6>{nombreGrupo} ({empleados.length} personas)</h6>
+                                            <ul className="list-group">
+                                                {empleados.map((persona, indice) => (
+                                                    <li key={indice} className="list-group-item d-flex justify-content-between align-items-center" onClick={() => manejarClicEmpleado(persona)} style={{ cursor: 'pointer' }}>
+                                                        <div>
+                                                            <strong>{persona.nombre}</strong> ({persona.rut})
+                                                        </div>
+                                                        <span className="badge bg-info text-dark">{persona.motivo}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No hay ausencias para este día.</p>
+                                )}
+                            </div>
+                        )}
                     </div>
-                    <div className="card-body">
-                        <div className="row row-cols-7 text-center fw-bold mb-2">
-                            <div className="col">Dom</div>
-                            <div className="col">Lun</div>
-                            <div className="col">Mar</div>
-                            <div className="col">Mié</div>
-                            <div className="col">Jue</div>
-                            <div className="col">Vie</div>
-                            <div className="col">Sáb</div>
-                        </div>
-                        <div className="row row-cols-7 text-center">
-                            {renderizarCalendario()}
-                        </div>
-                    </div>
-                    {detallesFechaSeleccionada && (
-                        <div className="card-footer">
-                            <h5>Detalles para {fechaSeleccionada}:</h5>
-                            {Object.keys(detallesFechaSeleccionada).length > 0 ? (
-                                Object.entries(detallesFechaSeleccionada).map(([nombreGrupo, empleados]) => (
-                                    <div key={nombreGrupo} className="mb-3">
-                                        <h6>{nombreGrupo} ({empleados.length} personas)</h6>
-                                        <ul className="list-group">
-                                            {empleados.map((persona, indice) => (
-                                                <li key={indice} className="list-group-item d-flex justify-content-between align-items-center" onClick={() => manejarClicEmpleado(persona)} style={{ cursor: 'pointer' }}>
-                                                    <div>
-                                                        <strong>{persona.nombre}</strong> ({persona.rut})
-                                                    </div>
-                                                    <span className="badge bg-info text-dark">{persona.motivo}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No hay ausencias para este día.</p>
-                            )}
-                        </div>
-                    )}
-                </div>
+                )
             )}
 
             {/* Employee Details Modal */}
@@ -254,7 +272,7 @@ const PaginaDashboard = () => {
                  <div className={`modal fade ${mostrarModalEmpleado ? 'show' : ''}`} style={{ display: mostrarModalEmpleado ? 'block' : 'none' }} tabIndex="-1" aria-labelledby="employeeModalLabel" aria-hidden={!mostrarModalEmpleado}>
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
-                            <div className="modal-header bg-primary text-white">
+                            <div className="modal-header dashboard-modal-header">
                                 <h5 className="modal-title" id="employeeModalLabel">Detalles del Funcionario</h5>
                                 <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={manejarCerrarModal}></button>
                             </div>

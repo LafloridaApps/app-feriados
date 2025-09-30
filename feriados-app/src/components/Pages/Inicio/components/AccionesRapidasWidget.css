@@ -1,0 +1,35 @@
+/* AccionesRapidasWidget.css */
+
+.acciones-rapidas-widget-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease-in-out;
+}
+
+.acciones-rapidas-widget-card:hover {
+    transform: translateY(-3px);
+}
+
+.acciones-rapidas-widget-card .card-title {
+    color: #007bff; /* Azul neutro para título */
+}
+
+.acciones-rapidas-widget-card .btn-primary {
+    background-color: #28a745 !important; /* Verde profesional */
+    border-color: #28a745 !important;
+}
+
+.acciones-rapidas-widget-card .btn-primary:hover {
+    background-color: #218838 !important;
+    border-color: #218838 !important;
+}
+
+.acciones-rapidas-widget-card .btn-outline-secondary {
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.acciones-rapidas-widget-card .btn-outline-secondary:hover {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}

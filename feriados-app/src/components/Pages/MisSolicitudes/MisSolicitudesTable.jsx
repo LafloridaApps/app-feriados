@@ -5,15 +5,17 @@ import { formatFecha } from '../../../services/utils'; // Asegúrate de que esta
 const getStatusBadge = (status) => {
     switch (status) {
         case 'APROBADA':
-            return 'badge bg-success';
+            return 'badge badge-estado-aprobado';
         case 'POSTERGADA':
-            return 'badge bg-danger';
+            return 'badge badge-estado-rechazado'; // Asumiendo que postergada es similar a rechazada en color
         case 'PENDIENTE':
-            return 'badge bg-warning text-dark';
+            return 'badge badge-estado-pendiente';
         case 'PENDIENTE VISACION':
-            return 'badge bg-info text-dark';
+            return 'badge badge-estado-pendiente'; // Usar el mismo color que pendiente
+        case 'FINALIZADA':
+            return 'badge badge-estado-finalizado';
         default:
-            return 'badge bg-secondary';
+            return 'badge badge-estado-otro';
     }
 };
 
@@ -21,7 +23,7 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
 
     return (
         <div className="table-responsive">
-            <table className="table table-hover mb-0">
+            <table className="table table-hover mb-0 mis-solicitudes-table">
                 <thead className="bg-light">
                     <tr>
                         <th>ID Solicitud</th>

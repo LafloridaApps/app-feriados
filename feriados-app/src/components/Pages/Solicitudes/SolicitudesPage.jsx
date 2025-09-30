@@ -5,9 +5,14 @@ import ResumenPermisos from "./ResumenPermisos";
 import { getAdministrativoByRutAnIdent } from "../../../services/adminsitrativoService";
 import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import { UsuarioContext } from '../../../context/UsuarioContext';
-
+import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import SolicitudesPageMobile from './SolicitudesPageMobile'; // Importar el componente móvil
+import './SolicitudesPage.css'; // Importar el archivo CSS personalizado
 
 const SolicitudesPage = () => {
+
+    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const isMobile = width < 768; // Definir el breakpoint para móvil
 
     const funcionario = useContext(UsuarioContext);
     const [dataAdm, setDataAdm] = useState(null)
@@ -77,24 +82,37 @@ const SolicitudesPage = () => {
     if (!funcionario) return <p className="alert alert-info text-center mt-5" role='alert'>Cargando Información...</p>;
 
     return (
-        <div className="container py-4">
-            <h2 className="mb-4 text-primary text-center">Solicitudes de Permisos</h2>
-            <div className="row g-4">
-                <div className="col-md-12">
-                    <ResumenPermisos resumenAdm={resumenAdm} resumenFer={resumenFer} />
-                </div>
-                <div className="row">
+        isMobile ? (
+            <SolicitudesPageMobile
+                resumenAdm={resumenAdm}
+                resumenFer={resumenFer}
+                detalleAdm={detalleAdm}
+                detalleFer={detalleFer}
+            />
+        ) : (
+            <div className="container py-4 solicitudes-page-container">
+                <h2 className="mb-4 text-primary text-center solicitudes-page-header">Solicitudes de Permisos</h2>
+                <div className="row g-4">
                     <div className="col-md-12">
-                        <FormularioSolicitud
-                            resumenAdm={resumenAdm}
-                            resumenFer={resumenFer}
-                            detalleAdm={detalleAdm}
-                            detalleFer={detalleFer}
-                        />
+                        <div className="solicitudes-section-card">
+                            <ResumenPermisos resumenAdm={resumenAdm} resumenFer={resumenFer} />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <div className="solicitudes-section-card">
+                                <FormularioSolicitud
+                                    resumenAdm={resumenAdm}
+                                    resumenFer={resumenFer}
+                                    detalleAdm={detalleAdm}
+                                    detalleFer={detalleFer}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        )
     );
 };
 

@@ -3,8 +3,14 @@ import { useState, useEffect, useContext } from "react";
 import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import TabsFeriados from "./TabsFeriados";
 import { UsuarioContext } from '../../../context/UsuarioContext';
+import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import FeriadosPageMobile from './FeriadosPageMobile'; // Importar el componente móvil
+import './FeriadosPage.css'; // Importar el archivo CSS personalizado
 
 const FeriadosPage = () => {
+
+    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const isMobile = width < 768; // Definir el breakpoint para móvil
 
     const funcionario = useContext(UsuarioContext);
 
@@ -38,10 +44,14 @@ const FeriadosPage = () => {
     if (!funcionario) return <p className="alert alert-info text-center mt-5" role='alert'>Cargando Información...</p>;
 
     return (
-        <div className="container py-5">
-            <h2 className="text-center mb-4">Feriados Legales</h2>
-            <TabsFeriados resumen={resumen} detalle={detalle} />
-        </div>
+        isMobile ? (
+            <FeriadosPageMobile resumen={resumen} detalle={detalle} />
+        ) : (
+            <div className="container py-5 feriados-page-container">
+                <h2 className="text-center mb-4 feriados-page-header">Feriados Legales</h2>
+                <TabsFeriados resumen={resumen} detalle={detalle} />
+            </div>
+        )
     );
 };
 

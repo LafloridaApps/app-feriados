@@ -1,5 +1,6 @@
 import { useJefeDashboard } from '../../../../hooks/useJefeDashboard';
 import { formatFecha } from '../../../../services/utils';
+import './JefeDashboard.css'; // Importar el archivo CSS personalizado
 
 const JefeDashboard = () => {
     const { pendingSolicitudes, upcomingAbsences, todayAbsences, subrogatedDepartments, loading, error } =
@@ -11,15 +12,12 @@ const JefeDashboard = () => {
 
     if (error) {
         return <div className="alert alert-danger">Error al cargar los datos del dashboard.</div>;
-
-
     }
-
 
     return (
         <div className="col-12 mt-2">
-            <div className="card shadow-sm" style={{ borderRadius: '15px' }}>
-                <div className="card-header bg-primary text-white" style={{ borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
+            <div className="card shadow-sm jefe-dashboard-card">
+                <div className="card-header bg-primary text-white">
                     <h4 className="mb-0"><i className="bi bi-kanban-fill me-2"></i> Panel de Jefe</h4>
                 </div>
                 <div className="card-body">
@@ -52,7 +50,7 @@ const JefeDashboard = () => {
                             </ul>
                             {pendingSolicitudes.length > 5 && (
                                 <div className="text-center mt-2">
-                                    <a href="/inbox" className="btn btn-sm btn-outline-primary">Ver todas</a>
+                                    <a href="/feriados/inbox" className="btn btn-sm btn-outline-primary">Ver todas</a>
                                 </div>
                             )}
                         </div>

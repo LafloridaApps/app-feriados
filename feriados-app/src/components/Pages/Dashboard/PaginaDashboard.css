@@ -1,0 +1,156 @@
+/* PaginaDashboard.css */
+
+.dashboard-container {
+    padding: 20px;
+    background-color: #f8f9fa; /* Fondo de página */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: flex; /* Habilitar flexbox para expansión vertical */
+    flex-direction: column;
+    min-height: calc(100vh - 100px); /* Ajustar a la altura de la ventana menos el navbar/footer */
+}
+
+.dashboard-header {
+    color: #333333; /* Gris oscuro para texto principal */
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.dashboard-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+    flex: 1; /* Permitir que la tarjeta se expanda verticalmente */
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-calendar-header {
+    background-color: #28a745 !important; /* Verde profesional */
+    color: #ffffff !important;
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+}
+
+.dashboard-calendar-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columnas para los días de la semana */
+    grid-auto-rows: minmax(100px, auto); /* Altura mínima para las filas, se ajusta al contenido */
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    overflow: hidden; /* Para que los bordes redondeados se vean bien */
+}
+
+.dashboard-calendar-day {
+    min-height: 100px; /* Altura mínima para los días */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border 0.2s ease;
+    position: relative; /* Para iconos */
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0; /* Añadir borde inferior para las filas */
+    font-size: 0.9rem;
+}
+
+/* Eliminar el borde derecho del último día de cada fila (cada 7mo elemento) */
+.dashboard-calendar-day:nth-child(7n) {
+    border-right: none;
+}
+
+/* Eliminar el borde inferior de los días de la última fila */
+.dashboard-calendar-grid-wrapper > div:nth-last-child(-n + 7) {
+    border-bottom: none;
+}
+
+
+.dashboard-calendar-day:last-child {
+    border-right: none;
+}
+
+.dashboard-calendar-day:hover {
+    background-color: #e9ecef;
+}
+
+.dashboard-calendar-day.has-absence {
+    background-color: #ffc107; /* Warning yellow */
+    color: #212529;
+    font-weight: bold;
+}
+
+.dashboard-calendar-day.is-selected {
+    border: 3px solid #007bff !important; /* Azul neutro para selección */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Sombra para resaltar */
+    z-index: 1; /* Asegurar que el borde de selección se vea */
+}
+
+.dashboard-details-footer {
+    border-top: 1px solid #e0e0e0;
+    padding: 15px 20px;
+    background-color: #fdfdfd;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.dashboard-details-footer h5 {
+    color: #28a745; /* Verde profesional para el título de detalles */
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.dashboard-details-footer h6 {
+    color: #007bff; /* Azul neutro */
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.dashboard-details-footer .list-group-item {
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.dashboard-details-footer .list-group-item:hover {
+    background-color: #eef7ff; /* Un azul muy claro al pasar el ratón */
+}
+
+.dashboard-modal-header {
+    background-color: #28a745 !important; /* Verde profesional */
+    color: #ffffff !important;
+    border-bottom: 1px solid #218838 !important;
+}
+
+.dashboard-modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Make close button white */
+}
+
+.dashboard-modal-body p strong {
+    color: #333333;
+}
+
+.dashboard-modal-body h6 {
+    color: #28a745; /* Verde profesional para subtítulos del modal */
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.dashboard-modal-footer {
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+.dashboard-mini-calendar-day.is-highlighted {
+    background-color: #28a745 !important; /* Verde profesional */
+    color: #fff !important;
+}

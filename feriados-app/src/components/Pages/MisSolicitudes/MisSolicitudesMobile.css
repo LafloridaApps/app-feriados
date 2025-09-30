@@ -1,0 +1,72 @@
+/* MisSolicitudesMobile.css */
+
+.mis-solicitudes-mobile-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.mis-solicitudes-mobile-card-header {
+    background-color: #f5f5f5;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: bold;
+    color: #333333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mis-solicitudes-mobile-card-body {
+    padding: 15px;
+    color: #555555;
+}
+
+.mis-solicitudes-mobile-card-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.mis-solicitudes-mobile-card-item strong {
+    color: #333333;
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+
+.mis-solicitudes-mobile-card-actions {
+    padding: 10px 15px;
+    border-top: 1px solid #e0e0e0;
+    text-align: right;
+}
+
+/* Reusing badge styles from MisSolicitudes.css for consistency */
+.badge-estado-pendiente {
+    background-color: #ffc107; /* Warning yellow */
+    color: #212529;
+}
+
+.badge-estado-aprobado {
+    background-color: #28a745; /* Success green */
+    color: #fff;
+}
+
+.badge-estado-rechazado {
+    background-color: #dc3545; /* Danger red */
+    color: #fff;
+}
+
+.badge-estado-finalizado {
+    background-color: #0056b3; /* Nuevo azul primario */
+    color: #fff;
+}
+
+.badge-estado-otro {
+    background-color: #6c757d; /* Secondary gray */
+    color: #fff;
+}

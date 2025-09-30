@@ -1,0 +1,74 @@
+/* JefeDashboard.css */
+
+.jefe-dashboard-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px !important; /* Apply consistent border radius */
+    transition: transform 0.2s ease-in-out;
+}
+
+.jefe-dashboard-card:hover {
+    transform: translateY(-3px);
+}
+
+.jefe-dashboard-card .card-header {
+    background-color: #007bff !important; /* Azul neutro para header */
+    color: #ffffff !important;
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+}
+
+.jefe-dashboard-card .card-header h4 {
+    color: #ffffff !important;
+}
+
+.jefe-dashboard-card .alert-info {
+    background-color: #e0f7fa !important; /* Light blue for info alert */
+    border-color: #b2ebf2 !important;
+    color: #007bff !important;
+}
+
+.jefe-dashboard-card .alert-info h5 {
+    color: #007bff !important; /* Azul neutro */
+}
+
+.jefe-dashboard-card .bi-bell-fill {
+    color: #ffc107 !important; /* Warning yellow for icon */
+}
+
+.jefe-dashboard-card .bi-calendar-event-fill {
+    color: #17a2b8 !important; /* Info blue for icon */
+}
+
+.jefe-dashboard-card .bi-person-x-fill {
+    color: #dc3545 !important; /* Danger red for icon */
+}
+
+.jefe-dashboard-card .badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.jefe-dashboard-card .display-4.fw-bold.text-danger {
+    color: #dc3545 !important;
+}
+
+.jefe-dashboard-card .btn-outline-primary {
+    color: #007bff !important;
+    border-color: #007bff !important;
+}
+
+.jefe-dashboard-card .btn-outline-primary:hover {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.jefe-dashboard-card .btn-outline-danger {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.jefe-dashboard-card .btn-outline-danger:hover {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}

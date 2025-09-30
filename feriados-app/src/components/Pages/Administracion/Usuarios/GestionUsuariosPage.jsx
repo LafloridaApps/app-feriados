@@ -4,6 +4,7 @@ import { listarUsuarios } from '../../../../services/usuarioService';
 import UserTable from './components/UserTable';
 import AddUserModal from './components/AddUserModal';
 import ManageUserModulesModal from './components/ManageUserModulesModal';
+import './GestionUsuariosPage.css'; // Importar el archivo CSS personalizado
 
 const GestionUsuariosPage = () => {
     const [usuarios, setUsuarios] = useState([]);
@@ -74,10 +75,10 @@ const GestionUsuariosPage = () => {
     });
 
     return (
-        <div className="container py-5">
+        <div className="container py-5 gestion-usuarios-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Gestión de Usuarios</h2>
-                <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                <h2 className="gestion-usuarios-header">Gestión de Usuarios</h2>
+                <button className="btn btn-primary gestion-usuarios-add-button" onClick={() => setShowAddModal(true)}>
                     <i className="bi bi-plus-lg me-2"></i>
                     Agregar Usuario
                 </button>
@@ -86,7 +87,7 @@ const GestionUsuariosPage = () => {
             <div className="mb-3">
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control gestion-usuarios-search-input"
                     placeholder="Buscar por nombre, login o RUT..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

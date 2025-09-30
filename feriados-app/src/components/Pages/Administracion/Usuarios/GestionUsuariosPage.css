@@ -1,0 +1,48 @@
+/* GestionUsuariosPage.css */
+
+.gestion-usuarios-container {
+    padding: 20px;
+    background-color: #f8f9fa; /* Fondo de página */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.gestion-usuarios-header {
+    color: #333333; /* Gris oscuro para texto principal */
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.gestion-usuarios-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.gestion-usuarios-card-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #007bff; /* Azul neutro */
+    margin-bottom: 15px;
+}
+
+.gestion-usuarios-search-input {
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+}
+
+.gestion-usuarios-add-button {
+    background-color: #28a745; /* Verde profesional */
+    border-color: #28a745;
+    color: #fff;
+}
+
+.gestion-usuarios-add-button:hover {
+    background-color: #218838;
+    border-color: #218838;
+}

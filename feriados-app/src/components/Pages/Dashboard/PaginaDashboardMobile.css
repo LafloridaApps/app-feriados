@@ -1,0 +1,75 @@
+/* PaginaDashboardMobile.css */
+
+.dashboard-mobile-container {
+    padding: 15px;
+}
+
+.dashboard-mobile-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 15px;
+}
+
+.dashboard-mobile-card-header {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.dashboard-mobile-calendar-day {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border 0.2s ease;
+    font-size: 0.8rem;
+    position: relative;
+}
+
+.dashboard-mobile-calendar-day:hover {
+    background-color: #e9ecef;
+}
+
+.dashboard-mobile-calendar-day.has-absence {
+    background-color: #ffc107; /* Warning yellow */
+    color: #212529;
+    font-weight: bold;
+}
+
+.dashboard-mobile-calendar-day.is-selected {
+    border: 2px solid #007bff !important; /* Azul neutro para selección */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Sombra para resaltar */
+}
+
+.dashboard-mobile-details-section {
+    margin-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+    background-color: #fdfdfd;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.dashboard-mobile-details-section h5 {
+    color: #28a745; /* Verde profesional para el título de detalles */
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.dashboard-mobile-details-section h6 {
+    color: #007bff; /* Azul neutro */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.dashboard-mobile-details-section .badge.bg-info {
+    background-color: #007bff !important;
+    color: #fff !important;
+}

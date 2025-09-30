@@ -1,0 +1,48 @@
+/* SolicitudesMesWidget.css */
+
+.solicitudes-mes-widget-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease-in-out;
+}
+
+.solicitudes-mes-widget-card:hover {
+    transform: translateY(-3px);
+}
+
+.solicitudes-mes-widget-card .card-title {
+    color: #007bff; /* Azul neutro para título */
+}
+
+.solicitudes-mes-widget-card .bi-file-earmark-text-fill {
+    color: #007bff !important; /* Azul neutro para icono */
+}
+
+.solicitudes-mes-widget-card .list-group-item {
+    border-bottom: 1px dashed #e9ecef !important;
+}
+
+.solicitudes-mes-widget-card .list-group-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Badge colors for consistency */
+.solicitudes-mes-widget-card .badge.bg-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.solicitudes-mes-widget-card .badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.solicitudes-mes-widget-card .btn-outline-primary {
+    color: #007bff !important;
+    border-color: #007bff !important;
+}
+
+.solicitudes-mes-widget-card .btn-outline-primary:hover {
+    background-color: #007bff !important;
+    color: #fff !important;
+}

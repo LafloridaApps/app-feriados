@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 
 const RrhhPagination = ({ itemsPerPage, totalItems, paginate, currentPage, nextPage, prevPage }) => {
     const pageNumbers = [];
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
+    for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
     }
 
@@ -23,7 +24,7 @@ const RrhhPagination = ({ itemsPerPage, totalItems, paginate, currentPage, nextP
                         </a>
                     </li>
                 ))}
-                <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                     <a onClick={() => nextPage()} className="page-link" href="#">
                         Siguiente
                     </a>

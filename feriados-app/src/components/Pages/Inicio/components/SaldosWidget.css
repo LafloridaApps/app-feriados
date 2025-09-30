@@ -1,0 +1,38 @@
+/* SaldosWidget.css */
+
+.saldos-widget-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease-in-out;
+}
+
+.saldos-widget-card:hover {
+    transform: translateY(-3px);
+}
+
+.saldos-widget-card .card-title {
+    color: #007bff; /* Azul neutro para título */
+}
+
+.saldos-widget-card .bi-wallet-fill {
+    color: #28a745 !important; /* Verde profesional para icono */
+}
+
+.saldos-widget-card .list-group-item {
+    border-bottom: 1px dashed #e9ecef !important;
+}
+
+.saldos-widget-card .list-group-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Badge colors for consistency */
+.saldos-widget-card .badge.bg-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.saldos-widget-card .badge.bg-primary {
+    background-color: #007bff !important; /* Azul neutro */
+    color: #fff !important;
+}

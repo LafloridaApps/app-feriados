@@ -1,0 +1,25 @@
+/* WelcomeWidget.css */
+
+.welcome-widget-card {
+    background: linear-gradient(45deg, #28a745, #218838); /* Gradient background with new primary green */
+    color: #ffffff; /* White text for contrast */
+    border: none; /* Remove default card border */
+}
+
+.welcome-widget-card .text-primary {
+    color: #ffffff !important; /* Override Bootstrap primary text color */
+}
+
+.welcome-widget-card .text-muted,
+.welcome-widget-card .text-secondary {
+    color: rgba(255, 255, 255, 0.8) !important; /* Lighter text for contrast */
+}
+
+.welcome-widget-card .fw-bold.text-dark {
+    color: #ffffff !important; /* Ensure bold text is white */
+}
+
+.welcome-widget-image {
+    border: 4px solid rgba(255, 255, 255, 0.5); /* Lighter border for image */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
+}
