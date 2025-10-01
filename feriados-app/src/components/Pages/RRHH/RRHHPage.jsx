@@ -45,10 +45,34 @@ const RRHHPage = () => {
                 {activeTab === 'generar' && (
                     <div className="tab-pane fade show active">
                         <GeneradorDecretos
-                            {...generarDecretos}
+                            // Props del hook directamente
+                            fechaDesde={generarDecretos.fechaDesde}
+                            setFechaDesde={generarDecretos.setFechaDesde}
+                            fechaHasta={generarDecretos.fechaHasta}
+                            setFechaHasta={generarDecretos.setFechaHasta}
+                            handleCargarAprobaciones={generarDecretos.handleCargarAprobaciones}
+                            handleLimpiarFiltros={generarDecretos.handleLimpiarFiltros}
+                            loading={generarDecretos.loading}
                             selectedItemsCount={generarDecretos.selectedItems.length}
                             handleGenerarDecreto={generarDecretos.handleOpenTemplateModal}
+                            currentAprobaciones={generarDecretos.currentAprobaciones}
+                            totalElements={generarDecretos.totalElements}
+                            selectedItems={generarDecretos.selectedItems}
+                            onSelectItem={generarDecretos.handleSelectItem}
+                            onSelectAll={generarDecretos.handleSelectAll}
+                            requestSort={generarDecretos.requestSort}
+                            sortConfig={generarDecretos.sortConfig}
+                            componentPage={generarDecretos.componentPage}
+                            itemsPerPage={generarDecretos.itemsPerPage}
+                            handlePageChange={generarDecretos.handlePageChange}
+                            selectedTipoContrato={generarDecretos.selectedTipoContrato}
+                            handleTipoContratoChange={generarDecretos.handleTipoContratoChange}
+                            tipoContratoOptions={generarDecretos.tipoContratoOptions}
+                            selectedTipoSolicitud={generarDecretos.selectedTipoSolicitud}
+                            setSelectedTipoSolicitud={generarDecretos.setSelectedTipoSolicitud}
+                            tipoSolicitudOptions={generarDecretos.tipoSolicitudOptions}
                         />
+
                         {generarDecretos.loading && (
                             <div className="d-flex justify-content-center mt-4">
                                 <div className="spinner-border" role="status">
@@ -56,25 +80,8 @@ const RRHHPage = () => {
                                 </div>
                             </div>
                         )}
-                        {generarDecretos.totalFilteredItems > 0 && (
-                            <>
-                                <TablaDecretos
-                                    data={generarDecretos.currentAprobaciones}
-                                    selectedItems={generarDecretos.selectedItems}
-                                    onSelectItem={generarDecretos.handleSelectItem}
-                                    onSelectAll={generarDecretos.handleSelectAll}
-                                    requestSort={generarDecretos.requestSort}
-                                    sortConfig={generarDecretos.sortConfig} />
-                                <RrhhPagination
-                                    itemsPerPage={generarDecretos.itemsPerPage}
-                                    totalItems={generarDecretos.totalFilteredItems}
-                                    paginate={generarDecretos.paginate}
-                                    currentPage={generarDecretos.currentPage}
-                                    nextPage={generarDecretos.nextPage}
-                                    prevPage={generarDecretos.prevPage} />
-                            </>
-                        )}
-                        {generarDecretos.aprobacionesSearchPerformed && generarDecretos.totalFilteredItems === 0 && (
+
+                        {generarDecretos.aprobacionesSearchPerformed && generarDecretos.currentAprobaciones.length === 0 && !generarDecretos.loading && (
                             <div className="alert alert-info mt-4" role="alert">No se encontraron aprobaciones con los filtros aplicados.</div>
                         )}
                         {!generarDecretos.aprobacionesSearchPerformed && (

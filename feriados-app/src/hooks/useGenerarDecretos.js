@@ -1,5 +1,4 @@
-import { useState, useContext } from 'react';
-import { useRrhhData } from './useRrhhData';
+import { useState, useContext, useCallback, useMemo } from 'react';
 import { useRrhhSelection } from './useRrhhSelection';
 import { getAprobacionesBetweenDates } from '../services/aprobacionListService';
 import { decretar } from '../services/decretarService';
@@ -9,19 +8,30 @@ import { useAlertaSweetAlert } from './useAlertaSweetAlert';
 import { UsuarioContext } from '../context/UsuarioContext';
 import { exportToExcel } from '../services/utils';
 
+const ITEMS_PER_PAGE = 10;
+const BACKEND_PAGE_SIZE = 20;
+
 export const useGenerarDecretos = () => {
     const [fechaDesde, setFechaDesde] = useState('');
     const [fechaHasta, setFechaHasta] = useState('');
-    const [selectedTipoSolicitud, setSelectedTipoSolicitud] = useState('');
-    const [selectedTipoContrato, setSelectedTipoContrato] = useState([]);
-    const [searchRut, setSearchRut] = useState('');
-    const [searchNombre, setSearchNombre] = useState('');
-    const [searchIdSolicitud, setSearchIdSolicitud] = useState('');
     const [allAprobaciones, setAllAprobaciones] = useState([]);
-    const [tipoSolicitudOptions, setTipoSolicitudOptions] = useState([]);
-    const [tipoContratoOptions, setTipoContratoOptions] = useState([]);
-    const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
+
+    // State for backend pagination
+    const [backendPage, setBackendPage] = useState(0);
+    const [totalBackendPages, setTotalBackendPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
+
+    // State for component pagination
+    const [componentPage, setComponentPage] = useState(1);
+
+    // State for filters
+    const [selectedTipoContrato, setSelectedTipoContrato] = useState([]);
+    const [tipoContratoOptions, setTipoContratoOptions] = useState([]);
+    const [selectedTipoSolicitud, setSelectedTipoSolicitud] = useState('');
+    const [tipoSolicitudOptions, setTipoSolicitudOptions] = useState([]);
+
     const [showTemplateModal, setShowTemplateModal] = useState(false);
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -30,33 +40,36 @@ export const useGenerarDecretos = () => {
     const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
     const funcionario = useContext(UsuarioContext);
 
-    const { currentAprobaciones, totalFilteredItems, paginate, nextPage, prevPage, currentPage, itemsPerPage } = useRrhhData(
-        allAprobaciones, selectedTipoSolicitud, selectedTipoContrato, searchRut, searchNombre, searchIdSolicitud, sortConfig
-    );
-    const { selectedItems, setSelectedItems, handleSelectItem, handleSelectAll } = useRrhhSelection(currentAprobaciones);
-
-    const handleCargarAprobaciones = async () => {
+    const handleCargarAprobaciones = useCallback(async (page = 0) => {
         if (!fechaDesde || !fechaHasta) {
             mostrarAlertaError('Debe seleccionar una fecha de inicio y una fecha de fin.');
             return;
         }
         setLoading(true);
+        if (page === 0) {
+            setAllAprobaciones([]); // Reset on initial load
+        }
+
         try {
-            const response = await getAprobacionesBetweenDates(fechaDesde, fechaHasta);
-            const data = Array.isArray(response) ? response : [];
-            setAllAprobaciones(data);
+            const response = await getAprobacionesBetweenDates(fechaDesde, fechaHasta, page, BACKEND_PAGE_SIZE);
+            if (response && response.aprobaciones) {
+                const newAprobaciones = [...allAprobaciones, ...response.aprobaciones];
+                setAllAprobaciones(newAprobaciones);
+                setTotalBackendPages(response.totalPages);
+                setTotalElements(response.totalElements);
+                setBackendPage(response.currentPage);
 
-            if (data.length > 0) {
-                const uniqueSolicitudes = [...new Set(data.map(item => item.tipoSolicitud))];
-                const uniqueContratos = [...new Set(data.map(item => item.tipoContrato))];
-                setTipoSolicitudOptions(uniqueSolicitudes);
+                // Update filter options from all loaded data
+                const uniqueContratos = [...new Set(newAprobaciones.map(item => item.tipoContrato))];
                 setTipoContratoOptions(uniqueContratos);
-            } else {
-                setTipoSolicitudOptions([]);
-                setTipoContratoOptions([]);
-            }
+                const uniqueSolicitudes = [...new Set(newAprobaciones.map(item => item.tipoSolicitud))];
+                setTipoSolicitudOptions(uniqueSolicitudes);
 
-            setSelectedItems([]);
+            } else {
+                if (page === 0) {
+                    mostrarAlertaError('No se encontraron aprobaciones para los filtros seleccionados.');
+                }
+            }
             setAprobacionesSearchPerformed(true);
         } catch (error) {
             mostrarAlertaError('Error al cargar aprobaciones.');
@@ -64,7 +77,41 @@ export const useGenerarDecretos = () => {
         } finally {
             setLoading(false);
         }
+    }, [fechaDesde, fechaHasta, mostrarAlertaError]);
+
+    const handlePageChange = (newPage) => {
+        const requiredBackendPage = Math.floor(((newPage - 1) * ITEMS_PER_PAGE) / BACKEND_PAGE_SIZE);
+        
+        if (requiredBackendPage > backendPage && backendPage < totalBackendPages - 1) {
+            handleCargarAprobaciones(backendPage + 1);
+        }
+        setComponentPage(newPage);
     };
+
+    const handleTipoContratoChange = (e) => {
+        const { value, checked } = e.target;
+        setSelectedTipoContrato(prev => checked ? [...prev, value] : prev.filter(type => type !== value));
+        setComponentPage(1); // Reset to first page on filter change
+    };
+
+    // Apply client-side filtering before pagination
+    const filteredAprobaciones = useMemo(() => {
+        return allAprobaciones
+            .filter(item => {
+                return selectedTipoContrato.length === 0 || selectedTipoContrato.includes(item.tipoContrato);
+            })
+            .filter(item => {
+                return selectedTipoSolicitud === '' || item.tipoSolicitud === selectedTipoSolicitud;
+            });
+    }, [allAprobaciones, selectedTipoContrato, selectedTipoSolicitud]);
+
+    // Derived state for current page items, memoized to prevent infinite loops
+    const currentAprobaciones = useMemo(() => filteredAprobaciones.slice(
+        (componentPage - 1) * ITEMS_PER_PAGE,
+        componentPage * ITEMS_PER_PAGE
+    ), [filteredAprobaciones, componentPage]);
+
+    const { selectedItems, setSelectedItems, handleSelectItem, handleSelectAll } = useRrhhSelection(currentAprobaciones);
 
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -77,16 +124,18 @@ export const useGenerarDecretos = () => {
     const handleLimpiarFiltros = () => {
         setFechaDesde('');
         setFechaHasta('');
-        setSelectedTipoSolicitud('');
-        setSelectedTipoContrato([]);
-        setSearchRut('');
-        setSearchNombre('');
-        setSearchIdSolicitud('');
         setAllAprobaciones([]);
-        setTipoSolicitudOptions([]);
-        setTipoContratoOptions([]);
         setSelectedItems([]);
         setAprobacionesSearchPerformed(false);
+        // Reset pagination and filter state
+        setComponentPage(1);
+        setBackendPage(0);
+        setTotalBackendPages(0);
+        setTotalElements(0);
+        setSelectedTipoContrato([]);
+        setTipoContratoOptions([]);
+        setSelectedTipoSolicitud('');
+        setTipoSolicitudOptions([]);
     };
 
     const handleOpenTemplateModal = async () => {
@@ -184,35 +233,21 @@ export const useGenerarDecretos = () => {
         }
     };
 
-    const handleTipoContratoChange = (e) => {
-        const { value, checked } = e.target;
-        setSelectedTipoContrato(prev => checked ? [...prev, value] : prev.filter(type => type !== value));
-    };
-
     return {
         fechaDesde, setFechaDesde,
         fechaHasta, setFechaHasta,
-        selectedTipoSolicitud, setSelectedTipoSolicitud,
-        selectedTipoContrato, handleTipoContratoChange,
-        searchRut, setSearchRut,
-        searchNombre, setSearchNombre,
-        searchIdSolicitud, setSearchIdSolicitud,
         allAprobaciones,
-        tipoSolicitudOptions,
-        tipoContratoOptions,
         aprobacionesSearchPerformed,
         loading, setLoading,
         showTemplateModal, setShowTemplateModal,
         templates,
         selectedTemplate, setSelectedTemplate,
         sortConfig,
-        currentAprobaciones,
-        totalFilteredItems,
-        paginate,
-        nextPage,
-        prevPage,
-        currentPage,
-        itemsPerPage,
+        currentAprobaciones, // The items for the current view, filtered and paginated
+        totalElements: filteredAprobaciones.length, // Total items after filtering for pagination
+        componentPage, // Current page for pagination component
+        itemsPerPage: ITEMS_PER_PAGE,
+        handlePageChange, // Function to change page
         selectedItems,
         handleSelectItem,
         handleSelectAll,
@@ -220,6 +255,14 @@ export const useGenerarDecretos = () => {
         requestSort,
         handleLimpiarFiltros,
         handleOpenTemplateModal,
-        handleGenerarDecreto
+        handleGenerarDecreto,
+        // Contract filter props
+        selectedTipoContrato,
+        handleTipoContratoChange,
+        tipoContratoOptions,
+        // Solicitud filter props
+        selectedTipoSolicitud,
+        setSelectedTipoSolicitud,
+        tipoSolicitudOptions,
     };
 };

@@ -55,7 +55,7 @@ const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, request
                             </td>
                             <td>{item.idSolicitud}</td>
                             <td>{item.rut}</td>
-                            <td>{item.nombres}</td>
+                            <td>{`${item.apellidos} ${item.nombres}`}</td>
                             <td>{item.departamento}</td>
                             <td>{item.desde}</td>
                             <td>{item.hasta}</td>
@@ -83,6 +83,7 @@ TablaDecretos.propTypes = {
     data: PropTypes.arrayOf(PropTypes.shape({
         rut: PropTypes.string.isRequired,
         nombres: PropTypes.string.isRequired,
+        apellidos: PropTypes.string.isRequired,
         departamento: PropTypes.string.isRequired,
         desde: PropTypes.string.isRequired,
         hasta: PropTypes.string.isRequired,
