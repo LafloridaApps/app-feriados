@@ -3,7 +3,6 @@ import { BASE_URL } from './url.js';
 
 const api = axios.create({
   baseURL: `${BASE_URL}/solicitudes/departamentos`
-
 });
 
 export const getDepartamentosList = async () => {
@@ -16,9 +15,9 @@ export const getDepartamentosList = async () => {
   }
 };
 
-export const updateDepartamentoById = async (id, nuevoNombre) => {
+export const updateDepartamentoById = async (id, deptoData) => {
   try {
-    const { data } = await api.put('', { nombre: nuevoNombre }, {
+    const { data } = await api.put('', deptoData, {
       params: { idDepto: id }
     });
     return data;
@@ -36,6 +35,16 @@ export const updateJefeDeptoById = async (id, nuevoRut) => {
     return data;
   } catch (error) {
     console.error('Error al actualizar el jefe del departamento:', error);
+    throw error;
+  }
+};
+
+export const createDepartamento = async (deptoData) => {
+  try {
+    const { data } = await api.post('', deptoData);
+    return data;
+  } catch (error) {
+    console.error('Error al crear el departamento:', error);
     throw error;
   }
 };

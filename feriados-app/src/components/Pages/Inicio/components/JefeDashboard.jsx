@@ -77,7 +77,7 @@ const JefeDashboard = () => {
                             <div className="text-center">
                                 <p className="display-4 fw-bold text-danger">{todayAbsences}</p>
                                 <p className="text-muted">funcionarios ausentes</p>
-                                <a href="/dashboard" className="btn btn-sm btn-outline-danger mt-3">Ver Dashboard</a>
+                                <a href="/feriados/dashboard" className="btn btn-sm btn-outline-danger mt-3">Ver Dashboard</a>
                             </div>
                         </div>
                     </div>

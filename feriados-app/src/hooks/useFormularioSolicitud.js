@@ -41,6 +41,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     const depto = funcionario?.codDepto;
     const codDeptoJefe = funcionario?.codDeptoJefe;
 
+
     const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas, detalleFer, detalleAdm, tipo, fechaInicio);
 
     const parseDateAsLocal = (dateString) => {
@@ -200,7 +201,8 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
         try {
             setEnviando(true);
-            const res = await saveSolicitud(nuevaSolicitud);
+            console.log(diasUsar)
+            //const res = await saveSolicitud(nuevaSolicitud);
             await Swal.fire({
                 icon: 'success',
                 title: 'Solicitud enviada',

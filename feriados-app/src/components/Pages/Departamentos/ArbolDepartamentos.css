@@ -1,57 +1,7 @@
-.tree-container {
-    list-style: none;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
-.tree-node {
-    padding: 8px 0;
-    position: relative;
-}
-
-.tree-node>div {
-    padding: 5px;
-    border-radius: 3px;
-}
-
-.tree-node.active>div {
-    background-color: #e0f7fa;
-    /* Un color suave para el activo */
-    border: 1px solid #b2ebf2;
-}
-
-.tree-children {
-    list-style: none;
-    padding-left: 20px;
-    margin-left: 10px;
-}
-
-.tree-children::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    bottom: 0;
-    left: 5px;
-    border-left: 1px solid #ccc;
-}
-
-.tree-node::before {
-    content: '';
-    position: absolute;
-    top: 15px;
-    left: -10px;
-    width: 10px;
-    height: 1px;
-    background-color: #ccc;
-}
-
-.tree-node:last-child .tree-children::before {
-    display: none;
-}
-
-.tree-node .bi {
-    cursor: pointer;
-    margin-right: 5px;
+.scrollable-tree {
+  height: 65vh; /* Altura máxima del contenedor del árbol */
+  overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede la altura */
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
 }

@@ -108,12 +108,9 @@ const RRHHPage = () => {
                             <>
                                 <ConsultaDecretosResults data={consultarDecretos.results} />
                                 <RrhhPagination
-                                    itemsPerPage={consultarDecretos.itemsPerPage}
-                                    totalItems={consultarDecretos.totalItems}
-                                    paginate={consultarDecretos.paginate}
-                                    currentPage={consultarDecretos.currentPage}
-                                    nextPage={consultarDecretos.nextPage}
-                                    prevPage={consultarDecretos.prevPage}
+                                    currentPage={consultarDecretos.currentPage + 1}
+                                    totalPages={consultarDecretos.totalPages}
+                                    onPageChange={consultarDecretos.handlePageChange}
                                 />
                             </>
                         )}

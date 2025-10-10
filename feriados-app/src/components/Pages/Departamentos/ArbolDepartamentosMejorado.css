@@ -35,21 +35,19 @@
 .tree-toggler-mejorado {
     position: absolute;
     left: 0;
-    top: 8px;
+    top: 12px; /* Posición fija desde arriba */
     width: 20px;
     height: 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.2s ease-in-out;
 }
 
-.tree-toggler-mejorado::before {
-    content: '\25B6'; /* Triángulo a la derecha */
-    display: inline-block;
-    font-size: 12px;
-}
-
-.tree-toggler-mejorado.expanded::before {
-    transform: rotate(90deg);
+.tree-toggler-mejorado i {
+    transition: transform 0.2s ease-in-out;
+    font-size: 0.9rem;
 }
 
 .tree-children-mejorado {
@@ -62,4 +60,36 @@
 
 .tree-node-mejorado.expanded > .tree-children-mejorado {
     display: block;
+}
+
+/* --- Estilos para el Menú Kebab --- */
+.kebab-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    padding: 5px 0;
+    min-width: 220px; /* Ancho mínimo del menú */
+}
+
+.kebab-menu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #333; /* Color de texto normal del menú */
+}
+
+/* Forzar color de texto del menú cuando el nodo está activo */
+.tree-node-mejorado.active .kebab-menu-item {
+    color: #333;
+}
+
+.kebab-menu-item:hover {
+    background-color: #f0f0f0;
 }

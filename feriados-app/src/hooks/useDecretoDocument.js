@@ -15,7 +15,7 @@ export const useDecretoDocument = () => {
       const response = await getDocDecreto(idDecreto);
       const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
       const url = window.URL.createObjectURL(blob);
-      
+
       if (download) {
         const link = document.createElement('a');
         link.href = url;
@@ -26,7 +26,7 @@ export const useDecretoDocument = () => {
       } else {
         window.open(url, '_blank');
       }
-      
+
       window.URL.revokeObjectURL(url);
       Swal.close();
     } catch (error) {

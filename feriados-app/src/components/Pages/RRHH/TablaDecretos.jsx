@@ -44,8 +44,8 @@ const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, request
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item) => (
-                        <tr key={item.idSolicitud}>
+                    {data.map((item, index) => (
+                        <tr key={`${item.idSolicitud}-${index}`}>
                             <td>
                                 <input
                                     type="checkbox"

@@ -1,0 +1,11 @@
+.footer {
+  border-top: 1px solid #e7e7e7;
+}
+
+.logo-horizontal {
+  max-height: 50px;
+}
+
+.logo-vertical {
+  max-height: 75px;
+}

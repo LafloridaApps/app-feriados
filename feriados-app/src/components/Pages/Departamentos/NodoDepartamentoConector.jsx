@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const NodoDepartamentoConector = ({
     departamento,
@@ -9,27 +9,39 @@ const NodoDepartamentoConector = ({
     departamentoSeleccionado,
     depth,
     onEditarDepartamento,
+    onShowCrearModal,
 }) => {
     const [enEdicion, setEnEdicion] = useState(false);
     const [nombreEditado, setNombreEditado] = useState(departamento.nombre);
+    const [menuVisible, setMenuVisible] = useState(false);
+    const menuRef = useRef(null);
+
     const tieneDependencias = departamento.dependencias && departamento.dependencias.length > 0;
     const estaExpandido = nodosExpandidos[departamento.id] || false;
     const esDepartamentoSeleccionado = departamento?.id === departamentoSeleccionado?.id;
+
+    // Cerrar menú si se hace clic fuera
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenuVisible(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [menuRef]);
 
     const handleSeleccion = () => {
         onSeleccionarDepartamento(departamento);
     };
 
     const handleToggle = (e) => {
-        e.stopPropagation(); // Evita que el clic se propague al contenedor del nodo
+        e.stopPropagation();
         if (tieneDependencias) {
             onToggleNodo(departamento.id);
         }
-    };
-
-    const handleEditarClick = (e) => {
-        e.stopPropagation();
-        setEnEdicion(true);
     };
 
     const handleGuardarEdicion = (e) => {
@@ -48,49 +60,82 @@ const NodoDepartamentoConector = ({
         setNombreEditado(e.target.value);
     };
 
+    const handleMenuToggle = (e) => {
+        e.stopPropagation();
+        setMenuVisible(!menuVisible);
+    };
+
+    const handleEditClick = (e) => {
+        e.stopPropagation();
+        setEnEdicion(true);
+        setMenuVisible(false);
+    }
+
+    const handleAddClick = (e) => {
+        e.stopPropagation();
+        onShowCrearModal(departamento);
+        setMenuVisible(false);
+    }
+
     const nodeClasses = `tree-node-mejorado ${estaExpandido ? 'expanded' : ''} ${esDepartamentoSeleccionado ? 'active' : ''}`;
 
     return (
         <li className={nodeClasses}>
             <div className="tree-node-mejorado-content" onClick={handleSeleccion}>
-                {tieneDependencias && (
-                    <span
-                        className={`tree-toggler-mejorado ${estaExpandido ? 'expanded' : ''}`}
-                        onClick={handleToggle}
-                    />
-                )}
-                <span style={{ marginLeft: tieneDependencias ? '5px' : '25px' }}>
+                                <span
+                    className={`tree-toggler-mejorado ${estaExpandido ? 'expanded' : ''}`}
+                    onClick={tieneDependencias ? handleToggle : null}
+                >
+                    {tieneDependencias && (estaExpandido ? <i className="bi bi-chevron-down"></i> : <i className="bi bi-chevron-right"></i>)}
+                </span>
+                <span style={{ marginLeft: '5px' }}>
                     {enEdicion ? (
                         <input
                             type="text"
                             className="form-control form-control-sm"
                             value={nombreEditado}
                             onChange={handleNombreChange}
-                            onClick={(e) => e.stopPropagation()} // Evita que se seleccione al hacer clic en el input
+                            onClick={(e) => e.stopPropagation()}
                         />
                     ) : (
                         departamento.nombre
                     )}
                 </span>
-                {esDepartamentoSeleccionado && !enEdicion && (
-                    <button
-                        className="btn btn-sm btn-light ms-auto"
-                        onClick={handleEditarClick}
-                    >
-                        <i className="bi bi-pencil-fill"></i>
-                    </button>
-                )}
-                {enEdicion && (
+
+                {/* --- Botones de edición y menú --- */}
+                {enEdicion ? (
                     <div className="ms-auto">
-                        <button className="btn btn-sm btn-success me-1" onClick={handleGuardarEdicion}>
+                        <button className="btn btn-sm btn-success me-1" onClick={handleGuardarEdicion} title="Guardar">
                             <i className="bi bi-check-lg"></i>
                         </button>
-                        <button className="btn btn-sm btn-secondary" onClick={handleCancelarEdicion}>
+                        <button className="btn btn-sm btn-secondary" onClick={handleCancelarEdicion} title="Cancelar">
                             <i className="bi bi-x-lg"></i>
                         </button>
                     </div>
+                ) : esDepartamentoSeleccionado && (
+                    <div className="ms-auto position-relative" ref={menuRef}>
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={handleMenuToggle}
+                            title="Opciones"
+                        >
+                            <i className="bi bi-three-dots-vertical"></i>
+                        </button>
+
+                        {menuVisible && (
+                            <div className="kebab-menu">
+                                <div className="kebab-menu-item" onClick={handleAddClick}>
+                                    <i className="bi bi-plus-lg me-2"></i>Añadir sub-departamento
+                                </div>
+                                <div className="kebab-menu-item" onClick={handleEditClick}>
+                                    <i className="bi bi-pencil-fill me-2"></i>Editar nombre
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
+
             {estaExpandido && tieneDependencias && (
                 <ul className="tree-children-mejorado">
                     {departamento.dependencias.map(dep => (
@@ -103,6 +148,7 @@ const NodoDepartamentoConector = ({
                             departamentoSeleccionado={departamentoSeleccionado}
                             depth={depth + 1}
                             onEditarDepartamento={onEditarDepartamento}
+                            onShowCrearModal={onShowCrearModal}
                         />
                     ))}
                 </ul>
@@ -119,6 +165,7 @@ NodoDepartamentoConector.propTypes = {
     departamentoSeleccionado: PropTypes.object,
     depth: PropTypes.number.isRequired,
     onEditarDepartamento: PropTypes.func.isRequired,
+    onShowCrearModal: PropTypes.func.isRequired,
 };
 
 export default NodoDepartamentoConector;

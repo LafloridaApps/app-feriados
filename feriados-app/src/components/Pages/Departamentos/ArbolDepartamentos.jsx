@@ -3,9 +3,9 @@ import './ArbolDepartamentosMejorado.css'; // Importamos el CSS mejorado
 import NodoDepartamentoConector from './NodoDepartamentoConector';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
-import { updateJefeDeptoById } from '../../../services/departamentosService';
+import { updateDepartamentoById } from '../../../services/departamentosService'; // Corregido: Importar el servicio correcto
 
-function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departamentoSeleccionado }) {
+function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departamentoSeleccionado, onShowCrearModal, fetchDepartamentos }) {
 
     const [nodosExpandidos, setNodosExpandidos] = useState({});
 
@@ -19,7 +19,7 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
     const onEditarDepartamento = (id, nuevoNombre) => {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: `¿Quieres cambiar el nombre del departamento?`,
+            text: `¿Quieres cambiar el nombre del departamento a "${nuevoNombre}"?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, cambiar',
@@ -27,12 +27,14 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await updateJefeDeptoById(id, nuevoNombre);
+                    // Corregido: Usar el servicio y payload correctos para actualizar el nombre
+                    await updateDepartamentoById(id, { nombre: nuevoNombre });
                     Swal.fire(
                         '¡Cambiado!',
                         `El nombre del departamento ha sido actualizado.`,
                         'success'
                     );
+                    fetchDepartamentos(); // Refrescar el árbol
                 } catch (error) {
                     Swal.fire(
                         'Error',
@@ -55,6 +57,7 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
                     onSeleccionarDepartamento={onSeleccionarDepartamento}
                     departamentoSeleccionado={departamentoSeleccionado}
                     onEditarDepartamento={onEditarDepartamento}
+                    onShowCrearModal={onShowCrearModal} // Pasar la nueva prop
                     depth={0} // Nivel inicial de profundidad
                 />
             ))}
@@ -63,8 +66,11 @@ function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departam
 }
 
 export default ArbolDepartamentos;
+
 ArbolDepartamentos.propTypes = {
     departamentos: PropTypes.array.isRequired,
     onSeleccionarDepartamento: PropTypes.func.isRequired,
     departamentoSeleccionado: PropTypes.object,
+    onShowCrearModal: PropTypes.func.isRequired, // Añadir a propTypes
+    fetchDepartamentos: PropTypes.func.isRequired,
 };

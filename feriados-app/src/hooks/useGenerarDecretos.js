@@ -21,7 +21,6 @@ export const useGenerarDecretos = () => {
     // State for backend pagination
     const [backendPage, setBackendPage] = useState(0);
     const [totalBackendPages, setTotalBackendPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
 
     // State for component pagination
     const [componentPage, setComponentPage] = useState(1);
@@ -40,51 +39,48 @@ export const useGenerarDecretos = () => {
     const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
     const funcionario = useContext(UsuarioContext);
 
-    const handleCargarAprobaciones = useCallback(async (page = 0) => {
+    const handleCargarAprobaciones = useCallback(async () => {
         if (!fechaDesde || !fechaHasta) {
             mostrarAlertaError('Debe seleccionar una fecha de inicio y una fecha de fin.');
             return;
         }
         setLoading(true);
-        if (page === 0) {
-            setAllAprobaciones([]); // Reset on initial load
-        }
+        setComponentPage(1); // Reset to first page for a new search
 
         try {
-            const response = await getAprobacionesBetweenDates(fechaDesde, fechaHasta, page, BACKEND_PAGE_SIZE);
-            if (response && response.aprobaciones) {
-                const newAprobaciones = [...allAprobaciones, ...response.aprobaciones];
-                setAllAprobaciones(newAprobaciones);
-                setTotalBackendPages(response.totalPages);
-                setTotalElements(response.totalElements);
-                setBackendPage(response.currentPage);
+            // Call service without pagination parameters, as it fetches all data
+            const response = await getAprobacionesBetweenDates(fechaDesde, fechaHasta);
 
-                // Update filter options from all loaded data
-                const uniqueContratos = [...new Set(newAprobaciones.map(item => item.tipoContrato))];
+            // Check if the response is a valid, non-empty array
+            if (response && Array.isArray(response) && response.length > 0) {
+                setAllAprobaciones(response); // Set the whole dataset
+
+                // Update filter options from the data
+                const uniqueContratos = [...new Set(response.map(item => item.tipoContrato))];
                 setTipoContratoOptions(uniqueContratos);
-                const uniqueSolicitudes = [...new Set(newAprobaciones.map(item => item.tipoSolicitud))];
+                const uniqueSolicitudes = [...new Set(response.map(item => item.tipoSolicitud))];
                 setTipoSolicitudOptions(uniqueSolicitudes);
 
             } else {
-                if (page === 0) {
-                    mostrarAlertaError('No se encontraron aprobaciones para los filtros seleccionados.');
-                }
+                // Clear previous results and show error if new search yields nothing.
+                setAllAprobaciones([]);
+                setTipoContratoOptions([]);
+                setTipoSolicitudOptions([]);
+                mostrarAlertaError('No se encontraron aprobaciones para los filtros seleccionados.');
             }
             setAprobacionesSearchPerformed(true);
         } catch (error) {
             mostrarAlertaError('Error al cargar aprobaciones.');
-            console.error(error);
+            console.error('Error al cargar aprobaciones:', error.response ? error.response.data : error);
+            setAllAprobaciones([]); // Clear data on error
+            setTipoContratoOptions([]);
+            setTipoSolicitudOptions([]);
         } finally {
             setLoading(false);
         }
     }, [fechaDesde, fechaHasta, mostrarAlertaError]);
 
     const handlePageChange = (newPage) => {
-        const requiredBackendPage = Math.floor(((newPage - 1) * ITEMS_PER_PAGE) / BACKEND_PAGE_SIZE);
-        
-        if (requiredBackendPage > backendPage && backendPage < totalBackendPages - 1) {
-            handleCargarAprobaciones(backendPage + 1);
-        }
         setComponentPage(newPage);
     };
 
@@ -111,7 +107,7 @@ export const useGenerarDecretos = () => {
         componentPage * ITEMS_PER_PAGE
     ), [filteredAprobaciones, componentPage]);
 
-    const { selectedItems, setSelectedItems, handleSelectItem, handleSelectAll } = useRrhhSelection(currentAprobaciones);
+    const { selectedItems, setSelectedItems, handleSelectItem, handleSelectAll } = useRrhhSelection(filteredAprobaciones);
 
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -131,7 +127,6 @@ export const useGenerarDecretos = () => {
         setComponentPage(1);
         setBackendPage(0);
         setTotalBackendPages(0);
-        setTotalElements(0);
         setSelectedTipoContrato([]);
         setTipoContratoOptions([]);
         setSelectedTipoSolicitud('');
@@ -153,6 +148,7 @@ export const useGenerarDecretos = () => {
             setShowTemplateModal(true);
         } catch (error) {
             mostrarAlertaError('Error al cargar las plantillas.', error.message);
+            console.error('Error al cargar las plantillas:', error.response ? error.response.data : error);
         } finally {
             setLoading(false);
         }
@@ -175,10 +171,17 @@ export const useGenerarDecretos = () => {
         setLoading(true);
         setShowTemplateModal(false);
         try {
+            const templateObj = templates.find(t => t.nombre === templateName);
+            if (!templateObj) {
+                mostrarAlertaError('La plantilla seleccionada no es válida.');
+                setLoading(false);
+                return;
+            }
+
             const decretos = {
                 ids: selectedItems,
                 rut: funcionario.rut,
-                template: templateName
+                template: templateObj.docFile
             };
 
             const response = await decretar(decretos);
@@ -190,7 +193,7 @@ export const useGenerarDecretos = () => {
                     excelSuccess = true;
                 } catch (excelError) {
                     mostrarAlertaError('Error al exportar a Excel.', excelError.message || 'Ocurrió un error al exportar el archivo Excel.');
-                    console.error('Error exporting to Excel:', excelError);
+                    console.error('Error exporting to Excel:', excelError.response ? excelError.response.data : excelError);
                 }
 
                 let wordSuccess = false;
@@ -211,7 +214,7 @@ export const useGenerarDecretos = () => {
                     wordSuccess = true;
                 } catch (wordError) {
                     mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
-                    console.error('Error downloading Word document:', wordError);
+                    console.error('Error downloading Word document:', wordError.response ? wordError.response.data : wordError);
                 }
 
                 if (excelSuccess && wordSuccess) {
@@ -227,7 +230,7 @@ export const useGenerarDecretos = () => {
             }
         } catch (error) {
             mostrarAlertaError('Error al generar el decreto.', error.message || 'Ocurrió un error inesperado.');
-            console.error('Error al generar el decreto:', error);
+            console.error('Error al generar el decreto:', error.response ? error.response.data : error);
         } finally {
             setLoading(false);
         }

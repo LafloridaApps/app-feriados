@@ -40,9 +40,9 @@ export const getJefeDashboardSummary = async (rutJefe, idDepartamento) => {
     }
 };
 
-export const getDashboardSummary = async (codDepto) => {
+export const getDashboardSummary = async (idDepto, fecha) => {
     try {
-        const { data } = await api.get(`/ausencias/departamento/${codDepto}`);
+        const { data } = await api.get(`/ausencias/departamento`,{params:{idDepto,fecha}});
         return data;
     } catch (error) {
         console.error('Error al obtener las ausencias de hoy:', error);

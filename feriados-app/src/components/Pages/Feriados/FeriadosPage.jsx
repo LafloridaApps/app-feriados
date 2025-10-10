@@ -43,6 +43,8 @@ const FeriadosPage = () => {
 
     if (!funcionario) return <p className="alert alert-info text-center mt-5" role='alert'>Cargando Información...</p>;
 
+    console.log(resumen)
+
     return (
         isMobile ? (
             <FeriadosPageMobile resumen={resumen} detalle={detalle} />

@@ -19,38 +19,45 @@ const ConsultaDecretosResults = ({ data }) => {
       <table className="table table-striped table-hover">
         <thead className="table-dark">
           <tr>
-            <th>ID Decreto</th>
-            <th>Fecha Decreto</th>
             <th>ID Solicitud</th>
             <th>RUT Funcionario</th>
             <th>Nombre Funcionario</th>
+            <th>Tipo Solicitud</th>
+            <th>Fechas</th>
+            <th>Nro. Decreto</th>
             <th className="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {data.map((decreto) => (
-            decreto.solicitudes.map((solicitud) => (
-              <tr key={`${decreto.idDecreto}-${solicitud.idSolicitud}`}>
-                <td>{decreto.idDecreto}</td>
-                <td>{decreto.fechaDecreto}</td>
+            decreto.solicitudes.map((solicitud, index) => (
+              <tr key={`${decreto.idDecreto}-${solicitud.idSolicitud}-${index}`}>
                 <td>{solicitud.idSolicitud}</td>
                 <td>{solicitud.rutFuncionario}</td>
                 <td>{solicitud.nombreFuncionario}</td>
+                <td>N/A</td> {/* Tipo Solicitud is not in the new response */}
+                <td>{decreto.fechaDecreto}</td>
+                <td>{decreto.idDecreto || 'N/A'}</td>
                 <td className="text-center">
-                  <button
-                    className="btn btn-outline-primary btn-sm me-2"
-                    onClick={() => handleViewDocument(decreto.idDecreto, false)}
-                    title="Ver Documento"
-                  >
-                    <i className="bi bi-eye-fill"></i> Ver Documento
-                  </button>
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={() => handleViewDocument(decreto.idDecreto, true)}
-                    title="Descargar Decreto"
-                  >
-                    <i className="bi bi-download"></i> Descargar Decreto
-                  </button>
+                  {decreto.idDecreto && (
+                    <>
+                      <button
+                        className="btn btn-outline-primary btn-sm me-2"
+                        onClick={() => handleViewDocument(decreto.idDecreto, false)}
+                        title="Ver Documento"
+                      >
+                        <i className="bi bi-eye-fill"></i> Ver
+                      </button>
+                      <button
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => handleViewDocument(decreto.idDecreto, true)}
+                        title="Descargar Decreto"
+                      >
+                        <i className="bi bi-download"></i> Descargar
+                      </button>
+                    </>
+                  )}
+                  {/* Removed aprobacion.url as it's not in the new response */}
                 </td>
               </tr>
             ))

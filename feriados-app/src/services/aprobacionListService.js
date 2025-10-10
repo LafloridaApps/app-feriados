@@ -7,12 +7,12 @@ const api = axios.create({
 
 });
 
-export const getAprobacionesBetweenDates = async (fechaInicio, fechaFin, pageNumber) => {
+export const getAprobacionesBetweenDates = async (fechaInicio, fechaFin) => {
     try {
-        const { data } = await api.get('/list', { params: { fechaInicio, fechaFin, pageNumber } });
+        const { data } = await api.get('/list', { params: { fechaInicio, fechaFin } });
         return data;
     } catch (error) {
-        console.error('Error al obtener funcionario:', error);
+        console.error('Error al obtener aprobaciones:', error);
         throw error;
     }
 };

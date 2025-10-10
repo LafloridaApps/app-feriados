@@ -26,7 +26,14 @@ const PaginaDashboard = () => {
                 try {
                     setLoading(true);
                     setError(null);
-                    const absenceList = await getDashboardSummary(funcionario.codDepto);
+
+                    // Formatear la fecha a YYYY-MM-DD
+                    const anio = mesActual.getFullYear();
+                    const mes = (mesActual.getMonth() + 1).toString().padStart(2, '0');
+                    const dia = '01'; // Usar el primer día del mes
+                    const fechaParaElBackend = `${anio}-${mes}-${dia}`;
+
+                    const absenceList = await getDashboardSummary(funcionario.codDepto, fechaParaElBackend);
                     
                     if (!Array.isArray(absenceList)) {
                         setError("Los datos recibidos no tienen el formato esperado.");

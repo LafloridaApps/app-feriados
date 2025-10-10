@@ -1,13 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-export const useRrhhSelection = (currentAprobaciones) => {
+export const useRrhhSelection = (fullData) => {
     const [selectedItems, setSelectedItems] = useState([]);
-
-    useEffect(() => {
-        setSelectedItems(prevSelected =>
-            prevSelected.filter(id => currentAprobaciones.some(item => item.idSolicitud === id))
-        );
-    }, [currentAprobaciones]);
 
     const handleSelectItem = (idSolicitud) => {
         setSelectedItems(prevSelected => {
@@ -20,16 +14,15 @@ export const useRrhhSelection = (currentAprobaciones) => {
     };
 
     const handleSelectAll = () => {
-        const allCurrentIds = currentAprobaciones.map(item => item.idSolicitud);
-        const allCurrentlySelected = allCurrentIds.every(idSolicitud => selectedItems.includes(idSolicitud));
+        const allIds = fullData.map(item => item.idSolicitud);
+        const allCurrentlySelected = allIds.length > 0 && allIds.every(id => selectedItems.includes(id));
 
         if (allCurrentlySelected) {
-            setSelectedItems(prevSelected => prevSelected.filter(idSolicitud => !allCurrentIds.includes(idSolicitud)));
+            // If all are selected, deselect all
+            setSelectedItems([]);
         } else {
-            setSelectedItems(prevSelected => {
-                const newSelected = new Set([...prevSelected, ...allCurrentIds]);
-                return Array.from(newSelected);
-            });
+            // Otherwise, select all
+            setSelectedItems(allIds);
         }
     };
 

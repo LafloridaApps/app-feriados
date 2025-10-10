@@ -14,28 +14,32 @@ import Inicio from "./components/Pages/Inicio/Inicio";
 import IngresoSubrogancia from "./components/Pages/RRHH/IngresoSubrogancia";
 import GestionUsuariosPage from "./components/Pages/Administracion/Usuarios/GestionUsuariosPage";
 import GestionModulosPage from "./components/Pages/Administracion/Modulos/GestionModulosPage";
+import Footer from "./components/footer/Footer";
 
 function App() {
     return (
         <AppContextProvider>
-            <Navbar />
-            <div className="container mt-4">
-                <Routes>
-                    <Route path="/" element={<Navigate to="/home" />} />
-                    <Route path="/home" element={<Inicio />} />
-                    <Route path="/administrativos" element={<AdministrativosPage />} />
-                    <Route path="/feriados" element={<FeriadosPage />} />
-                    <Route path="/solicitudes" element={<SolicitudesPage />} />
-                    <Route path="/inbox" element={<InboxSolicitudes />} />
-                    <Route path="/deptos" element={<DepartamentosPage />} />
-                    <Route path="/mis-solicitudes" element={<MisSolicitudes />} />
-                    <Route path="/rrhh" element={<RRHHPage />} />
-                    <Route path="/parametros/documentos" element={<ParametrosPage />} />
-                    <Route path="/dashboard" element={<PaginaDashboard />} />
-                    <Route path="/rrhh/subrogancia" element={<IngresoSubrogancia />} />
-                    <Route path="/administracion/usuarios" element={<GestionUsuariosPage />} />
-                    <Route path="/administracion/modulos" element={<GestionModulosPage />} />
-                </Routes>
+            <div className="d-flex flex-column min-vh-100">
+                <Navbar />
+                <main className="container mt-4 flex-grow-1">
+                    <Routes>
+                        <Route path="/" element={<Navigate to="/home" />} />
+                        <Route path="/home" element={<Inicio />} />
+                        <Route path="/administrativos" element={<AdministrativosPage />} />
+                        <Route path="/feriados" element={<FeriadosPage />} />
+                        <Route path="/solicitudes" element={<SolicitudesPage />} />
+                        <Route path="/inbox" element={<InboxSolicitudes />} />
+                        <Route path="/deptos" element={<DepartamentosPage />} />
+                        <Route path="/mis-solicitudes" element={<MisSolicitudes />} />
+                        <Route path="/rrhh" element={<RRHHPage />} />
+                        <Route path="/parametros/documentos" element={<ParametrosPage />} />
+                        <Route path="/dashboard" element={<PaginaDashboard />} />
+                        <Route path="/rrhh/subrogancia" element={<IngresoSubrogancia />} />
+                        <Route path="/administracion/usuarios" element={<GestionUsuariosPage />} />
+                        <Route path="/administracion/modulos" element={<GestionModulosPage />} />
+                    </Routes>
+                </main>
+                <Footer />
             </div>
         </AppContextProvider>
     );
