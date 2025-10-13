@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { formatFechaString } from '../../../services/utils';
 
 const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, requestSort, sortConfig }) => {
     const allSelected = data.length > 0 && data.every(item => selectedItems.includes(item.idSolicitud));
@@ -57,11 +58,11 @@ const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, request
                             <td>{item.rut}</td>
                             <td>{`${item.apellidos} ${item.nombres}`}</td>
                             <td>{item.departamento}</td>
-                            <td>{item.desde}</td>
-                            <td>{item.hasta}</td>
+                            <td>{formatFechaString(item.desde)}</td>
+                            <td>{formatFechaString(item.hasta)}</td>
                             <td>{item.jornada}</td>
                             <td>{item.duracion}</td>
-                            <td>{item.fechaSolicitud}</td>
+                            <td>{formatFechaString(item.fechaSolicitud)}</td>
                             <td>{item.tipoSolicitud}</td>
                             <td>{item.tipoContrato}</td>
                             <td>

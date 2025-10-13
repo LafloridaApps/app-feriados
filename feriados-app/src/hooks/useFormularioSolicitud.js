@@ -201,8 +201,8 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
         try {
             setEnviando(true);
-            console.log(diasUsar)
-            //const res = await saveSolicitud(nuevaSolicitud);
+            
+            const res = await saveSolicitud(nuevaSolicitud);
             await Swal.fire({
                 icon: 'success',
                 title: 'Solicitud enviada',

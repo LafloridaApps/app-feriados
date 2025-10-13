@@ -19,10 +19,10 @@ export const useGenerarDecretos = () => {
     const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
 
     // State for backend pagination
-    const [backendPage, setBackendPage] = useState(0);
-    const [totalBackendPages, setTotalBackendPages] = useState(0);
+    const [ setBackendPage] = useState(0);
+    const [ setTotalBackendPages] = useState(0);
 
-    // State for component pagination
+    // State for component pagination 
     const [componentPage, setComponentPage] = useState(1);
 
     // State for filters

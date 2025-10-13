@@ -174,18 +174,27 @@ export const exportToExcel = async (data, filename) => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Decretos");
 
-        // Add headers
-        if (data.length > 0) {
-            const headers = Object.keys(data[0]);
-            worksheet.addRow(headers);
-            console.log('Headers added:', headers);
-        } else {
-            console.log('No data to add headers.');
+        if (data.length === 0) {
+            console.log('No data to export.');
+            return;
         }
 
-        // Add data rows
+        const headers = Object.keys(data[0]);
+        worksheet.addRow(headers);
+
+        const isDateString = (value) => {
+            return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value);
+        };
+
         data.forEach(row => {
-            worksheet.addRow(Object.values(row));
+            const rowData = headers.map(header => {
+                const value = row[header];
+                if (isDateString(value)) {
+                    return formatFechaString(value);
+                }
+                return value;
+            });
+            worksheet.addRow(rowData);
         });
 
         // Write to file
