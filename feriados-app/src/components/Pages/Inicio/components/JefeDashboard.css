@@ -22,53 +22,13 @@
     color: #ffffff !important;
 }
 
-.jefe-dashboard-card .alert-info {
-    background-color: #e0f7fa !important; /* Light blue for info alert */
-    border-color: #b2ebf2 !important;
-    color: #007bff !important;
+.jefe-info-card {
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
 }
 
-.jefe-dashboard-card .alert-info h5 {
-    color: #007bff !important; /* Azul neutro */
-}
-
-.jefe-dashboard-card .bi-bell-fill {
-    color: #ffc107 !important; /* Warning yellow for icon */
-}
-
-.jefe-dashboard-card .bi-calendar-event-fill {
-    color: #17a2b8 !important; /* Info blue for icon */
-}
-
-.jefe-dashboard-card .bi-person-x-fill {
-    color: #dc3545 !important; /* Danger red for icon */
-}
-
-.jefe-dashboard-card .badge.bg-warning {
-    background-color: #ffc107 !important;
-    color: #212529 !important;
-}
-
-.jefe-dashboard-card .display-4.fw-bold.text-danger {
-    color: #dc3545 !important;
-}
-
-.jefe-dashboard-card .btn-outline-primary {
-    color: #007bff !important;
-    border-color: #007bff !important;
-}
-
-.jefe-dashboard-card .btn-outline-primary:hover {
-    background-color: #007bff !important;
-    color: #fff !important;
-}
-
-.jefe-dashboard-card .btn-outline-danger {
-    color: #dc3545 !important;
-    border-color: #dc3545 !important;
-}
-
-.jefe-dashboard-card .btn-outline-danger:hover {
-    background-color: #dc3545 !important;
-    color: #fff !important;
+.jefe-info-list .list-group-item {
+    background-color: transparent;
 }

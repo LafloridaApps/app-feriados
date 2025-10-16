@@ -43,8 +43,10 @@ const PaginaDashboard = () => {
 
                     const ausenciasProcesadas = {};
                     absenceList.forEach(empleado => {
-                        const inicio = new Date(empleado.periodoAusencia.fechaInicio);
-                        const fin = new Date(empleado.periodoAusencia.fechaFin);
+                        const inicioParts = empleado.periodoAusencia.fechaInicio.split(/[-/]/);
+                        const inicio = new Date(inicioParts[0], inicioParts[1] - 1, inicioParts[2]);
+                        const finParts = empleado.periodoAusencia.fechaFin.split(/[-/]/);
+                        const fin = new Date(finParts[0], finParts[1] - 1, finParts[2]);
                         let fechaTemporal = new Date(inicio);
 
                         while (fechaTemporal <= fin) {
@@ -145,8 +147,10 @@ const PaginaDashboard = () => {
 
     const renderizarMiniCalendario = (periodo) => {
         // Esta función se mantiene igual que en tu versión original
-        const inicio = new Date(periodo.fechaInicio);
-        const fin = new Date(periodo.fechaFin);
+        const inicioParts = periodo.fechaInicio.split(/[-/]/);
+        const inicio = new Date(inicioParts[0], inicioParts[1] - 1, inicioParts[2]);
+        const finParts = periodo.fechaFin.split(/[-/]/);
+        const fin = new Date(finParts[0], finParts[1] - 1, finParts[2]);
         const dias = [];
         const fechaTemporal = new Date(inicio);
 

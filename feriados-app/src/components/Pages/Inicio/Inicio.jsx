@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { UsuarioContext } from '../../../context/UsuarioContext';
+import { FirmaDigitalContext } from '../../../context/FirmaDigitalContext';
 
 import WelcomeWidget from './components/WelcomeWidget';
 import SaldosWidget from './components/SaldosWidget';
@@ -10,6 +11,7 @@ import { useIsJefe } from '../../../hooks/useIsJefe';
 import { useFuncionarioResumen } from '../../../hooks/useFuncionarioResumen'; // New import
 import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
 import InicioMobile from './InicioMobile'; // Importar el componente móvil
+import FirmaDigitalCard from './components/FirmaDigitalCard';
 
 const Inicio = () => {
     const { width } = useWindowSize(); // Obtener el ancho de la ventana
@@ -19,11 +21,13 @@ const Inicio = () => {
     const { codDepto, rut } = funcionario || {};
     const { esJefe } = useIsJefe(codDepto, rut);
     const { resumenFunc } = useFuncionarioResumen(); // Get resumenFunc from the new hook
+    const { tieneFirma } = useContext(FirmaDigitalContext);
 
     if (!funcionario) {
         return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
     }
 
+    
     
    
     return (
@@ -40,7 +44,7 @@ const Inicio = () => {
                         <WelcomeWidget funcionario={funcionario} />
                     </div>
 
-                    <div className="col-md-8">
+                    <div className="col-md-8 mb-2">
                         <div className="row">
                             <SaldosWidget
                                 saldoFeriado={resumenFunc?.saldoFeriado}
@@ -50,9 +54,20 @@ const Inicio = () => {
                             />
                             <AccionesRapidasWidget />
                             <SolicitudesMesWidget solicitudes={resumenFunc?.solicitudMes} />
-                            {esJefe && <JefeDashboard />}
                         </div>
                     </div>
+
+                    {esJefe && (
+                        <div className="col-md-8 mb-4">
+                            <JefeDashboard />
+                        </div>
+                    )}
+
+                    {tieneFirma && (
+                        <div className="col-md-8 mb-4">
+                            <FirmaDigitalCard   />
+                        </div>
+                    )}
                 </div>
             )}
         </div>

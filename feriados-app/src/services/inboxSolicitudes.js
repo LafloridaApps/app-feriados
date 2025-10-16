@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 
-export const getInboxSolicitudesByDepto = async (codDepto,pageNumber) => {
+export const getInboxSolicitudesByDepto = async (codDepto, pageNumber) => {
     try {
         const { data } = await api.get(`departamento/${codDepto}/${pageNumber}`);
         return data;

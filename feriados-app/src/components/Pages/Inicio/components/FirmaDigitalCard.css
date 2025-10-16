@@ -1,0 +1,68 @@
+.firma-digital-card-redesigned {
+    border-left-width: 5px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.firma-digital-card-redesigned:hover {
+    transform: translateY(-5px);
+}
+
+.firma-digital-card-redesigned .card-body {
+    padding: 1rem;
+}
+
+.firma-digital-card-redesigned .icon {
+    font-size: 1.5rem;
+}
+
+.firma-digital-card-redesigned.status-ok {
+    border-left-color: #28a745;
+}
+.firma-digital-card-redesigned.status-ok .icon {
+    color: #28a745;
+}
+
+.firma-digital-card-redesigned.status-warning {
+    border-left-color: #ffc107;
+}
+.firma-digital-card-redesigned.status-warning .icon {
+    color: #ffc107;
+}
+
+.firma-digital-card-redesigned.status-danger {
+    border-left-color: #dc3545;
+}
+.firma-digital-card-redesigned.status-danger .icon {
+    color: #dc3545;
+}
+
+.firma-digital-card-redesigned .card-title {
+    font-weight: 600;
+}
+
+.firma-digital-card-redesigned .card-text {
+    font-size: 0.95rem;
+    color: #6c757d;
+}
+
+.firma-digital-card-redesigned .firma-details-redesigned {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.firma-digital-card-redesigned .detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.firma-digital-card-redesigned .detail-item strong {
+    color: #495057;
+}
+
+.firma-digital-card-redesigned .btn-primary {
+    width: 100%;
+}

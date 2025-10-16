@@ -34,6 +34,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
     const [maxDateFin, setMaxDateFin] = useState('');
     const [fechaEditada, setFechaEditada] = useState('inicio'); // Control which date is being edited
 
+
     const funcionario = useContext(UsuarioContext);
     const feriados = useContext(FeriadosContext);
     const fechasFeriadas = feriados.map(f => f.fecha);
