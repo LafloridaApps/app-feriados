@@ -17,25 +17,17 @@ export const useConsultarDecretos = (mostrarAlertaError) => {
         // The 'results' state will directly reflect the 'content' from the backend response
         // after handleSearch updates allResults.
         setResults(allResults);
-        
+
     }, [allResults]); // Only re-run when allResults (content from backend) changes
 
     const handleSearch = async (pageNumber = 0) => {
-        if (!filters.fechaDesde || !filters.fechaHasta) {
-            mostrarAlertaError('Debe proporcionar un rango de fechas (Desde y Hasta) para realizar la búsqueda.');
-            return;
-        }
 
-        if (filters.fechaDesde > filters.fechaHasta) {
-            mostrarAlertaError('La fecha "Desde" no puede ser posterior a la fecha "Hasta".');
-            return;
-        }
 
         setLoading(true);
         setSearchPerformed(false);
         try {
             const response = await searchDecretos(filters, pageNumber, itemsPerPage);
-            
+
             setAllResults(response?.content || []);
             setTotalItems(response?.page?.totalElements || 0);
             setTotalPages(response?.page?.totalPages || 0);
@@ -65,7 +57,7 @@ export const useConsultarDecretos = (mostrarAlertaError) => {
     const handlePageChange = (pageNumber) => {
         handleSearch(pageNumber - 1); // Backend pages are 0-indexed
     };
-    
+
     const requestSort = (key) => {
         let direction = 'ascending';
         if (sortConfig.key === key && sortConfig.direction === 'ascending') {

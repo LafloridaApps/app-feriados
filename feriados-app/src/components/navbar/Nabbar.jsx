@@ -17,6 +17,7 @@ const Navbar = () => {
     const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
     const closeMobileMenu = () => setIsNavCollapsed(true);
 
+
     useEffect(() => {
         const getPermisos = async () => {
             if (funcionario && funcionario.rut) {
@@ -32,8 +33,6 @@ const Navbar = () => {
         };
         getPermisos();
     }, [funcionario]);
-
-
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark px-4" style={{ background: 'linear-gradient(to right, #009B4D, #004B8D)' }}>

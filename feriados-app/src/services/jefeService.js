@@ -7,9 +7,9 @@ const api = axios.create({
 });
 
 export const searchIsJefeByCodDeptoAndRut = async (codDepto, rut) => {
-    
+
     try {
-        const {data} = await api.get('', {
+        const { data } = await api.get('', {
             params: {
                 codDepto: codDepto,
                 rut: rut

@@ -7,12 +7,18 @@ const api = axios.create({
 });
 
 
-export const getInboxSolicitudesByDepto = async (codDepto, pageNumber) => {
+export const getInboxSolicitudesByDepto = async (codDepto, pageNumber, filtros = {}) => {
     try {
-        const { data } = await api.get(`departamento/${codDepto}/${pageNumber}`);
+        const { noLeidas } = filtros;
+        let url = `departamento/${codDepto}/${pageNumber}`;
+        if (noLeidas) {
+            url += '?noLeidas=true';
+        }
+
+        const { data } = await api.get(url);
         return data;
     } catch (error) {
-        console.error('Error al obtener funcionario:', error);
+        console.error('Error al obtener las solicitudes del inbox:', error);
         throw error;
     }
 };

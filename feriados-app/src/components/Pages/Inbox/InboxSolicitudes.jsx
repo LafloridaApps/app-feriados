@@ -22,7 +22,9 @@ const InboxSolicitudes = () => {
         handlerEntrada,
         handlerVisar,
         handlerAprobar,
-        solicitudesFiltradas
+        solicitudesFiltradas,
+        noLeidas,
+        setNoLeidas
     } = useInboxSolicitudes();
 
     const getSortIcon = (key) => {
@@ -42,10 +44,22 @@ const InboxSolicitudes = () => {
             <div className="row">
                 <div className="col-md-12">
                     <div className="card shadow-sm">
-                        <div className="card-header bg-white py-3">
+                        <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                             <h5 className="mb-0 font-weight-bold text-primary">
                                 Bandeja de Solicitudes {isSubrogante && <span className='badge bg-info ms-2'>Subrogante</span>}
                             </h5>
+                            <div className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="noLeidas"
+                                    checked={noLeidas}
+                                    onChange={(e) => setNoLeidas(e.target.checked)}
+                                />
+                                <label className="form-check-label" htmlFor="noLeidas">
+                                    No Leídas
+                                </label>
+                            </div>
                         </div>
                         <div className="card-body p-0">
                             <div className="table-responsive d-none d-md-block">

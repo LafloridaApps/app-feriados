@@ -178,7 +178,6 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
             fechaInicio,
             fechaFin,
             depto,
-            diasUsar,
             tipoSolicitud: tipo,
             ...(tipo === "ADMINISTRATIVO" && {
                 jornadaInicio,
@@ -202,6 +201,7 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
 
         try {
             setEnviando(true);
+
             
             const res = await saveSolicitud(nuevaSolicitud);
             await Swal.fire({
