@@ -131,9 +131,9 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                 <button
                                     type="submit"
                                     className="btn btn-primary"
-                                    disabled={enviando || Boolean(error)}
+                                    disabled={enviando || Boolean(error) || !tipo}
                                 >
-                                    Enviar Solicitud
+                                    {enviando ? 'Enviando...' : 'Enviar Solicitud'}
                                 </button>
                                 {subrogancia && (
                                     <div className="alert alert-info d-flex justify-content-between align-items-center m-3" role="alert">

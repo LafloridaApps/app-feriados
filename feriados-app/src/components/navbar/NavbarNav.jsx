@@ -111,8 +111,18 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu, permisos }) => {
                                 <i className="bi bi-person-rolodex me-2"></i>Administración
                             </a>
                             <ul className={`dropdown-menu dropdown-menu-dark ${openDropdown === 'administracion' ? 'show' : ''}`}>
-                                <li><Link className={`dropdown-item ${rutaActual === '/administracion/usuarios' ? 'active' : ''}`} to="/administracion/usuarios" onClick={handleLinkClick}><i className="bi bi-person me-2"></i>Usuarios</Link></li>
-                                <li><Link className={`dropdown-item ${rutaActual === '/administracion/modulos' ? 'active' : ''}`} to="/administracion/modulos" onClick={handleLinkClick}><i className="bi bi-grid me-2"></i>Módulos</Link></li>
+                                <li><Link
+                                    className={`dropdown-item ${rutaActual === '/administracion/usuarios' ? 'active' : ''}`}
+                                    to="/administracion/usuarios"
+                                    onClick={handleLinkClick}><i className="bi bi-person me-2"></i>Usuarios</Link></li>
+                                <li><Link
+                                    className={`dropdown-item ${rutaActual === '/administracion/modulos' ? 'active' : ''}`}
+                                    to="/administracion/modulos"
+                                    onClick={handleLinkClick}><i className="bi bi-grid me-2"></i>Módulos</Link></li>
+                                <li><Link
+                                    className={`dropdown-item ${rutaActual === '/administracion/adm-solicitudes' ? 'active' : ''}`}
+                                    to="/administracion/adm-solicitudes"
+                                    onClick={handleLinkClick}> <i className="bi bi-pen me-2"></i> Actualizacion de Solicitudes</Link></li>
                             </ul>
                         </li>
                     )

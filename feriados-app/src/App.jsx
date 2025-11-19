@@ -15,6 +15,7 @@ import IngresoSubrogancia from "./components/Pages/RRHH/IngresoSubrogancia";
 import GestionUsuariosPage from "./components/Pages/Administracion/Usuarios/GestionUsuariosPage";
 import GestionModulosPage from "./components/Pages/Administracion/Modulos/GestionModulosPage";
 import Footer from "./components/footer/Footer";
+import { GestionSolicitudes } from "./components/Pages/Administracion/Gestion/GestionSolicitudes";
 
 function App() {
     return (
@@ -37,6 +38,7 @@ function App() {
                         <Route path="/rrhh/subrogancia" element={<IngresoSubrogancia />} />
                         <Route path="/administracion/usuarios" element={<GestionUsuariosPage />} />
                         <Route path="/administracion/modulos" element={<GestionModulosPage />} />
+                        <Route path="/administracion/adm-solicitudes" element={<GestionSolicitudes />} />
                     </Routes>
                 </main>
                 <Footer />
