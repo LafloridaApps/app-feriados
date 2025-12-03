@@ -9,6 +9,7 @@ export const useIsJefe = (codDepto, rut) => {
 
     const shouldFetch = codDepto && rut;
 
+
     useEffect(() => {
         if (!shouldFetch) {
             setLoading(false);

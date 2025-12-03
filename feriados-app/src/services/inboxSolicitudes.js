@@ -7,15 +7,19 @@ const api = axios.create({
 });
 
 
-export const getInboxSolicitudesByDepto = async (codDepto, pageNumber, filtros = {}) => {
+export const getInboxSolicitudesByDepto = async (codDepto, pageNumber, rut, filtros = {}) => {
     try {
         const { noLeidas } = filtros;
-        let url = `departamento/${codDepto}/${pageNumber}`;
+        const params = new URLSearchParams();
+        params.append('rut', rut);
+
         if (noLeidas) {
-            url += '?noLeidas=true';
+            params.append('noLeidas', 'true');
         }
 
-        const { data } = await api.get(url);
+        const url = `departamento/${codDepto}/page/${pageNumber}`;
+
+        const { data } = await api.get(url, { params });
         return data;
     } catch (error) {
         console.error('Error al obtener las solicitudes del inbox:', error);
