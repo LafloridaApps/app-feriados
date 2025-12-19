@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useDecretoDocument } from '../../../hooks/useDecretoDocument';
-import { formatFechaString } from '../../../services/utils';
 
 const ConsultaDecretosResults = ({ data }) => {
   const { handleViewDocument } = useDecretoDocument();
@@ -21,7 +20,6 @@ const ConsultaDecretosResults = ({ data }) => {
           <td>{solicitud.rutFuncionario}</td>
           <td>{solicitud.nombreFuncionario}</td>
           <td>{solicitud.tipoSolicitud}</td>
-          <td>{formatFechaString(decreto.fechaDecreto)}</td>
           <td>{decreto.idDecreto || 'N/A'}</td>
           <td className="text-center">
             {solicitud.urlPdf && (
@@ -64,7 +62,6 @@ const ConsultaDecretosResults = ({ data }) => {
             <th>RUT Funcionario</th>
             <th>Nombre Funcionario</th>
             <th>Tipo Solicitud</th>
-            <th>Fechas</th>
             <th>Nro. Decreto</th>
             <th className="text-center">Documento</th>
             <th className="text-center">Acciones</th>

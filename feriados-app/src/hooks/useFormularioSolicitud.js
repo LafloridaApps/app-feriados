@@ -226,12 +226,11 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                 resetErrors();
                 setErrorSaldo("");
             } catch (error) {
-                console.error("Error al enviar solicitud:", error);
-                Swal.fire({ icon: 'error', title: 'Error', text: 'Hubo un problema al enviar la solicitud.' });
+                Swal.fire({ icon: 'error', title: 'Error', text: error.response?.data?.message || 'Hubo un problema al enviar la solicitud.' });
             } finally {
                 setEnviando(false);
             }
-        }, [solicitud, rut, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, resetErrors]);
+        }, [solicitud, rut, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, diasUsarFeriado, diasUsarAdministrativo, resetErrors]);
     
         const submitForm = async (e, esJefe, esDirector) => {
             e.preventDefault();
@@ -309,11 +308,11 @@ export const useFormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, det
                 await handleSaveSolicitud();
     
             } catch (error) {
-                console.error("Error al enviar la solicitud:", error);
+                console.error('Error inesperado al procesar la solicitud:', error);
                 await Swal.fire({
                     icon: 'error',
                     title: 'Error inesperado',
-                    text: 'Ocurrió un problema al enviar la solicitud. Intenta nuevamente.',
+                    text: error.response?.data?.message || 'Hubo un problema al procesar la solicitud.',
                 });
             }
         };

@@ -36,6 +36,7 @@ export const useGestionSolicitudes = () => {
             setSolicitud(data);
         } catch (err) {
             setError('Error al buscar la solicitud. Verifique el ID e intente nuevamente.');
+            console.log(err);
             setSolicitud(null);
         } finally {
             setLoading(false);
@@ -52,7 +53,7 @@ export const useGestionSolicitudes = () => {
             Swal.fire('¡Éxito!', 'La solicitud ha sido actualizada.', 'success');
             buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
         } catch (err) {
-            Swal.fire('Error', 'No se pudo actualizar la solicitud.', 'error');
+            Swal.fire('Error', 'No se pudo actualizar la solicitud.', err.message || 'error');
         } finally {
             setLoading(false);
         }
@@ -66,7 +67,7 @@ export const useGestionSolicitudes = () => {
             Swal.fire('¡Éxito!', 'Se ha iniciado el proceso para re-firmar el documento.', 'success');
             buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
         } catch (err) {
-            Swal.fire('Error', 'No se pudo iniciar el proceso de re-firma.', 'error');
+            Swal.fire('Error', 'No se pudo iniciar el proceso de re-firma.', err.message || 'error');
         } finally {
             setLoading(false);
         }

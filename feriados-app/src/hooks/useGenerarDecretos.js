@@ -188,6 +188,7 @@ export const useGenerarDecretos = () => {
 
             if (response && response.length > 0) {
                 let excelSuccess = false;
+                console.log('Decretos generated response:', response);
                 try {
                     await exportToExcel(response, 'decretos_generados');
                     excelSuccess = true;

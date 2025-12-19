@@ -5,6 +5,7 @@ import { formatFechaString } from '../../../services/utils';
 const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, requestSort, sortConfig }) => {
     const allSelected = data.length > 0 && data.every(item => selectedItems.includes(item.idSolicitud));
 
+
     const getSortDirectionClass = (key) => {
         if (!sortConfig || sortConfig.key !== key) {
             return 'text-muted'; // No sort or not sorted by this key
@@ -30,7 +31,7 @@ const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, request
                                 onChange={onSelectAll}
                             />
                         </th>
-                        {renderHeader('Id','idSolicitud')}
+                        {renderHeader('Id', 'idSolicitud')}
                         {renderHeader('Rut', 'rut')}
                         {renderHeader('Nombre', 'nombres')}
                         {renderHeader('Departamento', 'departamento')}
@@ -56,7 +57,7 @@ const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, request
                             </td>
                             <td>{item.idSolicitud}</td>
                             <td>{item.rut}</td>
-                            <td>{`${item.apellidos} ${item.nombres}`}</td>
+                            <td>{item.nombres}</td>
                             <td>{item.departamento}</td>
                             <td>{formatFechaString(item.desde)}</td>
                             <td>{formatFechaString(item.hasta)}</td>

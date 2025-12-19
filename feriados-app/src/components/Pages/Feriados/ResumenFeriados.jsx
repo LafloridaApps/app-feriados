@@ -2,6 +2,9 @@ import PropTypes from "prop-types";
 
 const ResumenFeriados = ({ resumen }) => {
 
+
+
+    console.log("ResumenAdministrativos - resumen:", resumen);
     const {
         total,
         diasCorresponden,

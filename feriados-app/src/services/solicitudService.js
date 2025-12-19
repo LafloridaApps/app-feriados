@@ -10,7 +10,7 @@ export const saveSolicitud = async (solicitud) => {
         const { data } = await api.post('/crear', solicitud);
         return data;
     } catch (error) {
-        console.error('Error al guardar la solicitud:', error);
+        console.error('Error al guardar solicitud:', error);
         throw error;
     }
 };

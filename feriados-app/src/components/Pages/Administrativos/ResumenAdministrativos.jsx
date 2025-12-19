@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 const ResumenAdministrativos = ({ resumen }) => {
 
     const { anio, maximo, usados, saldo } = resumen || {};
+
     
     return (
         <div className="table-responsive mb-4">
