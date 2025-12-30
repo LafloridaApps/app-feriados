@@ -27,7 +27,6 @@ const InboxSolicitudes = () => {
         setNoLeidas
     } = useInboxSolicitudes();
 
-    console.log(isSubrogante)
 
     const getSortIcon = (key) => {
         if (sortConfig.key !== key) {

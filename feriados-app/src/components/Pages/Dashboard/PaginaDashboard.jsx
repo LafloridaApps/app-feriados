@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UsuarioContext } from '../../../context/UsuarioContext';
 import { getDashboardSummary } from '../../../services/dashboardService';
+import { getTablaFeriados } from '../../../services/tablaFeriados.js'; // Importar servicio de feriados
 import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
 import PaginaDashboardMobile from './PaginaDashboardMobile'; // Importar el componente móvil
 import './PaginaDashboard.css'; // Importar el archivo CSS personalizado
@@ -14,6 +15,7 @@ const PaginaDashboard = () => {
 
     const [mesActual, setMesActual] = useState(new Date());
     const [ausencias, setAusencias] = useState({});
+    const [feriadosSet, setFeriadosSet] = useState(new Set()); // Estado para feriados
     const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
     const [mostrarModalEmpleado, setMostrarModalEmpleado] = useState(false);
     const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
@@ -27,16 +29,23 @@ const PaginaDashboard = () => {
                     setLoading(true);
                     setError(null);
 
-                    // Formatear la fecha a YYYY-MM-DD
                     const anio = mesActual.getFullYear();
                     const mes = (mesActual.getMonth() + 1).toString().padStart(2, '0');
-                    const dia = '01'; // Usar el primer día del mes
+                    const dia = '01';
                     const fechaParaElBackend = `${anio}-${mes}-${dia}`;
 
-                    const absenceList = await getDashboardSummary(funcionario.codDepto, fechaParaElBackend);
-                    
+                    // Cargar ausencias y feriados en paralelo
+                    const [absenceList, feriadosList] = await Promise.all([
+                        getDashboardSummary(funcionario.codDepto, fechaParaElBackend),
+                        getTablaFeriados()
+                    ]);
+
+                    // Procesar feriados en un Set para búsqueda eficiente
+                    const processedFeriados = new Set(feriadosList.map(f => f.fecha.split('T')[0]));
+                    setFeriadosSet(processedFeriados);
+
                     if (!Array.isArray(absenceList)) {
-                        setError("Los datos recibidos no tienen el formato esperado.");
+                        setError("Los datos de ausencia recibidos no tienen el formato esperado.");
                         setAusencias({});
                         return;
                     }
@@ -50,26 +59,32 @@ const PaginaDashboard = () => {
                         let fechaTemporal = new Date(inicio);
 
                         while (fechaTemporal <= fin) {
+                            const dayOfWeek = fechaTemporal.getDay();
+                            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
                             const cadenaFecha = `${fechaTemporal.getFullYear()}-${(fechaTemporal.getMonth() + 1).toString().padStart(2, '0')}-${fechaTemporal.getDate().toString().padStart(2, '0')}`;
+                            const isFeriado = processedFeriados.has(cadenaFecha);
 
-                            if (!ausenciasProcesadas[cadenaFecha]) {
-                                ausenciasProcesadas[cadenaFecha] = { detalles: {} };
-                            }
+                            // Solo procesar si no es fin de semana y no es feriado
+                            if (!isWeekend && !isFeriado) {
+                                if (!ausenciasProcesadas[cadenaFecha]) {
+                                    ausenciasProcesadas[cadenaFecha] = { detalles: {} };
+                                }
 
-                            const nombreGrupo = empleado.nombreGrupo;
-                            if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo]) {
-                                ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo] = [];
-                            }
-                            
-                            if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].some(e => e.rut === empleado.rut)) {
-                                ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].push(empleado);
+                                const nombreGrupo = empleado.nombreGrupo;
+                                if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo]) {
+                                    ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo] = [];
+                                }
+                                
+                                if (!ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].some(e => e.rut === empleado.rut)) {
+                                    ausenciasProcesadas[cadenaFecha].detalles[nombreGrupo].push(empleado);
+                                }
                             }
                             fechaTemporal.setDate(fechaTemporal.getDate() + 1);
                         }
                     });
                     setAusencias(ausenciasProcesadas);
                 } catch (err) {
-                    setError("No se pudo cargar la información de ausencias.");
+                    setError("No se pudo cargar la información del dashboard.");
                     console.error(err);
                 } finally {
                     setLoading(false);
@@ -155,7 +170,14 @@ const PaginaDashboard = () => {
         const fechaTemporal = new Date(inicio);
 
         while (fechaTemporal <= fin) {
-            dias.push(new Date(fechaTemporal));
+            const dayOfWeek = fechaTemporal.getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const cadenaFecha = `${fechaTemporal.getFullYear()}-${(fechaTemporal.getMonth() + 1).toString().padStart(2, '0')}-${fechaTemporal.getDate().toString().padStart(2, '0')}`;
+            const isFeriado = feriadosSet.has(cadenaFecha);
+
+            if (!isWeekend && !isFeriado) {
+                dias.push(new Date(fechaTemporal));
+            }
             fechaTemporal.setDate(fechaTemporal.getDate() + 1);
         }
 
@@ -192,6 +214,7 @@ const PaginaDashboard = () => {
             </div>
         );
     };
+
 
     return (
         <div className="container-fluid mt-4 dashboard-container d-flex flex-column">
