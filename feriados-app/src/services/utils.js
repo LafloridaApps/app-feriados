@@ -109,37 +109,42 @@ export function formatFechaString(fecha) {
 }
 
 export const validarRut = (rut) => {
-	if (!/^[0-9]+[0-9kK]{1}$/.test(rut)) {
-		return false;
-	}
-	const rutLimpio = rut.replace(/[^0-9kK]/g, '').toUpperCase();
-	const cuerpo = rutLimpio.slice(0, -1);
-	const dv = rutLimpio.slice(-1);
+    if (typeof rut !== 'string') {
+        return false;
+    }
 
-	let suma = 0;
-	let multiplo = 2;
+    // Limpiar el RUT de puntos y guiones y convertir a mayúsculas
+    const rutLimpio = rut.replace(/[\\.-]/g, '').toUpperCase();
+    
+    // Separar cuerpo y dígito verificador
+    const cuerpo = rutLimpio.slice(0, -1);
+    const dv = rutLimpio.slice(-1);
 
-	for (let i = cuerpo.length - 1; i >= 0; i--) {
-		suma += multiplo * cuerpo.charAt(i);
-		if (multiplo < 7) {
-			multiplo++;
-		} else {
-			multiplo = 2;
-		}
-	}
+    // Validar que el cuerpo sea numérico y el dv sea un número o 'K'
+    if (!/^\d+$/.test(cuerpo) || !/^[0-9K]$/.test(dv)) {
+        return false;
+    }
 
-	const dvEsperado = 11 - (suma % 11);
-	let dvCalculado;
+    let suma = 0;
+    let multiplo = 2;
 
-	if (dvEsperado === 11) {
-		dvCalculado = '0';
-	} else if (dvEsperado === 10) {
-		dvCalculado = 'K';
-	} else {
-		dvCalculado = dvEsperado.toString();
-	}
+    // Calcular suma ponderada
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+        suma += parseInt(cuerpo.charAt(i), 10) * multiplo;
+        multiplo = multiplo === 7 ? 2 : multiplo + 1;
+    }
 
-	return dv === dvCalculado;
+    // Calcular dígito verificador esperado
+    const dvEsperado = 11 - (suma % 11);
+    
+    // Comparar con el dígito verificador proporcionado
+    if (dv === 'K' && dvEsperado === 10) {
+        return true;
+    }
+    if (dv === '0' && dvEsperado === 11) {
+        return true;
+    }
+    return dv === dvEsperado.toString();
 };
 
 export function calcularPrimerDiaDelMes() {

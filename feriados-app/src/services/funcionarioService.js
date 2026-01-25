@@ -18,8 +18,16 @@ export const getFuncionarioByRutAndVrut = async (rut) => {
 };
 
 export const getFuncionarioLocalByRut = async (rut) => {
-    const response = await api.get('', { params: { rut } });
-    return response;
+
+    try {
+
+         const data = await api.get('', { params: { rut } });
+        return data;
+    } catch (error) {
+         console.error('Error al obtener funcionario:', error);
+        throw error;
+    }
+   
 };
 
 

@@ -29,9 +29,8 @@ export const updateDepartamentoById = async (id, deptoData) => {
 
 export const updateJefeDeptoById = async (id, nuevoRut) => {
   try {
-    const { data } = await api.put('/jefe', { rut: nuevoRut }, {
-      params: { idDepto: id }
-    });
+    const { data } = await api.put(`/update/${id}`, nuevoRut)
+  
     return data;
   } catch (error) {
     console.error('Error al actualizar el jefe del departamento:', error);

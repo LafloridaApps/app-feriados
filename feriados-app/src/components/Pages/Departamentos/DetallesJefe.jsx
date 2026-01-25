@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getFuncionarioLocalByRut } from '../../../services/funcionarioService';
 import { updateJefeDeptoById, updateDepartamentoById } from '../../../services/departamentosService';
+import { validarRut } from '../../../services/utils';
 
 const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJefeLoading }) => {
 
@@ -37,6 +38,20 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
     };
 
     const handleGuardarJefe = () => {
+        if (!rutCompleto.trim()) {
+            Swal.fire('Error', 'El RUT no puede estar vacío.', 'error');
+            return;
+        }
+
+        // Formatear el RUT para la validación: quitar puntos, dejar guion y dígito verificador.
+        // La función validarRut en utils.js espera el formato "xxxxxxxx-x" o "xxxxxxxxxK/k"
+        const rutParaValidar = rutCompleto.replace(/\./g, '').toUpperCase();
+
+        if (!validarRut(rutParaValidar)) {
+            Swal.fire('Error', 'El RUT ingresado no es válido.', 'error');
+            return;
+        }
+
         Swal.fire({
             title: '¿Está seguro de guardar el jefe?',
             icon: 'warning',
@@ -46,8 +61,10 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const rutNumerico = rutCompleto.split('-')[0].replace(/\./g, '');
-                    await updateJefeDeptoById(departamento.id, rutNumerico);
+                    // Aquí se extrae el número del RUT antes del guion para enviarlo al servicio.
+                    // Si el rutCompleto es "12345678-K", rutNumerico será "12345678"
+                    const rutNumerico = rutCompleto.replace(/[.-]/g, '').slice(0, -1);
+                    await updateJefeDeptoById(departamento.id, { rut: rutNumerico });
                     Swal.fire('¡Guardado!', 'El jefe del departamento ha sido actualizado.', 'success');
                     fetchDepartamentos();
                     setEnEdicion(false);
@@ -79,22 +96,38 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
     };
 
     const handleBuscarJefePorRut = async () => {
+        console.log("RUT ingresado:", rutCompleto);
+
+        if (!rutCompleto.trim()) {
+            Swal.fire('Error', 'El RUT no puede estar vacío para buscar.', 'error');
+            setNombreJefeEditado('');
+            setDisabled(true);
+            return;
+        }
+
+        const rutParaValidar = rutCompleto.replace(/\./g, '').toUpperCase();
+        if (!validarRut(rutParaValidar)) {
+            Swal.fire('Error', 'El RUT ingresado no es válido.', 'error');
+            setNombreJefeEditado('');
+            setDisabled(true);
+            return;
+        }
+
         const input = rutCompleto.replace(/\./g, '').replace('-', '').toUpperCase();
-        if (input.length < 2) {
+        if (input.length < 2) { // This check might be redundant after validarRut, but keeping it as it was there.
             setNombreJefeEditado('');
             setDisabled(true);
             return;
         }
         const cuerpo = input.slice(0, -1);
-        const dv = input.slice(-1);
         try {
-            const result = await getFuncionarioLocalByRut(cuerpo + dv);
-            const nombreCompleto = [result.nombre, result.apellidoPaterno, result.apellidoMaterno].filter(Boolean).join(' ');
+            const data = await getFuncionarioLocalByRut(cuerpo );
+            const nombreCompleto = data.data.nombreCompleto;
             setNombreJefeEditado(nombreCompleto);
             setDisabled(false);
         } catch (error) {
             setDisabled(true);
-            Swal.fire('Error', error.response?.data?.detalle || 'No se pudo obtener el funcionario', 'error');
+            Swal.fire('Error', error.response.data.message, 'error');
         }
     };
 
@@ -147,7 +180,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
                             <div className="mb-2">
                                 <label className="form-label form-label-sm">RUT</label>
                                 <div className="input-group">
-                                    <input type="text" className="form-control form-control-sm" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} />
+                                    <input type="text" className="form-control form-control-sm" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} placeholder="Ej: 12345678-9 o 123456789" />
                                     <button className="btn btn-outline-secondary btn-sm" type="button" onClick={handleBuscarJefePorRut}>Buscar</button>
                                 </div>
                             </div>
@@ -201,6 +234,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
         </div>
     );
 }
+
 
 export default DetallesJefe;
 

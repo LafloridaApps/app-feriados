@@ -1,103 +1,44 @@
-import { useState, useEffect, useCallback } from 'react';
 import ArbolDepartamentos from './ArbolDepartamentos';
 import DetallesJefe from './DetallesJefe';
 import CrearDepartamentoModal from './CrearDepartamentoModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { getDepartamentosList } from '../../../services/departamentosService';
 import './ArbolDepartamentos.css';
-import { getFuncionarioByRutAndVrut } from '../../../services/funcionarioService';
+import useDepartamentos from '../../../hooks/useDepartamentos';
+import useJefeDepartamento from '../../../hooks/useJefeDepartamento';
+import useCrearDepartamentoModal from '../../../hooks/useCrearDepartamentoModal';
+import useSeleccionarDepartamento from '../../../hooks/useSeleccionarDepartamento';
 
 const DepartamentosPage = () => {
-    const [departamentos, setDepartamentos] = useState([]);
-    const [departamentoSeleccionado, setDepartamentoSeleccionado] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showCrearModal, setShowCrearModal] = useState(false);
-    const [parentDepartment, setParentDepartment] = useState(null);
-    const [jefeSeleccionado, setJefeSeleccionado] = useState(null);
-    const [isJefeLoading, setIsJefeLoading] = useState(false);
+    const {
+        departamentosFiltrados,
+        loading,
+        error,
+        searchTerm,
+        setSearchTerm,
+        fetchDepartamentos
+    } = useDepartamentos();
 
-    const fetchDepartamentos = useCallback(async () => {
-        try {
-            setLoading(true);
-            const response = await getDepartamentosList();
-            if (Array.isArray(response.data)) {
-                setDepartamentos(response.data);
-            } else {
-                setError("La respuesta no tiene el formato esperado.");
-            }
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    const {
+        departamentoSeleccionado,
+        handleSeleccionarDepartamento
+    } = useSeleccionarDepartamento();
 
-    useEffect(() => {
-        fetchDepartamentos();
-    }, [fetchDepartamentos]);
+    const { jefeSeleccionado, isJefeLoading } = useJefeDepartamento(departamentoSeleccionado);
 
-    const handleShowCrearModal = (parent) => {
-        setParentDepartment(parent);
-        setShowCrearModal(true);
-    };
-
-    const handleHideCrearModal = () => {
-        setShowCrearModal(false);
-        setParentDepartment(null);
-    };
-
-
-    useEffect(() => {
-        const buscarJefe = async () => {
-            if (departamentoSeleccionado && departamentoSeleccionado.rutJefe) {
-                setIsJefeLoading(true);
-                try {
-                    const response = await getFuncionarioByRutAndVrut(departamentoSeleccionado.rutJefe);
-                    setJefeSeleccionado(response); // Guardar el objeto completo
-                } catch (error) {
-                    console.error("Error al buscar los detalles del jefe:", error);
-                    setJefeSeleccionado(null);
-                } finally {
-                    setIsJefeLoading(false);
-                }
-            } else {
-                setJefeSeleccionado(null); // Limpiar el jefe si no hay depto seleccionado
-            }
-        };
-
-        buscarJefe();
-    }, [departamentoSeleccionado]);
-
-    const handleSeleccionarDepartamento = (departamento) => {
-        if (departamentoSeleccionado && departamentoSeleccionado.id === departamento.id) {
-            setDepartamentoSeleccionado(null);
-        } else {
-            setDepartamentoSeleccionado(departamento);
-        }
-    };
-
-    const filterTree = (nodes, term) => {
-        if (!term) return nodes;
-        const lowerCaseTerm = term.toLowerCase();
-        function filter(node) {
-            const children = (node.dependencias || []).map(filter).filter(Boolean);
-            if (node.nombre.toLowerCase().includes(lowerCaseTerm) || children.length > 0) {
-                return { ...node, dependencias: children };
-            }
-            return null;
-        }
-        return nodes.map(filter).filter(Boolean);
-    };
-
-    const departamentosFiltrados = filterTree(departamentos, searchTerm);
+    const {
+        showCrearModal,
+        parentDepartment,
+        handleShowCrearModal,
+        handleHideCrearModal
+    } = useCrearDepartamentoModal();
 
     if (error) {
         return <div className="container mt-5 alert alert-danger"><p>Error al cargar: {error}</p></div>;
     }
 
+
+    console.log(departamentosFiltrados)
     return (
         <div className="container-fluid mt-4">
             <h2 className="mb-4">Gestión de Departamentos</h2>
