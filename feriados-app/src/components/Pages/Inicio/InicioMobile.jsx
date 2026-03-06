@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import WelcomeWidget from './components/WelcomeWidget';
 import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
@@ -41,6 +42,18 @@ const InicioMobile = ({ funcionario, esJefe, resumenFunc }) => {
             )}
         </div>
     );
+};
+
+InicioMobile.propTypes = {
+    funcionario: PropTypes.object,
+    esJefe: PropTypes.bool,
+    resumenFunc: PropTypes.shape({
+        saldoFeriado: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        saldoAdministrativo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        idUltimaSolicitud: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        estadoUltimaSolicitud: PropTypes.string,
+        solicitudMes: PropTypes.array
+    })
 };
 
 export default InicioMobile;

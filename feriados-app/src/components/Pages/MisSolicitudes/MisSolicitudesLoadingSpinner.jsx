@@ -1,9 +1,8 @@
 const MisSolicitudesLoadingSpinner = () => {
     return (
         <div className="text-center p-4">
-            <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Cargando...</span>
-            </div>
+            <span className="spinner-border text-primary" aria-hidden="true"></span>
+            <output className="visually-hidden">Cargando...</output>
         </div>
     );
 };

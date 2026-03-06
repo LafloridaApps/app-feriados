@@ -20,7 +20,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const getPermisos = async () => {
-            if (funcionario && funcionario.rut) {
+            if (funcionario?.rut) {
                 try {
                     const response = await getPermisosByUsuario(funcionario.rut);
                     if (response) {

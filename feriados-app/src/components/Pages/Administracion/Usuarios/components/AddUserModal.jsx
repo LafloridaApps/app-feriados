@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import { getFuncionarioByRutAndVrut } from '../../../../../services/funcionarioService';
 
@@ -48,8 +49,9 @@ const AddUserModal = ({ show, onClose, onUserAdded }) => {
                     <div className="modal-body">
                         <form onSubmit={handleSearch}>
                             <div className="mb-3">
-                                <label className="form-label">RUT del Funcionario</label>
+                                <label htmlFor="rutInput" className="form-label">RUT del Funcionario</label>
                                 <input
+                                    id="rutInput"
                                     type="text"
                                     className="form-control"
                                     value={rutBusqueda}
@@ -100,5 +102,12 @@ const AddUserModal = ({ show, onClose, onUserAdded }) => {
         </div>
     );
 };
+
+AddUserModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onUserAdded: PropTypes.func.isRequired,
+};
+
 
 export default AddUserModal;

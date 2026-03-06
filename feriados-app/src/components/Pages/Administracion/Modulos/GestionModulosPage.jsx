@@ -36,7 +36,6 @@ const GestionModulosPage = () => {
             nombre: nombreModulo,
         };
 
-        // await createModulo(newModule); // Removed this line
 
         setModulos([...modulos, newModule]);
         setNombreModulo(''); // Limpiar el input
@@ -70,8 +69,8 @@ const GestionModulosPage = () => {
                                         <button type="submit" className="btn btn-primary w-100" disabled={loading}>
                                             {loading ? (
                                                 <>
-                                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                    ...
+                                                    <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+                                                    {' ...'}
                                                 </>
                                             ) : 'Agregar'}
                                         </button>

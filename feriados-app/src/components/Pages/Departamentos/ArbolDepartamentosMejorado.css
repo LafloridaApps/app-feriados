@@ -2,94 +2,194 @@
 
 .tree-container-mejorado {
     list-style: none;
-    padding: 1rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
 }
 
 .tree-node-mejorado {
     position: relative;
-    padding-left: 25px;
-    margin-bottom: 8px;
+    padding-left: 20px;
+    margin-bottom: 4px;
+}
+
+/* Connecting Lines */
+.tree-node-mejorado::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8px;
+    bottom: 0;
+    width: 1px;
+    background-color: #e0e0e0;
+    z-index: 1;
+}
+
+.tree-node-mejorado:last-child::before {
+    bottom: calc(100% - 20px);
+}
+
+.tree-node-mejorado::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 8px;
+    width: 12px;
+    height: 1px;
+    background-color: #e0e0e0;
+    z-index: 1;
+}
+
+/* Base level no lines to the left */
+.tree-container-mejorado>.tree-node-mejorado::before,
+.tree-container-mejorado>.tree-node-mejorado::after {
+    display: none;
+}
+
+.tree-container-mejorado>.tree-node-mejorado {
+    padding-left: 0;
 }
 
 .tree-node-mejorado-content {
     display: flex;
     align-items: center;
     padding: 8px 12px;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    background-color: #fff;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 4px;
 }
 
 .tree-node-mejorado-content:hover {
-    background-color: #f0f0f0;
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
 }
 
-.tree-node-mejorado.active > .tree-node-mejorado-content {
-    background-color: #007bff;
-    color: #fff;
+.tree-node-mejorado.active>.tree-node-mejorado-content {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+    color: #0a58ca;
+    box-shadow: 0 1px 3px rgba(13, 110, 253, 0.1);
+}
+
+.tree-node-mejorado.active>.tree-node-mejorado-content i.node-icon {
+    color: #0d6efd;
 }
 
 .tree-toggler-mejorado {
-    position: absolute;
-    left: 0;
-    top: 12px; /* Posición fija desde arriba */
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease-in-out;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    margin-right: 8px;
+    color: #495057;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.tree-toggler-mejorado:hover {
+    background-color: #e9ecef;
+    color: #212529;
 }
 
 .tree-toggler-mejorado i {
+    font-size: 0.75rem;
     transition: transform 0.2s ease-in-out;
-    font-size: 0.9rem;
+}
+
+.tree-node-mejorado.expanded>.tree-node-mejorado-content .tree-toggler-mejorado {
+    background-color: #e9ecef;
 }
 
 .tree-children-mejorado {
     list-style: none;
-    padding-left: 10px;
-    margin-top: 8px;
-    border-left: 1px dashed #ccc;
+    padding-left: 14px;
     display: none;
+    animation: fadeInDown 0.2s ease-out;
 }
 
-.tree-node-mejorado.expanded > .tree-children-mejorado {
+.tree-node-mejorado.expanded>.tree-children-mejorado {
     display: block;
 }
 
-/* --- Estilos para el Menú Kebab --- */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Icon specific */
+.node-icon {
+    color: #6c757d;
+    /* Darker for better contrast */
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+.tree-node-mejorado-content:hover .node-icon {
+    color: #495057;
+}
+
+/* --- Menu Kebab --- */
 .kebab-menu {
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 100;
-    padding: 5px 0;
-    min-width: 220px; /* Ancho mínimo del menú */
+    padding: 0.5rem 0;
+    min-width: 200px;
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .kebab-menu-item {
-    padding: 8px 15px;
+    padding: 8px 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-size: 0.9rem;
-    color: #333; /* Color de texto normal del menú */
-}
-
-/* Forzar color de texto del menú cuando el nodo está activo */
-.tree-node-mejorado.active .kebab-menu-item {
-    color: #333;
+    font-size: 0.875rem;
+    color: #495057;
+    transition: background-color 0.15s;
 }
 
 .kebab-menu-item:hover {
-    background-color: #f0f0f0;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.kebab-menu-item i {
+    color: #6c757d;
+}
+
+.kebab-menu-item:hover i {
+    color: #0d6efd;
 }

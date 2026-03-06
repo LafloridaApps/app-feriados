@@ -77,18 +77,53 @@ const NodoDepartamentoConector = ({
         setMenuVisible(false);
     }
 
+    let iconClass = 'bi-file-earmark-text';
+    if (depth === 0) {
+        iconClass = 'bi-building';
+    } else if (tieneDependencias) {
+        iconClass = estaExpandido ? 'bi-folder2-open' : 'bi-folder2';
+    }
+
     const nodeClasses = `tree-node-mejorado ${estaExpandido ? 'expanded' : ''} ${esDepartamentoSeleccionado ? 'active' : ''}`;
+
+    const renderChildren = () => {
+        if (!estaExpandido || !tieneDependencias) return null;
+        return (
+            <ul className="tree-children-mejorado">
+                {departamento.dependencias.map(dep => (
+                    <NodoDepartamentoConector
+                        key={dep.id}
+                        departamento={dep}
+                        nodosExpandidos={nodosExpandidos}
+                        onToggleNodo={onToggleNodo}
+                        onSeleccionarDepartamento={onSeleccionarDepartamento}
+                        departamentoSeleccionado={departamentoSeleccionado}
+                        depth={depth + 1}
+                        onEditarDepartamento={onEditarDepartamento}
+                        onShowCrearModal={onShowCrearModal}
+                    />
+                ))}
+            </ul>
+        );
+    };
 
     return (
         <li className={nodeClasses}>
-            <div className="tree-node-mejorado-content" onClick={handleSeleccion}>
-                                <span
-                    className={`tree-toggler-mejorado ${estaExpandido ? 'expanded' : ''}`}
+            <div className="tree-node-mejorado-content" onClick={handleSeleccion} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') handleSeleccion(); }}>
+                <span
+                    className={`tree-toggler-mejorado ${estaExpandido ? 'expanded' : ''} ${tieneDependencias ? '' : 'invisible'}`}
                     onClick={tieneDependencias ? handleToggle : null}
+                    style={{ visibility: tieneDependencias ? 'visible' : 'hidden' }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && tieneDependencias) handleToggle(e); }}
                 >
-                    {tieneDependencias && (estaExpandido ? <i className="bi bi-chevron-down"></i> : <i className="bi bi-chevron-right"></i>)}
+                    {tieneDependencias && (estaExpandido ? <i className="bi bi-dash"></i> : <i className="bi bi-plus"></i>)}
                 </span>
-                <span style={{ marginLeft: '5px' }}>
+
+                <i className={`node-icon bi ${iconClass}`}></i>
+
+                <span className="flex-grow-1 text-truncate" title={departamento.nombre}>
                     {enEdicion ? (
                         <input
                             type="text"
@@ -96,6 +131,7 @@ const NodoDepartamentoConector = ({
                             value={nombreEditado}
                             onChange={handleNombreChange}
                             onClick={(e) => e.stopPropagation()}
+                            autoFocus
                         />
                     ) : (
                         departamento.nombre
@@ -124,35 +160,19 @@ const NodoDepartamentoConector = ({
 
                         {menuVisible && (
                             <div className="kebab-menu">
-                                <div className="kebab-menu-item" onClick={handleAddClick}>
+                                <button className="kebab-menu-item btn border-0 w-100 text-start" onClick={handleAddClick}>
                                     <i className="bi bi-plus-lg me-2"></i>Añadir sub-departamento
-                                </div>
-                                <div className="kebab-menu-item" onClick={handleEditClick}>
+                                </button>
+                                <button className="kebab-menu-item btn border-0 w-100 text-start" onClick={handleEditClick}>
                                     <i className="bi bi-pencil-fill me-2"></i>Editar nombre
-                                </div>
+                                </button>
                             </div>
                         )}
                     </div>
                 )}
             </div>
 
-            {estaExpandido && tieneDependencias && (
-                <ul className="tree-children-mejorado">
-                    {departamento.dependencias.map(dep => (
-                        <NodoDepartamentoConector
-                            key={dep.id}
-                            departamento={dep}
-                            nodosExpandidos={nodosExpandidos}
-                            onToggleNodo={onToggleNodo}
-                            onSeleccionarDepartamento={onSeleccionarDepartamento}
-                            departamentoSeleccionado={departamentoSeleccionado}
-                            depth={depth + 1}
-                            onEditarDepartamento={onEditarDepartamento}
-                            onShowCrearModal={onShowCrearModal}
-                        />
-                    ))}
-                </ul>
-            )}
+            {renderChildren()}
         </li>
     );
 };

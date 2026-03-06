@@ -41,10 +41,13 @@ export default DetalleSolicitud;
 
 DetalleSolicitud.propTypes = {
     detalle: PropTypes.shape({
-        departamentoOrigen: PropTypes.string.isRequired,
+        nombreDepartamento: PropTypes.string.isRequired,
         fechaInicio: PropTypes.string.isRequired,
         fechaFin: PropTypes.string.isRequired,
         cantidadDias: PropTypes.number.isRequired,
+        jornadaInicio: PropTypes.string,
+        jornadaFin: PropTypes.string,
+        tipoSolicitud: PropTypes.string,
     }).isRequired,
 };
 

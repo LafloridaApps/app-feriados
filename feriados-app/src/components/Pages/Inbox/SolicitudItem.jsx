@@ -153,6 +153,7 @@ SolicitudItem.propTypes = {
                 nombreDeptoSubrogado: PropTypes.string,
             })
         ),
+        urlPdf: PropTypes.string,
         derivaciones: PropTypes.arrayOf(
             PropTypes.shape({
                 id: PropTypes.number.isRequired,

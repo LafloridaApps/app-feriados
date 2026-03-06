@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const TrazabilidadCard = ({ derivaciones }) => (
@@ -31,5 +32,10 @@ const TrazabilidadCard = ({ derivaciones }) => (
         </div>
     </div>
 );
+
+TrazabilidadCard.propTypes = {
+    derivaciones: PropTypes.array,
+};
+
 
 export default TrazabilidadCard;

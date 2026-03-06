@@ -1,6 +1,7 @@
 import React from 'react';
 import TabsAdministrativos from "./TabsAdministrativos";
 import './AdministrativosPageMobile.css';
+import PropTypes from 'prop-types';
 
 const AdministrativosPageMobile = ({ resumen, detalle }) => {
     return (
@@ -13,6 +14,16 @@ const AdministrativosPageMobile = ({ resumen, detalle }) => {
             </div>
         </div>
     );
+};
+
+AdministrativosPageMobile.propTypes = {
+    resumen: PropTypes.shape({
+        anio: PropTypes.number.isRequired, 
+    }).isRequired,
+    detalle: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        nombre: PropTypes.string.isRequired,
+    })).isRequired,
 };
 
 export default AdministrativosPageMobile;

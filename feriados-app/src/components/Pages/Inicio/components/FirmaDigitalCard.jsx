@@ -5,6 +5,7 @@ import './FirmaDigitalCard.css'; // I will create a new CSS file for the card
 const FirmaDigitalCard = () => {
     const { firma } = useContext(FirmaDigitalContext);
 
+
     if (!firma) {
         return null;
     }

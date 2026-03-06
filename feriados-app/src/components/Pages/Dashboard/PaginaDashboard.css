@@ -31,7 +31,7 @@
 
 .dashboard-calendar-header {
     background-color: #28a745 !important; /* Verde profesional */
-    color: #ffffff !important;
+    color: #000000 !important;
     border-top-left-radius: 8px !important;
     border-top-right-radius: 8px !important;
 }
@@ -126,7 +126,7 @@
 
 .dashboard-modal-header {
     background-color: #28a745 !important; /* Verde profesional */
-    color: #ffffff !important;
+    color: #000000 !important;
     border-bottom: 1px solid #218838 !important;
 }
 
@@ -152,5 +152,23 @@
 
 .dashboard-mini-calendar-day.is-highlighted {
     background-color: #28a745 !important; /* Verde profesional */
-    color: #fff !important;
+    color: #000000 !important;
+}
+
+button.btn-day-override {
+    background-color: transparent;
+    border: none;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    color: inherit;
+    font-family: inherit;
+    width: 100%;
+}
+
+/* Specific overrides for no border on last column/rows for button to match old div behavior */
+button.btn-day-override:nth-child(7n) {
+    border-right: none;
+}
+.dashboard-calendar-grid-wrapper > button:nth-last-child(-n + 7) {
+    border-bottom: none;
 }

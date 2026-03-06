@@ -8,7 +8,7 @@ export const useSubroganteSearch = (setSubrogante, setErrors) => {
         setErrors({ mensaje: '', detalle: '' });
         setSubrogante(null);
 
-        const rutLimpio = rut.replace(/\D/g, '');
+        const rutLimpio = rut.replaceAll(/\D/g, '');
 
         if (!rutLimpio) {
             setErrors({ mensaje: 'RUT inválido', detalle: 'Por favor, ingrese un RUT válido sin puntos ni guiones.' });
@@ -18,8 +18,8 @@ export const useSubroganteSearch = (setSubrogante, setErrors) => {
         const rutSinDv = rutLimpio.slice(0, -1);
 
         try {
-            const dataFuncionario = await consultarRut(rutSinDv, fechaInicio,fechaFin);
-            
+            const dataFuncionario = await consultarRut(rutSinDv, fechaInicio, fechaFin);
+
             setSubrogante(dataFuncionario);
         } catch (error) {
             console.error('Error al consultar funcionario:', error);

@@ -1,4 +1,4 @@
-import { PropTypes } from 'prop-types'
+import PropTypes from 'prop-types';
 import { formatFecha } from '../../../services/utils';
 
 const DetalleSolicitud = ({ fechaInicio, fechaFin, tipo, diasUsar, saldo }) => {

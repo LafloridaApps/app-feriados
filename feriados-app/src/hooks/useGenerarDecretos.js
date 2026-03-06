@@ -19,8 +19,8 @@ export const useGenerarDecretos = () => {
     const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
 
     // State for backend pagination
-    const [ setBackendPage] = useState(0);
-    const [ setTotalBackendPages] = useState(0);
+    const [setBackendPage] = useState(0);
+    const [setTotalBackendPages] = useState(0);
 
     // State for component pagination 
     const [componentPage, setComponentPage] = useState(1);
@@ -154,6 +154,39 @@ export const useGenerarDecretos = () => {
         }
     };
 
+    const procesarExcel = async (response) => {
+        try {
+            await exportToExcel(response, 'decretos_generados');
+            return true;
+        } catch (excelError) {
+            mostrarAlertaError('Error al exportar a Excel.', excelError.message || 'Ocurrió un error al exportar el archivo Excel.');
+            console.error('Error exporting to Excel:', excelError.response ? excelError.response.data : excelError);
+            return false;
+        }
+    };
+
+    const procesarWord = async (nroDecreto) => {
+        try {
+            if (!nroDecreto) {
+                throw new Error("No se encontró el 'nroDecreto' en la respuesta para generar el documento Word.");
+            }
+            const wordResponse = await getDocDecreto(nroDecreto);
+            const url = globalThis.URL.createObjectURL(wordResponse.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `decreto_${nroDecreto}.docx`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            globalThis.URL.revokeObjectURL(url);
+            return true;
+        } catch (wordError) {
+            mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
+            console.error('Error downloading Word document:', wordError.response ? wordError.response.data : wordError);
+            return false;
+        }
+    };
+
     const handleGenerarDecreto = async (templateName) => {
         if (!templateName) {
             mostrarAlertaError('Debe seleccionar una plantilla.');
@@ -163,7 +196,7 @@ export const useGenerarDecretos = () => {
             mostrarAlertaError('Debe seleccionar al menos una aprobación para generar un decreto.');
             return;
         }
-        if (!funcionario || !funcionario.rut) {
+        if (!funcionario?.rut) {
             mostrarAlertaError('No se pudo obtener el RUT del usuario para generar el decreto.');
             return;
         }
@@ -187,36 +220,10 @@ export const useGenerarDecretos = () => {
             const response = await decretar(decretos);
 
             if (response && response.length > 0) {
-                let excelSuccess = false;
                 console.log('Decretos generated response:', response);
-                try {
-                    await exportToExcel(response, 'decretos_generados');
-                    excelSuccess = true;
-                } catch (excelError) {
-                    mostrarAlertaError('Error al exportar a Excel.', excelError.message || 'Ocurrió un error al exportar el archivo Excel.');
-                    console.error('Error exporting to Excel:', excelError.response ? excelError.response.data : excelError);
-                }
 
-                let wordSuccess = false;
-                try {
-                    const nroDecreto = response[0].nroDecreto;
-                    if (!nroDecreto) {
-                        throw new Error("No se encontró el 'nroDecreto' en la respuesta para generar el documento Word.");
-                    }
-                    const wordResponse = await getDocDecreto(nroDecreto);
-                    const url = window.URL.createObjectURL(wordResponse.data);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', `decreto_${nroDecreto}.docx`);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    window.URL.revokeObjectURL(url);
-                    wordSuccess = true;
-                } catch (wordError) {
-                    mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
-                    console.error('Error downloading Word document:', wordError.response ? wordError.response.data : wordError);
-                }
+                const excelSuccess = await procesarExcel(response);
+                const wordSuccess = await procesarWord(response[0]?.nroDecreto);
 
                 if (excelSuccess && wordSuccess) {
                     mostrarAlertaExito('Generación Exitosa', 'Decretos generados. Archivos Excel y Word descargados.');

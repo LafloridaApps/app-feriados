@@ -48,8 +48,8 @@ const RrhhFilters = ({
                     >
                         {loading ? (
                             <>
-                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                <span className="visually-hidden">Cargando...</span>
+                                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                <output className="visually-hidden">Cargando...</output>
                             </>
                         ) : (
                             'Cargar Aprobaciones'

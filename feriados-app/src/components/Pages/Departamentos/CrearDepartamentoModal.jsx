@@ -30,7 +30,7 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
             setNombreJefe('');
             return;
         }
-        const input = rutCompleto.replace(/\./g, '').replace('-', '').toUpperCase();
+        const input = rutCompleto.replaceAll('.', '').replace('-', '').toUpperCase();
         if (input.length < 2) {
             setNombreJefe('');
             return;
@@ -48,7 +48,7 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
     };
 
     const handleGuardar = async () => {
-        const rutJefe = rutCompleto ? rutCompleto.split('-')[0].replace(/\./g, '') : null;
+        const rutJefe = rutCompleto ? rutCompleto.split('-')[0].replaceAll('.', '') : null;
         const deptoData = {
             nombre,
             rut_jefe: rutJefe,
@@ -80,8 +80,8 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
                         </div>
                         <div className="modal-body">
                             <div className="mb-3">
-                                <label className="form-label">Dependiente de:</label>
-                                <input type="text" className="form-control" readOnly disabled value={parent ? parent.nombre : 'Raíz'} />
+                                <label htmlFor="deptoPadre" className="form-label">Dependiente de:</label>
+                                <input id="deptoPadre" type="text" className="form-control" readOnly disabled value={parent ? parent.nombre : 'Raíz'} />
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="nombreDepto" className="form-label">Nombre del Nuevo Departamento</label>
@@ -109,8 +109,8 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Nombre del Jefe</label>
-                                <input type="text" className="form-control" readOnly disabled value={nombreJefe} />
+                                <label htmlFor="nombreJefeDisplay" className="form-label">Nombre del Jefe</label>
+                                <input id="nombreJefeDisplay" type="text" className="form-control" readOnly disabled value={nombreJefe} />
                             </div>
                         </div>
                         <div className="modal-footer">

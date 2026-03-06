@@ -2,6 +2,7 @@ import React from 'react';
 import DetalleMiSolicitud from './DetalleMiSolicitud';
 import { formatFecha } from '../../../services/utils';
 import './MisSolicitudesMobile.css';
+import PropTypes from 'prop-types';
 
 const getStatusBadge = (status) => {
     switch (status) {
@@ -69,6 +70,12 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
             ))}
         </div>
     );
+};
+
+MisSolicitudesMobile.propTypes = {
+    solicitudes: PropTypes.array.isRequired,
+    openDetailId: PropTypes.number,
+    handleToggleDetail: PropTypes.func.isRequired,
 };
 
 export default MisSolicitudesMobile;

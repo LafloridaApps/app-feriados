@@ -93,11 +93,11 @@ const IngresoSubrogancia = () => {
                                     </div>
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Nombre del Jefe</label>
+                                    <div className="form-label">Nombre del Jefe</div>
                                     <p className="form-control-plaintext bg-light p-2 rounded ingreso-subrogancia-form-control-plaintext">{jefe.nombre || '(Resultado de la búsqueda)'}</p>
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Departamento del Jefe</label>
+                                    <div className="form-label">Departamento del Jefe</div>
                                     <p className="form-control-plaintext bg-light p-2 rounded ingreso-subrogancia-form-control-plaintext">{jefe.departamento || '(Resultado de la búsqueda)'}</p>
                                 </div>
                             </div>
@@ -111,11 +111,11 @@ const IngresoSubrogancia = () => {
                                     </div>
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Nombre del Subrogante</label>
+                                    <div className="form-label">Nombre del Subrogante</div>
                                     <p className="form-control-plaintext bg-light p-2 rounded ingreso-subrogancia-form-control-plaintext">{subrogante.nombre || '(Resultado de la búsqueda)'}</p>
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Departamento del Subrogante</label>
+                                    <div className="form-label">Departamento del Subrogante</div>
                                     <p className="form-control-plaintext bg-light p-2 rounded ingreso-subrogancia-form-control-plaintext">{subrogante.departamento || '(Resultado de la búsqueda)'}</p>
                                 </div>
                             </div>

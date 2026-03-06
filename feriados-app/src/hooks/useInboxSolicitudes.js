@@ -38,7 +38,6 @@ export const useInboxSolicitudes = () => {
         if (!funcionario) return;
 
         try {
-            console.log('Obteniendo solicitudes para el funcionario:', funcionario.rut, 'en el depto:', funcionario.codDepto, 'Página actual:', currentPage, 'No leídas:', noLeidas);
             const response = await getInboxSolicitudesByDepto(funcionario.codDepto, currentPage, funcionario.rut, { noLeidas });
             console.log('Respuesta de solicitudes:', response);
             setTotalElements(response.totalElements);
@@ -85,7 +84,7 @@ export const useInboxSolicitudes = () => {
         const fechaSolicitudObj = new Date(solicitud.fechaSolicitud);
         const anioSolicitud = fechaSolicitudObj.getFullYear();
 
-        const cumpleAnio = !anio || anioSolicitud === parseInt(anio);
+        const cumpleAnio = !anio || anioSolicitud === Number.parseInt(anio);
         const cumpleFechaInicio = !fechaInicio || fechaSolicitudObj >= new Date(fechaInicio);
         const cumpleFechaFin = !fechaFin || fechaSolicitudObj <= new Date(fechaFin);
         const cumpleNombre = !nombreSolicitante || solicitud.nombreFuncionario?.toLowerCase().includes(nombreSolicitante.toLowerCase());

@@ -1,7 +1,7 @@
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import DetalleSolicitud from './DetalleSolicitud';
 import ModalSubrogante from './Subrogancias/ModalSubrogante';
-import {  useState } from 'react';
+import { useState } from 'react';
 import { useIsJefe } from '../../../hooks/useIsJefe';
 import { useFormularioSolicitud } from '../../../hooks/useFormularioSolicitud';
 import ModalVerSubrogante from './Subrogancias/ModalVerSubrogante';

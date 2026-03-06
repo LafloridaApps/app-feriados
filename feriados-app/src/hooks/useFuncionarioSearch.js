@@ -11,7 +11,7 @@ export const useFuncionarioSearch = () => {
     const [idDepto, setIdDepto] = useState(null);
 
     const handleRutChange = (e) => {
-        const valorFiltrado = e.target.value.replace(/[^0-9kK-]/g, '');
+        const valorFiltrado = e.target.value.replaceAll(/[^0-9kK-]/g, '');
         setRut(valorFiltrado);
     };
 
@@ -24,8 +24,8 @@ export const useFuncionarioSearch = () => {
     };
 
     const handleBuscar = async () => {
-        const rutLimpio = rut.replace(/[.-]/g, '');
-        
+        const rutLimpio = rut.replaceAll(/[.-]/g, '');
+
         if (!rutLimpio) {
             Swal.fire({ icon: 'warning', title: 'Campo Vacío', text: 'Por favor, ingrese un RUT.' });
             return;

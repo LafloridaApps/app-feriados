@@ -1,4 +1,4 @@
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { useContext, useEffect, useState } from "react";
 import { getAdministrativoByRutAnIdent } from "../../../services/adminsitrativoService";
 import TabsAdministrativos from "./TabsAdministrativos";

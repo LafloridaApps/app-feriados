@@ -1,7 +1,8 @@
 /* SolicitudesMesWidget.css */
 
 .solicitudes-mes-widget-card {
-    background-color: #ffffff; /* White background */
+    background-color: #ffffff;
+    /* White background */
     border: 1px solid #e0e0e0;
     transition: transform 0.2s ease-in-out;
 }
@@ -11,11 +12,13 @@
 }
 
 .solicitudes-mes-widget-card .card-title {
-    color: #007bff; /* Azul neutro para título */
+    color: #0056b3;
+    /* Darkened from #007bff to meet minimal contrast */
 }
 
 .solicitudes-mes-widget-card .bi-file-earmark-text-fill {
-    color: #007bff !important; /* Azul neutro para icono */
+    color: #0056b3 !important;
+    /* Darkened from #007bff to meet minimal contrast */
 }
 
 .solicitudes-mes-widget-card .list-group-item {
@@ -28,7 +31,8 @@
 
 /* Badge colors for consistency */
 .solicitudes-mes-widget-card .badge.bg-success {
-    background-color: #28a745 !important;
+    background-color: #1d7b32 !important;
+    /* Darkened from #28a745 to meet minimal contrast */
     color: #fff !important;
 }
 
@@ -38,11 +42,11 @@
 }
 
 .solicitudes-mes-widget-card .btn-outline-primary {
-    color: #007bff !important;
-    border-color: #007bff !important;
+    color: #0056b3 !important;
+    border-color: #0056b3 !important;
 }
 
 .solicitudes-mes-widget-card .btn-outline-primary:hover {
-    background-color: #007bff !important;
+    background-color: #0056b3 !important;
     color: #fff !important;
 }

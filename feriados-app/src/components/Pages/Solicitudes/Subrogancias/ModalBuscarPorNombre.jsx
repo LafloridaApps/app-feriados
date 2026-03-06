@@ -130,9 +130,9 @@ ModalBuscarPorNombre.propTypes = {
     show: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onFuncionarioSelected: PropTypes.func.isRequired,
-    deptoFuncionario: PropTypes.isRequired,
-    fechInicio: PropTypes.isRequired,
-    fechaFin: PropTypes.isRequired
+    deptoFuncionario: PropTypes.any,
+    fechaInicio: PropTypes.any,
+    fechaFin: PropTypes.any
 };
 
 export default ModalBuscarPorNombre;

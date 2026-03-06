@@ -123,4 +123,8 @@ const EliminarGeneracionDecretos = ({ setLoading }) => {
     );
 };
 
+EliminarGeneracionDecretos.propTypes = {
+    setLoading: PropTypes.func.isRequired,
+};
+
 export default EliminarGeneracionDecretos;

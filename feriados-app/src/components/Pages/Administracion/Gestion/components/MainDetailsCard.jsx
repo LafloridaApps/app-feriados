@@ -1,10 +1,11 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const MainDetailsCard = ({ solicitud }) => {
     const handlePdfClick = () => {
         if (solicitud.urlPdf) {
             // Clean the URL by removing any newline/carriage return characters and trimming whitespace
-            const cleanedUrl = solicitud.urlPdf.replace(/(\r\n|\n|\r)/gm, "").trim();
+            const cleanedUrl = solicitud.urlPdf.replaceAll(/(\r\n|\n|\r)/gm, "").trim();
             window.open(cleanedUrl, '_blank', 'noopener,noreferrer');
         }
     };
@@ -37,5 +38,10 @@ const MainDetailsCard = ({ solicitud }) => {
         </div>
     );
 };
+
+MainDetailsCard.propTypes = {
+    solicitud: PropTypes.object.isRequired,
+};
+
 
 export default MainDetailsCard;

@@ -50,7 +50,7 @@ const JefeDashboard = () => {
                     {upcomingAbsences.length > 0 ? (
                         upcomingAbsences.slice(0, 5).map((absence, index) => (
                             <li key={absence.id || index} className="list-group-item">
-                                <strong>{absence.nombreFuncionario}</strong> - {formatFecha(absence.fechaAusencia)}
+                                <strong>{absence.nombreFuncionario}</strong>
                             </li>
                         ))
                     ) : (
@@ -90,10 +90,10 @@ const JefeDashboard = () => {
                             </ul>
                         </div>
                     )}
-                    
+
                     <div className="row">
-                        {cardData.map((card, index) => (
-                            <JefeInfoCard key={index} icon={card.icon} title={card.title}>
+                        {cardData.map((card) => (
+                            <JefeInfoCard key={card.title} icon={card.icon} title={card.title}>
                                 {card.content}
                             </JefeInfoCard>
                         ))}

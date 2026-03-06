@@ -5,7 +5,8 @@
 }
 
 .inicio-mobile-widget-card {
-    background-color: #ffffff; /* White background */
+    background-color: #ffffff;
+    /* White background */
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -16,12 +17,14 @@
 .inicio-mobile-widget-card-header {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #007bff; /* Azul neutro */
+    color: #007bff;
+    /* Azul neutro */
     margin-bottom: 10px;
 }
 
 .inicio-mobile-welcome-widget {
-    background: linear-gradient(45deg, #28a745, #218838); /* Gradient background with new primary green */
+    background: linear-gradient(45deg, #1d7b32, #145523);
+    /* Gradient background with deeper green for contrast */
     color: #ffffff;
     padding: 20px;
     border-radius: 8px;
@@ -41,8 +44,9 @@
 }
 
 .inicio-mobile-quick-actions-button {
-    background-color: #28a745; /* Verde profesional */
-    border-color: #28a745;
+    background-color: #145523;
+    /* Verde profesional accesible */
+    border-color: #145523;
     color: #fff;
     margin-right: 8px;
     margin-bottom: 8px;
@@ -51,14 +55,15 @@
 }
 
 .inicio-mobile-quick-actions-button:hover {
-    background-color: #218838;
-    border-color: #218838;
+    background-color: #0f3d19;
+    border-color: #0f3d19;
 }
 
 .inicio-mobile-saldos-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #007bff; /* Azul neutro */
+    color: #007bff;
+    /* Azul neutro */
 }
 
 .inicio-mobile-solicitudes-mes-value {

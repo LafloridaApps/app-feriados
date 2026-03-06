@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
 import { UsuarioContext } from '../../../context/UsuarioContext';
-import DetalleMiSolicitud from './DetalleMiSolicitud';
 import { getSolicitudesByRut } from '../../../services/misSolicitudesService';
 import MisSolicitudesLoadingSpinner from './MisSolicitudesLoadingSpinner';
 import MisSolicitudesNoDataMessage from './MisSolicitudesNoDataMessage';
@@ -41,13 +40,43 @@ const MisSolicitudes = () => {
             }
         };
 
-        if (funcionario && funcionario.rut) {
+        if (funcionario?.rut) {
             fetSolicitudesByRut();
         }
     }, [funcionario, currentPage, pageSize]);
 
     const handleToggleDetail = (id) => {
         setOpenDetailId(openDetailId === id ? null : id);
+    };
+
+    const renderContent = () => {
+        if (loading) {
+            return <MisSolicitudesLoadingSpinner />;
+        }
+
+        if (solicitudes.length === 0) {
+            return <MisSolicitudesNoDataMessage />;
+        }
+
+        if (isMobile) {
+            return (
+                <MisSolicitudesMobile
+                    solicitudes={solicitudes}
+                    openDetailId={openDetailId}
+                    handleToggleDetail={handleToggleDetail}
+                />
+            );
+        }
+
+        return (
+            <div className="mis-solicitudes-table-wrapper">
+                <MisSolicitudesTable
+                    solicitudes={solicitudes}
+                    openDetailId={openDetailId}
+                    handleToggleDetail={handleToggleDetail}
+                />
+            </div>
+        );
     };
 
 
@@ -62,29 +91,7 @@ const MisSolicitudes = () => {
                     </h5>
                 </div>
                 <div className="card-body p-0">
-                    {loading ? (
-                        <MisSolicitudesLoadingSpinner />
-                    ) : (
-                        solicitudes.length === 0 ? (
-                            <MisSolicitudesNoDataMessage />
-                        ) : (
-                            isMobile ? (
-                                <MisSolicitudesMobile
-                                    solicitudes={solicitudes}
-                                    openDetailId={openDetailId}
-                                    handleToggleDetail={handleToggleDetail}
-                                />
-                            ) : (
-                                <div className="mis-solicitudes-table-wrapper">
-                                    <MisSolicitudesTable
-                                        solicitudes={solicitudes}
-                                        openDetailId={openDetailId}
-                                        handleToggleDetail={handleToggleDetail}
-                                    />
-                                </div>
-                            )
-                        )
-                    )}
+                    {renderContent()}
                 </div>
                 <div className="pagination-container">
                     <MisSolicitudesPagination

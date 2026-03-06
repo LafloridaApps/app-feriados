@@ -14,7 +14,7 @@ const TabsAdministrativos = ({ resumen, detalle }) => {
                     id="year-select"
                     className="form-select" 
                     value={activeYear || ''} 
-                    onChange={(e) => setActiveYear(parseInt(e.target.value, 10))}
+                    onChange={(e) => setActiveYear(Number.parseInt(e.target.value, 10))}
                 >
                     {years.map((anio) => (
                         <option key={anio} value={anio}>

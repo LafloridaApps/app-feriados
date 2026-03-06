@@ -1,5 +1,6 @@
 
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useSubroganteForm } from '../../../../hooks/useSubroganteForm';
 
 const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect, subrogante }) => {
@@ -47,6 +48,13 @@ const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect, subrogante 
             )}
         </div>
     );
+};
+
+SubroganteForm.propTypes = {
+    fechaInicio: PropTypes.any,
+    fechaFin: PropTypes.any,
+    onSubroganteSelect: PropTypes.func.isRequired,
+    subrogante: PropTypes.any
 };
 
 export default SubroganteForm;

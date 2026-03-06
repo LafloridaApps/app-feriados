@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './PaginaDashboardMobile.css';
 
 const PaginaDashboardMobile = ({
@@ -38,16 +39,19 @@ const PaginaDashboardMobile = ({
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
             const esDelMesActual = fechaActual.getMonth() === mes;
 
+            const extraLabel = tieneAusencia ? `, ${totalAusenciasPorDia} ausencias` : '';
+            const ariaLabel = `Fecha ${fechaActual.toLocaleDateString()}${extraLabel}`;
             diasCalendario.push(
-                <div
+                <button
                     key={cadenaFecha}
-                    className={`col dashboard-mobile-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${!esDelMesActual ? 'text-muted bg-light' : ''}`}
+                    className={`col dashboard-mobile-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted bg-light'}`}
                     onClick={() => manejarClicEmpleado({ fecha: cadenaFecha, detalles: datosAusenciasDia?.detalles || {} })}
-                    style={{ cursor: 'pointer' }}
+                    aria-label={ariaLabel}
+                    type="button"
                 >
                     <strong>{fechaActual.getDate()}</strong>
                     {totalAusenciasPorDia > 0 && <span className="badge bg-danger rounded-pill mt-1">{totalAusenciasPorDia}</span>}
-                </div>
+                </button>
             );
             diaInicioCalendario.setDate(diaInicioCalendario.getDate() + 1);
         }
@@ -87,13 +91,18 @@ const PaginaDashboardMobile = ({
                                 <div key={nombreGrupo} className="mb-3">
                                     <h6>{nombreGrupo} ({empleados.length} personas)</h6>
                                     <ul className="list-group">
-                                        {empleados.map((persona, indice) => (
-                                            <li key={indice} className="list-group-item d-flex justify-content-between align-items-center" onClick={() => manejarClicEmpleado(persona)} style={{ cursor: 'pointer' }}>
+                                        {empleados.map((persona) => (
+                                            <button
+                                                key={`${persona.rut}-${persona.idSolicitud}`}
+                                                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                                onClick={() => manejarClicEmpleado(persona)}
+                                                type="button"
+                                            >
                                                 <div>
                                                     <strong>{persona.nombre}</strong> ({persona.rut})
                                                 </div>
                                                 <span className="badge bg-info text-dark">{persona.motivo}</span>
-                                            </li>
+                                            </button>
                                         ))}
                                     </ul>
                                 </div>
@@ -107,7 +116,7 @@ const PaginaDashboardMobile = ({
 
             {/* Employee Details Modal (reusing desktop modal structure for now) */}
             {empleadoSeleccionado && (
-                 <div className={`modal fade ${mostrarModalEmpleado ? 'show' : ''}`} style={{ display: mostrarModalEmpleado ? 'block' : 'none' }} tabIndex="-1" aria-labelledby="employeeModalLabel" aria-hidden={!mostrarModalEmpleado}>
+                <div className={`modal fade ${mostrarModalEmpleado ? 'show' : ''}`} style={{ display: mostrarModalEmpleado ? 'block' : 'none' }} tabIndex="-1" aria-labelledby="employeeModalLabel" aria-hidden={!mostrarModalEmpleado}>
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header dashboard-modal-header">
@@ -121,7 +130,7 @@ const PaginaDashboardMobile = ({
                                     <p><strong>Motivo:</strong> {empleadoSeleccionado.motivo}</p>
                                     <p><strong>ID Solicitud:</strong> {empleadoSeleccionado.idSolicitud}</p>
                                     <p><strong>Fecha Aprobación:</strong> {empleadoSeleccionado.fechaAprobacion}</p>
-                                    <hr/>
+                                    <hr />
                                     <h6>Período de Ausencia:</h6>
                                     {renderizarMiniCalendario(empleadoSeleccionado.periodoAusencia)}
                                 </div>
@@ -136,6 +145,20 @@ const PaginaDashboardMobile = ({
             {mostrarModalEmpleado && <div className="modal-backdrop fade show"></div>}
         </div>
     );
+};
+
+PaginaDashboardMobile.propTypes = {
+    mesActual: PropTypes.instanceOf(Date).isRequired,
+    ausencias: PropTypes.object.isRequired,
+    fechaSeleccionada: PropTypes.string,
+    detallesFechaSeleccionada: PropTypes.object,
+    manejarMesAnterior: PropTypes.func.isRequired,
+    manejarMesSiguiente: PropTypes.func.isRequired,
+    manejarClicEmpleado: PropTypes.func.isRequired,
+    renderizarMiniCalendario: PropTypes.func.isRequired,
+    mostrarModalEmpleado: PropTypes.bool.isRequired,
+    empleadoSeleccionado: PropTypes.object,
+    manejarCerrarModal: PropTypes.func.isRequired,
 };
 
 export default PaginaDashboardMobile;

@@ -1,9 +1,11 @@
 /* JefeDashboard.css */
 
 .jefe-dashboard-card {
-    background-color: #ffffff; /* White background */
+    background-color: #ffffff;
+    /* White background */
     border: 1px solid #e0e0e0;
-    border-radius: 8px !important; /* Apply consistent border radius */
+    border-radius: 8px !important;
+    /* Apply consistent border radius */
     transition: transform 0.2s ease-in-out;
 }
 
@@ -12,7 +14,8 @@
 }
 
 .jefe-dashboard-card .card-header {
-    background-color: #007bff !important; /* Azul neutro para header */
+    background-color: #0069d9 !important;
+    /* Azul neutro para header (WCAG AA contrast) */
     color: #ffffff !important;
     border-top-left-radius: 8px !important;
     border-top-right-radius: 8px !important;

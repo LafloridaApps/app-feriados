@@ -3,7 +3,7 @@ import { formatFecha } from '../../../services/utils';
 
 const DetalleMiSolicitud = ({ solicitud }) => {
 
-    
+
 
     const timelineItemStyle = {
         position: 'relative',
@@ -41,7 +41,7 @@ const DetalleMiSolicitud = ({ solicitud }) => {
         }
     };
 
-    
+
     return (
         <div className="p-3 bg-light rounded">
             <div className="row">
@@ -54,8 +54,8 @@ const DetalleMiSolicitud = ({ solicitud }) => {
                 <div className="col-md-6">
                     <h6>Trazabilidad</h6>
                     <div style={{ position: 'relative' }}>
-                        {solicitud.trazabilidad.map((evento, index) => (
-                            <div key={index} style={timelineItemStyle}>
+                        {solicitud.trazabilidad.map((evento) => (
+                            <div key={`${evento.fecha}-${evento.accion}-${evento.usuario}`} style={timelineItemStyle}>
                                 <div style={timelineIconStyle}>
                                     <i className={getIconForAction(evento.accion)}></i>
                                 </div>
@@ -64,7 +64,7 @@ const DetalleMiSolicitud = ({ solicitud }) => {
                                     <p className="text-muted small mb-0">{formatFecha(evento.fecha)} por {evento.usuario}</p>
                                     {evento.departamento && <p className="small text-muted mt-1">Departamento: {evento.departamento}</p>}
                                     {evento.estado && <p className="small text-muted mt-1">Estado: {evento.estado}</p>}
-                                    {evento.estado =="POSTERGADA" && <p className='small text-muted mt-1'> Glosa : {evento.glosa}</p>}
+                                    {evento.estado == "POSTERGADA" && <p className='small text-muted mt-1'> Glosa : {evento.glosa}</p>}
                                 </div>
                             </div>
                         ))}

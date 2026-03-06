@@ -1,4 +1,4 @@
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { useContext, useEffect, useState } from "react";
 import FormularioSolicitud from "./FormularioSolicitud";
 import ResumenPermisos from "./ResumenPermisos";
@@ -41,7 +41,7 @@ const SolicitudesPage = () => {
 
                 const detalleFiltrado = response.detalle?.filter(item => {
                     const fecha = new Date(item.fechaInicio);
-                    return !isNaN(fecha) && fecha.getFullYear() === anioActual;
+                    return !Number.isNaN(fecha.getTime()) && fecha.getFullYear() === anioActual;
                 }) || [];
 
 
@@ -66,7 +66,7 @@ const SolicitudesPage = () => {
                 }
                 const detalleFiltrado = response.detalle?.filter(item => {
                     const fecha = new Date(item.fechaInicio);
-                    return !isNaN(fecha) && fecha.getFullYear() === anioActual;
+                    return !Number.isNaN(fecha.getTime()) && fecha.getFullYear() === anioActual;
                 }) || [];
                 setDataFer({ ...response, resumen: resumenFiltrado, detalle: detalleFiltrado });
             } catch (error) {

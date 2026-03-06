@@ -35,7 +35,7 @@ export const useSubroganteForm = (fechaInicio, fechaFin, onSubroganteSelect) => 
                 setErrors({ mensaje: 'No se encontró ningún funcionario con el RUT ingresado', detalle: '' });
             }
         } catch (error) {
-            if (error.response && error.response.data) {
+            if (error.response?.data) {
                 mostrarAlertaError(error.response.data.mensaje);
             } else {
                 setErrors({ mensaje: 'Error al buscar el funcionario', detalle: '' });

@@ -21,13 +21,13 @@ const ModalVerSubrogante = ({ show, onClose, subrogante, onEliminar }) => {
             <div className="modal-backdrop fade show"></div>
 
             {/* Modal */}
-            <div
+            <dialog
                 className="modal fade show d-block"
                 tabIndex="-1"
-                role="dialog"
-                style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                open
+                style={{ backgroundColor: 'rgba(0,0,0,0.5)', border: 'none', padding: 0 }}
             >
-                <div className="modal-dialog modal-dialog-centered" role="document">
+                <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">Detalles del Subrogante</h5>
@@ -57,7 +57,7 @@ const ModalVerSubrogante = ({ show, onClose, subrogante, onEliminar }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </dialog>
         </>
     );
 };

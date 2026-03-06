@@ -25,7 +25,6 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
             }
             setCodigoExterno(departamento.codigoExterno || '');
         } else {
-            // Limpiar todo si no hay departamento seleccionado
             setNombreJefeEditado('');
             setRutCompleto('');
             setCodigoExterno('');
@@ -46,7 +45,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const rutNumerico = rutCompleto.split('-')[0].replace(/\./g, '');
+                    const rutNumerico = rutCompleto.split('-')[0].replaceAll('.', '');
                     await updateJefeDeptoById(departamento.id, rutNumerico);
                     Swal.fire('¡Guardado!', 'El jefe del departamento ha sido actualizado.', 'success');
                     fetchDepartamentos();
@@ -57,7 +56,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
             }
         });
     };
-    
+
     const handleGuardarCodigoExterno = () => {
         Swal.fire({
             title: '¿Está seguro de guardar el código externo?',
@@ -79,7 +78,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
     };
 
     const handleBuscarJefePorRut = async () => {
-        const input = rutCompleto.replace(/\./g, '').replace('-', '').toUpperCase();
+        const input = rutCompleto.replaceAll('.', '').replaceAll('-', '').toUpperCase();
         if (input.length < 2) {
             setNombreJefeEditado('');
             setDisabled(true);
@@ -114,90 +113,163 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, jefeSeleccionado, isJe
 
     // --- Renderizado de campos --- //
     const renderNombre = () => {
-        if (isJefeLoading) return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
+        if (isJefeLoading) return (
+            <>
+                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <output className="visually-hidden">Cargando...</output>
+            </>
+        );
         if (jefeSeleccionado) {
-            return [jefeSeleccionado.nombre, jefeSeleccionado.apellidoPaterno, jefeSeleccionado.apellidoMaterno].filter(Boolean).join(' ');
+            return <>{[jefeSeleccionado.nombre, jefeSeleccionado.apellidoPaterno, jefeSeleccionado.apellidoMaterno].filter(Boolean).join(' ')}</>;
         }
-        return departamento.nombreJefe || 'No disponible';
+        return <>{departamento.nombreJefe || 'No disponible'}</>;
     };
 
     const renderRut = () => {
-        if (isJefeLoading) return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
-        if (jefeSeleccionado) return `${jefeSeleccionado.rut}-${jefeSeleccionado.vrut}`;
-        if (departamento.rutJefe) return `${departamento.rutJefe}-${departamento.vrutJefe}`;
-        return 'No disponible';
+        if (isJefeLoading) return (
+            <>
+                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <output className="visually-hidden">Cargando...</output>
+            </>
+        );
+        if (jefeSeleccionado) return <>{`${jefeSeleccionado.rut}-${jefeSeleccionado.vrut}`}</>;
+        if (departamento.rutJefe) return <>{`${departamento.rutJefe}-${departamento.vrutJefe}`}</>;
+        return <>{'No disponible'}</>;
     };
 
     const renderEmail = () => {
-        if (isJefeLoading) return <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>;
-        return (jefeSeleccionado && jefeSeleccionado.email) || departamento.email || 'No disponible';
+        if (isJefeLoading) return (
+            <>
+                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <output className="visually-hidden">Cargando...</output>
+            </>
+        );
+        return <>{(jefeSeleccionado?.email) || departamento.email || 'No disponible'}</>;
+    };
+
+    if (!departamento) {
+        return (
+            <div className="text-center py-5 text-muted">
+                <i className="bi bi-building fs-1 mb-3 d-block text-secondary opacity-50"></i>
+                <h5>Seleccione un departamento</h5>
+                <p>Haga clic en un departamento del árbol organizativo para ver o editar sus detalles y su respectiva jefatura.</p>
+            </div>
+        );
+    }
+
+    const renderJefaturaContent = () => {
+        if (enEdicion) {
+            return (
+                <div className="bg-light p-4 rounded border">
+                    <div className="row g-3">
+                        <div className="col-md-12">
+                            <label htmlFor="rutJefeInput" className="form-label text-muted small fw-bold text-uppercase">RUT del Funcionario</label>
+                            <div className="input-group">
+                                <input id="rutJefeInput" type="text" className="form-control" placeholder="Ej: 12345678-9" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} autoFocus />
+                                <button className="btn btn-primary px-4" type="button" onClick={handleBuscarJefePorRut}>
+                                    <i className="bi bi-search me-2"></i>Buscar
+                                </button>
+                            </div>
+                        </div>
+                        <div className="col-md-12">
+                            <label htmlFor="nombreJefe" className="form-label text-muted small fw-bold text-uppercase">Nombre Encontrado</label>
+                            <input id="nombreJefe" type="text" className="form-control bg-white" readOnly value={nombreJefeEditado} placeholder="El nombre aparecerá aquí..." />
+                        </div>
+                    </div>
+                    <div className="d-flex gap-2 mt-4 justify-content-end">
+                        <button className="btn btn-light border" onClick={handleCancelar}>Cancelar</button>
+                        <button className="btn btn-success px-4" onClick={handleGuardarJefe} disabled={disabled || !nombreJefeEditado}>
+                            <i className="bi bi-check-circle me-2"></i>Guardar
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        if (departamento.rutJefe) {
+            return (
+                <div className="d-flex align-items-center gap-4 mt-2 p-3 bg-light rounded border border-light">
+                    <div className="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '70px', height: '70px' }}>
+                        <i className="bi bi-person-fill" style={{ fontSize: '2.5rem' }}></i>
+                    </div>
+                    <div className="flex-grow-1">
+                        <h5 className="mb-2 text-dark fw-semibold">{renderNombre()}</h5>
+                        <div className="d-flex flex-column flex-md-row gap-2 gap-md-4 text-muted small">
+                            <span className="d-flex align-items-center gap-2">
+                                <i className="bi bi-upc-scan text-primary"></i>
+                                {renderRut()}
+                            </span>
+                            <span className="d-flex align-items-center gap-2">
+                                <i className="bi bi-envelope text-primary"></i>
+                                {renderEmail()}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="text-center p-5 bg-light rounded border">
+                <div className="bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                    <i className="bi bi-person-x fs-2"></i>
+                </div>
+                <h6 className="text-muted mb-1">Sin Jefatura Asignada</h6>
+                <p className="text-muted small mb-0">Haga clic en <strong>Asignar</strong> para buscar y establecer un responsable para este departamento.</p>
+            </div>
+        );
     };
 
     return (
-        <div className="card p-3">
-            {departamento ? (
-                <>
-                    <h5 className="card-title">Jefe de Departamento</h5>
-                    {enEdicion ? (
-                        <>
-                            <div className="mb-2">
-                                <label className="form-label form-label-sm">Nombre</label>
-                                <input type="text" className="form-control form-control-sm" readOnly value={nombreJefeEditado} />
-                            </div>
-                            <div className="mb-2">
-                                <label className="form-label form-label-sm">RUT</label>
-                                <div className="input-group">
-                                    <input type="text" className="form-control form-control-sm" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} />
-                                    <button className="btn btn-outline-secondary btn-sm" type="button" onClick={handleBuscarJefePorRut}>Buscar</button>
-                                </div>
-                            </div>
-                            <div className="d-flex gap-2 mt-3">
-                                <button className="btn btn-sm btn-success" onClick={handleGuardarJefe} disabled={disabled}>Guardar Jefe</button>
-                                <button className="btn btn-sm btn-secondary" onClick={handleCancelar}>Cancelar</button>
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            {departamento.rutJefe ? (
-                                <div className="mb-3">
-                                    <div className="row g-2 align-items-center mb-2">
-                                        <div className="col-3"><strong className="text-muted small">Nombre:</strong></div>
-                                        <div className="col-9">{renderNombre()}</div>
-                                    </div>
-                                    <div className="row g-2 align-items-center mb-2">
-                                        <div className="col-3"><strong className="text-muted small">RUT:</strong></div>
-                                        <div className="col-9">{renderRut()}</div>
-                                    </div>
-                                    <div className="row g-2 align-items-center">
-                                        <div className="col-3"><strong className="text-muted small">Email:</strong></div>
-                                        <div className="col-9">{renderEmail()}</div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <p className="card-text text-muted">Este departamento no tiene un jefe asignado.</p>
-                            )}
-                            <button className="btn btn-sm btn-primary" onClick={handleEditar}>Editar Jefe</button>
-                        </>
+        <div className="d-flex flex-column gap-4">
+            {/* Card: Jefatura */}
+            <div className="bg-white p-4 rounded shadow-sm border">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h5 className="mb-0 text-primary fw-bold d-flex align-items-center gap-3">
+                        <div className="bg-primary bg-opacity-10 text-primary rounded d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
+                            <i className="bi bi-person-badge fs-5"></i>
+                        </div>
+                        Director / Jefatura
+                    </h5>
+                    {!enEdicion && (
+                        <button className={`btn ${departamento.rutJefe ? 'btn-outline-primary btn-sm' : 'btn-primary btn-sm'}`} onClick={handleEditar}>
+                            <i className={`bi ${departamento.rutJefe ? 'bi-pencil' : 'bi-plus-circle'} me-1`}></i>
+                            {departamento.rutJefe ? 'Editar' : 'Asignar'}
+                        </button>
                     )}
+                </div>
 
-                    <hr />
+                {renderJefaturaContent()}
+            </div>
 
-                    <h5 className="card-title mt-3">Código Externo</h5>
-                    <div className="mb-2">
-                        <label htmlFor="codigoExterno" className="form-label form-label-sm">Código</label>
+            {/* Card: Configuración */}
+            <div className="bg-white p-4 rounded shadow-sm border">
+                <div className="d-flex align-items-center gap-3 mb-4">
+                    <div className="bg-secondary bg-opacity-10 text-secondary rounded d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
+                        <i className="bi bi-gear fs-5"></i>
+                    </div>
+                    <h5 className="mb-0 text-secondary fw-bold">Configuración Adicional</h5>
+                </div>
+
+                <div className="row align-items-end g-3">
+                    <div className="col-md-9">
+                        <label htmlFor="codigoExterno" className="form-label text-muted small fw-bold text-uppercase">Código Externo</label>
                         <input
                             type="text"
-                            className="form-control form-control-sm"
+                            className="form-control"
                             id="codigoExterno"
+                            placeholder="Ingrese código de referencia (ej: DEPTO-001)"
                             value={codigoExterno}
                             onChange={(e) => setCodigoExterno(e.target.value)}
                         />
                     </div>
-                    <button className="btn btn-sm btn-success" onClick={handleGuardarCodigoExterno}>Guardar Código</button>
-                </>
-            ) : (
-                <p className="card-text">Seleccione un departamento para ver los detalles.</p>
-            )}
+                    <div className="col-md-3">
+                        <button className="btn btn-outline-success w-100" onClick={handleGuardarCodigoExterno}>
+                            <i className="bi bi-save me-2"></i>Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

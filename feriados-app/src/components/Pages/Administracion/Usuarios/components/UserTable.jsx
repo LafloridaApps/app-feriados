@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const UserTable = ({ usuarios, onManageClick }) => (
@@ -34,5 +35,16 @@ const UserTable = ({ usuarios, onManageClick }) => (
         </div>
     </div>
 );
+
+UserTable.propTypes = {
+    usuarios: PropTypes.arrayOf(PropTypes.shape({
+        rut: PropTypes.string.isRequired,
+        login: PropTypes.string.isRequired,
+        nombre: PropTypes.string.isRequired,
+        vrut: PropTypes.string.isRequired,
+    })).isRequired,
+    onManageClick: PropTypes.func.isRequired,
+};
+
 
 export default UserTable;

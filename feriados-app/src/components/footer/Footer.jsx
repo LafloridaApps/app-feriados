@@ -1,6 +1,6 @@
 import './Footer.css';
-import { LOGO_URL } from '../../assets/constants';
-import { SELLO } from '../../assets/constants';
+import { LOGO_URL, SELLO } from '../../assets/constants';
+
 
 const Footer = () => {
   return (
@@ -11,7 +11,7 @@ const Footer = () => {
             <img src={LOGO_URL} alt="Logo Horizontal" className="img-fluid logo-horizontal" />
           </div>
           <div className="col-md-4 text-center">
-            <span className="text-muted">© 2025 Municipalidad de La Florida. Todos los derechos reservados.</span>
+            <span className="text-muted">© 2026 Municipalidad de La Florida. Todos los derechos reservados.</span>
           </div>
           <div className="col-md-4 text-center text-md-end">
             <img src={SELLO} alt="Logo Vertical" className="img-fluid logo-vertical" />

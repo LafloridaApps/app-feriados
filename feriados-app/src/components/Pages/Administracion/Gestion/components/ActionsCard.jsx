@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const ActionsCard = ({ solicitud, editableData, handleInputChange, handleUpdateSolicitud, handleRepairUrl, loading }) => {
@@ -63,6 +64,16 @@ const ActionsCard = ({ solicitud, editableData, handleInputChange, handleUpdateS
             </form>
         </div>
     );
+};
+
+
+ActionsCard.propTypes = {
+    solicitud: PropTypes.object.isRequired,
+    editableData: PropTypes.object.isRequired,
+    handleInputChange: PropTypes.func.isRequired,
+    handleUpdateSolicitud: PropTypes.func.isRequired,
+    handleRepairUrl: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired
 };
 
 export default ActionsCard;

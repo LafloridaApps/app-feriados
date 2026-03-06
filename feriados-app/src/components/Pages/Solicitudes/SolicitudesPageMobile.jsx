@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ResumenPermisos from "./ResumenPermisos";
 import FormularioSolicitud from "./FormularioSolicitud";
 import './SolicitudesPageMobile.css';
@@ -26,6 +27,13 @@ const SolicitudesPageMobile = ({ resumenAdm, resumenFer, detalleAdm, detalleFer 
             </div>
         </div>
     );
+};
+
+SolicitudesPageMobile.propTypes = {
+    resumenAdm: PropTypes.array.isRequired,
+    resumenFer: PropTypes.array.isRequired,
+    detalleAdm: PropTypes.array.isRequired,
+    detalleFer: PropTypes.array.isRequired,
 };
 
 export default SolicitudesPageMobile;

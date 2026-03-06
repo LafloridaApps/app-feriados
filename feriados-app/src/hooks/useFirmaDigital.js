@@ -10,7 +10,7 @@ export const useFirmaDigital = () => {
     const funcionario = useContext(UsuarioContext);
 
     useEffect(() => {
-        if (!funcionario || !funcionario.rut) {
+        if (funcionario?.rut) {
             setLoading(false);
             return;
         }

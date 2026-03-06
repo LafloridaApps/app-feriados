@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const SearchSolicitud = ({ solicitudId, setSolicitudId, handleSearch, loading }) => {
@@ -17,6 +18,13 @@ const SearchSolicitud = ({ solicitudId, setSolicitudId, handleSearch, loading })
             </form>
         </div>
     );
+};
+
+SearchSolicitud.propTypes = {
+    solicitudId: PropTypes.string.isRequired,
+    setSolicitudId: PropTypes.func.isRequired,
+    handleSearch: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired
 };
 
 export default SearchSolicitud;

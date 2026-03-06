@@ -20,6 +20,7 @@ export const useJefeDashboard = () => {
                     setLoading(true);
                     
                     const resumen = await getResumenJefe(rut, codDepto); // Use the new function
+
                     
 
                     setPendingSolicitudes(resumen.solicitudesPendientes || []);
@@ -27,7 +28,6 @@ export const useJefeDashboard = () => {
                     setTodayAbsences(resumen.ausenciasEquipoHoy || 0);
                     setSubrogatedDepartments(resumen.departamentosSubrogados || []);
 
-                } catch (err) {
                     setError(err);
                     console.error("Error fetching dashboard data:", err);
                 } finally {

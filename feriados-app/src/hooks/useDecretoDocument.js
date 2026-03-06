@@ -14,7 +14,7 @@ export const useDecretoDocument = () => {
     try {
       const response = await getDocDecreto(idDecreto);
       const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
 
       if (download) {
         const link = document.createElement('a');
@@ -22,12 +22,12 @@ export const useDecretoDocument = () => {
         link.setAttribute('download', `decreto_${idDecreto}.docx`);
         document.body.appendChild(link);
         link.click();
-        link.parentNode.removeChild(link);
+        link.remove();
       } else {
-        window.open(url, '_blank');
+        globalThis.open(url, '_blank');
       }
 
-      window.URL.revokeObjectURL(url);
+      globalThis.URL.revokeObjectURL(url);
       Swal.close();
     } catch (error) {
       Swal.close();

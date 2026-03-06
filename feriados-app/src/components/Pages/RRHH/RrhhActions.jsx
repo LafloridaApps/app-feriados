@@ -21,7 +21,6 @@ const RrhhActions = ({
 
 RrhhActions.propTypes = {
     selectedItemsCount: PropTypes.number.isRequired,
-    handleExportToExcel: PropTypes.func.isRequired,
     handleGenerarDecreto: PropTypes.func.isRequired,
 };
 

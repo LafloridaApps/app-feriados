@@ -38,7 +38,7 @@ export const useRrhhData = (initialData, selectedTipoSolicitud, selectedTipoCont
 
         let sortedData = [...tempFiltered];
         if (sortConfig.key) {
-            const dateKeys = ['desde', 'hasta', 'fechaSolicitud'];
+            const dateKeys = new Set(['desde', 'hasta', 'fechaSolicitud']);
             const parseDate = (dateString) => {
                 if (!dateString) return new Date(0);
                 const parts = dateString.split('-');
@@ -53,25 +53,18 @@ export const useRrhhData = (initialData, selectedTipoSolicitud, selectedTipoCont
                 if (valA == null) return 1;
                 if (valB == null) return -1;
 
-                if (dateKeys.includes(sortConfig.key)) {
-                    const dateA = parseDate(valA);
-                    const dateB = parseDate(valB);
-                    if (dateA < dateB) {
-                        return sortConfig.direction === 'ascending' ? -1 : 1;
-                    }
-                    if (dateA > dateB) {
-                        return sortConfig.direction === 'ascending' ? 1 : -1;
-                    }
-                    return 0;
+                let parsedA = valA;
+                let parsedB = valB;
+
+                if (dateKeys.has(sortConfig.key)) {
+                    parsedA = parseDate(valA).getTime();
+                    parsedB = parseDate(valB).getTime();
                 }
 
-                if (valA < valB) {
-                    return sortConfig.direction === 'ascending' ? -1 : 1;
-                }
-                if (valA > valB) {
-                    return sortConfig.direction === 'ascending' ? 1 : -1;
-                }
-                return 0;
+                if (parsedA === parsedB) return 0;
+
+                const comparison = parsedA < parsedB ? -1 : 1;
+                return sortConfig.direction === 'ascending' ? comparison : -comparison;
             });
         }
 

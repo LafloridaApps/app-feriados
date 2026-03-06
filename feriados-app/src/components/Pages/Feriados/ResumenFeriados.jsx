@@ -2,9 +2,6 @@ import PropTypes from "prop-types";
 
 const ResumenFeriados = ({ resumen }) => {
 
-
-
-    console.log("ResumenAdministrativos - resumen:", resumen);
     const {
         total,
         diasCorresponden,
@@ -46,14 +43,14 @@ const ResumenFeriados = ({ resumen }) => {
 
 ResumenFeriados.propTypes = {
     resumen: PropTypes.shape({
-            total: PropTypes.number.isRequired,
-            diasCorresponden: PropTypes.number.isRequired,
-            diasAcumulados: PropTypes.number.isRequired,
-            diasTomados: PropTypes.number.isRequired,
-            diasPendientes: PropTypes.number.isRequired,
-            anio: PropTypes.number.isRequired,
-        })
-    .isRequired,
+        total: PropTypes.number.isRequired,
+        diasCorresponden: PropTypes.number.isRequired,
+        diasAcumulados: PropTypes.number.isRequired,
+        diasTomados: PropTypes.number.isRequired,
+        diasPendientes: PropTypes.number.isRequired,
+        anio: PropTypes.number.isRequired,
+    })
+        .isRequired,
 };
 
 export default ResumenFeriados;

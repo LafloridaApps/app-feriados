@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { listarModulos } from '../../../../../services/moduloService';
 import { guardarUsuario } from '../../../../../services/usuarioService';
+import PropTypes from 'prop-types';
 
 const ManageUserModulesModal = ({ show, user, onClose, onSave }) => {
     const [availableModules, setAvailableModules] = useState([]);
@@ -23,7 +24,7 @@ const ManageUserModulesModal = ({ show, user, onClose, onSave }) => {
     const handleSave = async () => {
         const dataToSend = {
             rut: user.rut,
-            modulos: selectedModules.sort((a, b) => a - b)
+            modulos: selectedModules.toSorted((a, b) => a - b)
         };
 
         try {
@@ -70,6 +71,19 @@ const ManageUserModulesModal = ({ show, user, onClose, onSave }) => {
             </div>
         </div>
     );
+};
+
+
+
+ManageUserModulesModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    user: PropTypes.shape({
+        rut: PropTypes.string.isRequired,
+        nombre: PropTypes.string.isRequired,
+        modulos: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number }))
+    }).isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired
 };
 
 export default ManageUserModulesModal;

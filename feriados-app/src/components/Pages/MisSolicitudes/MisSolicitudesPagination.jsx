@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 const MisSolicitudesPagination = ({ currentPage, totalPages, setCurrentPage, solicitudesLength, totalElements }) => {
     return (
         <div className="card-footer text-muted d-flex justify-content-between align-items-center">
@@ -7,9 +9,9 @@ const MisSolicitudesPagination = ({ currentPage, totalPages, setCurrentPage, sol
                     <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Anterior</button>
                     </li>
-                    {[...Array(totalPages)].map((_, index) => (
-                        <li key={index} className={`page-item ${currentPage === index ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => setCurrentPage(index)}>{index + 1}</button>
+                    {Array.from({ length: totalPages }, (_, i) => i).map((pageNumber) => (
+                        <li key={`page-${pageNumber}`} className={`page-item ${currentPage === pageNumber ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => setCurrentPage(pageNumber)}>{pageNumber + 1}</button>
                         </li>
                     ))}
                     <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
@@ -19,6 +21,14 @@ const MisSolicitudesPagination = ({ currentPage, totalPages, setCurrentPage, sol
             </nav>
         </div>
     );
+};
+
+MisSolicitudesPagination.propTypes = {
+    currentPage: PropTypes.number.isRequired,
+    totalPages: PropTypes.number.isRequired,
+    setCurrentPage: PropTypes.func.isRequired,
+    solicitudesLength: PropTypes.number.isRequired,
+    totalElements: PropTypes.number.isRequired,
 };
 
 export default MisSolicitudesPagination;

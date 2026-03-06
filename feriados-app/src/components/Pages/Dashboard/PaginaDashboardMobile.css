@@ -31,6 +31,9 @@
     transition: background-color 0.2s ease, border 0.2s ease;
     font-size: 0.8rem;
     position: relative;
+    border: none;
+    background: none;
+    width: 100%;
 }
 
 .dashboard-mobile-calendar-day:hover {
@@ -38,14 +41,17 @@
 }
 
 .dashboard-mobile-calendar-day.has-absence {
-    background-color: #ffc107; /* Warning yellow */
+    background-color: #ffc107;
+    /* Warning yellow */
     color: #212529;
     font-weight: bold;
 }
 
 .dashboard-mobile-calendar-day.is-selected {
-    border: 2px solid #007bff !important; /* Azul neutro para selección */
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Sombra para resaltar */
+    border: 2px solid #007bff !important;
+    /* Azul neutro para selección */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+    /* Sombra para resaltar */
 }
 
 .dashboard-mobile-details-section {
@@ -58,18 +64,20 @@
 }
 
 .dashboard-mobile-details-section h5 {
-    color: #28a745; /* Verde profesional para el título de detalles */
+    color: #28a745;
+    /* Verde profesional para el título de detalles */
     margin-bottom: 10px;
     font-weight: bold;
 }
 
 .dashboard-mobile-details-section h6 {
-    color: #007bff; /* Azul neutro */
+    color: #007bff;
+    /* Azul neutro */
     margin-bottom: 5px;
     font-weight: bold;
 }
 
 .dashboard-mobile-details-section .badge.bg-info {
-    background-color: #007bff !important;
+    background-color: #0056b3 !important;
     color: #fff !important;
 }

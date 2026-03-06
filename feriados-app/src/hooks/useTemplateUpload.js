@@ -10,7 +10,7 @@ export const useTemplateUpload = (onUploadSuccess) => {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        if (file && file.name.endsWith('.docx')) {
+        if (file?.name.endsWith('.docx')) {
             setSelectedFile(file);
             setFeedbackMessage('');
         } else {
@@ -45,9 +45,7 @@ export const useTemplateUpload = (onUploadSuccess) => {
             setSelectedFile(null);
             setNombrePlantilla('');
             setFileInputKey(Date.now());
-            if (onUploadSuccess) {
-                onUploadSuccess();
-            }
+            onUploadSuccess?.();
         } catch (error) {
             Swal.close();
             Swal.fire({

@@ -23,8 +23,8 @@ export function fechaActual() {
 
 
 function parseDateAsLocal(dateString) {
-    const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day);
+	const [year, month, day] = dateString.split('-').map(Number);
+	return new Date(year, month - 1, day);
 }
 
 export function calculoDiasAusar(fechaInicio, fechaFin, tipoSolicitud, fechasFeriadas, jornadaInicio = null, jornadaFin = null) {
@@ -36,22 +36,22 @@ export function calculoDiasAusar(fechaInicio, fechaFin, tipoSolicitud, fechasFer
 	let count = 0;
 	const feriados = fechasFeriadas || [];
 
-    const oneDay = 1000 * 60 * 60 * 24;
-    const totalDays = Math.round(Math.abs((fin.getTime() - inicio.getTime()) / oneDay)) + 1;
+	const oneDay = 1000 * 60 * 60 * 24;
+	const totalDays = Math.round(Math.abs((fin.getTime() - inicio.getTime()) / oneDay)) + 1;
 
-    let current = new Date(inicio); // Start with the beginning date
-    for (let i = 0; i < totalDays; i++) {
-        // Check the current day
-        const dia = current.getDay(); // 0 = domingo, 6 = sábado
-        const fechaStr = current.toISOString().split("T")[0];
-        if (dia !== 0 && dia !== 6 && !feriados.includes(fechaStr)) {
-            count++;
-        }
-        // Move to the next day for the next iteration
-        current.setDate(current.getDate() + 1);
-    }
+	let current = new Date(inicio); // Start with the beginning date
+	for (let i = 0; i < totalDays; i++) {
+		// Check the current day
+		const dia = current.getDay(); // 0 = domingo, 6 = sábado
+		const fechaStr = current.toISOString().split("T")[0];
+		if (dia !== 0 && dia !== 6 && !feriados.includes(fechaStr)) {
+			count++;
+		}
+		// Move to the next day for the next iteration
+		current.setDate(current.getDate() + 1);
+	}
 
-	    if (tipoSolicitud === "ADMINISTRATIVO") {
+	if (tipoSolicitud === "ADMINISTRATIVO") {
 		if (fechaInicio === fechaFin) {
 			return calcularDiasAdministrativoMismoDia(jornadaInicio, jornadaFin);
 		}
@@ -109,10 +109,10 @@ export function formatFechaString(fecha) {
 }
 
 export const validarRut = (rut) => {
-	if (!/^[0-9]+[0-9kK]{1}$/.test(rut)) {
+	if (!/^\d+[\dkK]$/.test(rut)) {
 		return false;
 	}
-	const rutLimpio = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+	const rutLimpio = rut.replaceAll(/[^\dkK]/g, '').toUpperCase();
 	const cuerpo = rutLimpio.slice(0, -1);
 	const dv = rutLimpio.slice(-1);
 
@@ -169,51 +169,51 @@ export function calcularPrimerDiaMesAnterior() {
 import ExcelJS from 'exceljs';
 
 export const exportToExcel = async (data, filename) => {
-    try {
+	try {
 
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet("Decretos");
+		const workbook = new ExcelJS.Workbook();
+		const worksheet = workbook.addWorksheet("Decretos");
 
-        if (data.length === 0) {
-            console.log('No data to export.');
-            return;
-        }
+		if (data.length === 0) {
+			console.log('No data to export.');
+			return;
+		}
 
-        const headers = Object.keys(data[0]);
-        worksheet.addRow(headers);
+		const headers = Object.keys(data[0]);
+		worksheet.addRow(headers);
 
-        const isDateString = (value) => {
-            return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value);
-        };
+		const isDateString = (value) => {
+			return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value);
+		};
 
-        data.forEach(row => {
-            const rowData = headers.map(header => {
-                const value = row[header];
-                if (isDateString(value)) {
-                    return formatFechaString(value);
-                }
-                return value;
-            });
-            worksheet.addRow(rowData);
-        });
+		data.forEach(row => {
+			const rowData = headers.map(header => {
+				const value = row[header];
+				if (isDateString(value)) {
+					return formatFechaString(value);
+				}
+				return value;
+			});
+			worksheet.addRow(rowData);
+		});
 
-        // Write to file
-        const buffer = await workbook.xlsx.writeBuffer();
+		// Write to file
+		const buffer = await workbook.xlsx.writeBuffer();
 
-        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        const url = window.URL.createObjectURL(blob);
+		const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+		const url = globalThis.URL.createObjectURL(blob);
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${filename}.xlsx`;
-        document.body.appendChild(a); // Append to body to ensure it's clickable
-        a.click();
-        document.body.removeChild(a); // Clean up
-        window.URL.revokeObjectURL(url);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = `${filename}.xlsx`;
+		document.body.appendChild(a); // Append to body to ensure it's clickable
+		a.click();
+		a.remove(); // Clean up
+		globalThis.URL.revokeObjectURL(url);
 
-    } catch (error) {
-        console.error('Error in exportToExcel:', error);
-        // Re-throw the error so it can be caught by the caller (handleGenerarDecreto)
-        throw error;
-    }
+	} catch (error) {
+		console.error('Error in exportToExcel:', error);
+		// Re-throw the error so it can be caught by the caller (handleGenerarDecreto)
+		throw error;
+	}
 };

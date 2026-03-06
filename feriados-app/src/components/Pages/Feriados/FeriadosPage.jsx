@@ -1,4 +1,4 @@
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { useState, useEffect, useContext } from "react";
 import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import TabsFeriados from "./TabsFeriados";

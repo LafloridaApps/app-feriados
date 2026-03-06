@@ -36,7 +36,7 @@ export const getPermisosByUsuario = async (rut) => {
         const { data } = await api.get(`/${rut}`);
         return data;
     } catch (error) {
-        console.log / (error)
+        console.log(error)
         throw error
     }
 }

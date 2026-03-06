@@ -47,26 +47,31 @@
 
 /* Reusing badge styles from MisSolicitudes.css for consistency */
 .badge-estado-pendiente {
-    background-color: #ffc107; /* Warning yellow */
+    background-color: #ffc107;
+    /* Warning yellow */
     color: #212529;
 }
 
 .badge-estado-aprobado {
-    background-color: #28a745; /* Success green */
+    background-color: #198754;
+    /* Success green (WCAG AA Compliant) */
     color: #fff;
 }
 
 .badge-estado-rechazado {
-    background-color: #dc3545; /* Danger red */
+    background-color: #dc3545;
+    /* Danger red */
     color: #fff;
 }
 
 .badge-estado-finalizado {
-    background-color: #0056b3; /* Nuevo azul primario */
+    background-color: #0056b3;
+    /* Nuevo azul primario */
     color: #fff;
 }
 
 .badge-estado-otro {
-    background-color: #6c757d; /* Secondary gray */
+    background-color: #6c757d;
+    /* Secondary gray */
     color: #fff;
 }

@@ -1,4 +1,3 @@
-
 import PropTypes from 'prop-types';
 
 const SubroganteSearchResult = ({ subrogante, errors }) => {
@@ -25,6 +24,8 @@ const SubroganteSearchResult = ({ subrogante, errors }) => {
 SubroganteSearchResult.propTypes = {
     subrogante: PropTypes.shape({
         nombre: PropTypes.string.isRequired,
+        apellidoPaterno: PropTypes.string.isRequired,
+        apellidoMaterno: PropTypes.string.isRequired,
     }),
     errors: PropTypes.shape({
         mensaje: PropTypes.string,

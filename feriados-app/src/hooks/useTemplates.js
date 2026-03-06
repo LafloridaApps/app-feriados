@@ -69,15 +69,15 @@ export const useTemplates = () => {
 
         try {
             const blob = await viewTemplate(docFile);
-            const url = window.URL.createObjectURL(new Blob([blob]));
+            const url = globalThis.URL.createObjectURL(new Blob([blob]));
             const link = document.createElement('a');
             link.href = url;
             const fileName = nombrePlantilla.toLowerCase().endsWith('.docx') ? nombrePlantilla : `${nombrePlantilla}.docx`;
             link.setAttribute('download', fileName);
             document.body.appendChild(link);
             link.click();
-            link.parentNode.removeChild(link);
-            window.URL.revokeObjectURL(url);
+            link.remove();
+            globalThis.URL.revokeObjectURL(url);
             Swal.close();
         } catch (error) {
             Swal.close();

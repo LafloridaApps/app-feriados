@@ -21,7 +21,7 @@ export const UsuarioProvider = ({ children }) => {
 		}
 
 		if (import.meta.env.DEV) {
-			const urlParams = new URLSearchParams(window.location.search);
+			const urlParams = new URLSearchParams(globalThis.location.search);
 			const rutFromUrl = urlParams.get('rut');
 			if (rutFromUrl) {
 				setRut(rutFromUrl);
@@ -67,5 +67,5 @@ UsuarioProvider.propTypes = {
 //10735521,9 jorge poveda
 //18740165,8 jorge rementeria
 //15700766,1 gustavo
-//18766677,5 francisco 
+//18766677,5 francisco
 //15435599 Elizabeth

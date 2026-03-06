@@ -4,7 +4,7 @@ import { useConsultarDecretos } from '../../../hooks/useConsultarDecretos';
 import { useAlertaSweetAlert } from '../../../hooks/useAlertaSweetAlert';
 
 import GeneradorDecretos from './GeneradorDecretos';
-import TablaDecretos from './TablaDecretos';
+
 import RrhhPagination from './RrhhPagination';
 import ConsultaDecretosFilters from './ConsultaDecretosFilters';
 import ConsultaDecretosResults from './ConsultaDecretosResults';
@@ -74,10 +74,9 @@ const RRHHPage = () => {
                         />
 
                         {generarDecretos.loading && (
-                            <div className="d-flex justify-content-center mt-4">
-                                <div className="spinner-border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
+                            <div className="d-flex justify-content-center mt-4 text-center">
+                                <span className="spinner-border" aria-hidden="true"></span>
+                                <output className="visually-hidden">Cargando...</output>
                             </div>
                         )}
 
@@ -92,16 +91,15 @@ const RRHHPage = () => {
 
                 {activeTab === 'consultar' && (
                     <div className="tab-pane fade show active">
-                        <ConsultaDecretosFilters 
-                            filters={consultarDecretos.filters} 
-                            setFilters={consultarDecretos.setFilters} 
-                            handleSearch={() => consultarDecretos.handleSearch(0)} 
+                        <ConsultaDecretosFilters
+                            filters={consultarDecretos.filters}
+                            setFilters={consultarDecretos.setFilters}
+                            handleSearch={() => consultarDecretos.handleSearch(0)}
                             handleClear={consultarDecretos.handleClear} />
                         {consultarDecretos.loading && (
-                            <div className="d-flex justify-content-center mt-4">
-                                <div className="spinner-border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
+                            <div className="d-flex justify-content-center mt-4 text-center">
+                                <span className="spinner-border" aria-hidden="true"></span>
+                                <output className="visually-hidden">Cargando...</output>
                             </div>
                         )}
                         {consultarDecretos.searchPerformed && consultarDecretos.totalItems > 0 && (

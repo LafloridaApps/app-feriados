@@ -19,6 +19,8 @@ const DepartamentosPage = () => {
     const [jefeSeleccionado, setJefeSeleccionado] = useState(null);
     const [isJefeLoading, setIsJefeLoading] = useState(false);
 
+
+
     const fetchDepartamentos = useCallback(async () => {
         try {
             setLoading(true);
@@ -52,7 +54,7 @@ const DepartamentosPage = () => {
 
     useEffect(() => {
         const buscarJefe = async () => {
-            if (departamentoSeleccionado && departamentoSeleccionado.rutJefe) {
+            if (departamentoSeleccionado?.rutJefe) {
                 setIsJefeLoading(true);
                 try {
                     const response = await getFuncionarioByRutAndVrut(departamentoSeleccionado.rutJefe);
@@ -98,30 +100,48 @@ const DepartamentosPage = () => {
         return <div className="container mt-5 alert alert-danger"><p>Error al cargar: {error}</p></div>;
     }
 
+    console.log("Departamentos:", departamentos);
+
     return (
-        <div className="container-fluid mt-4">
-            <h2 className="mb-4">Gestión de Departamentos</h2>
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header d-flex justify-content-between align-items-center">
-                            <div className="input-group me-2">
-                                <span className="input-group-text"><i className="bi bi-search"></i></span>
+        <div className="container-fluid mt-4 mb-5">
+            {/* Page Header */}
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
+                <div className="mb-3 mb-md-0">
+                    <h2 className="mb-1 text-primary fw-bold">Estructura Organizacional</h2>
+                    <p className="text-muted mb-0">Gestione los departamentos y sus correspondientes jefaturas</p>
+                </div>
+                <div>
+                    <button className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2" onClick={() => handleShowCrearModal(null)} title="Crear departamento raíz">
+                        <i className="bi bi-plus-circle fs-5"></i>
+                        <span>Nuevo Departamento</span>
+                    </button>
+                </div>
+            </div>
+
+            <div className="row g-4">
+                {/* Left Panel: Tree */}
+                <div className="col-lg-5 col-md-12">
+                    <div className="card shadow-sm border-0 h-100">
+                        <div className="card-header bg-white border-bottom-0 pt-4 pb-0">
+                            <h5 className="mb-3 text-secondary fw-semibold">Directorios</h5>
+                            <div className="input-group">
+                                <span className="input-group-text bg-light border-end-0"><i className="bi bi-search text-muted"></i></span>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control bg-light border-start-0 ps-0"
                                     placeholder="Buscar departamento..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
-                            <button className="btn btn-primary" onClick={() => handleShowCrearModal(null)} title="Crear departamento raíz">
-                                <i className="bi bi-plus-lg"></i>
-                            </button>
                         </div>
-                        <div className="card-body scrollable-tree">
+                        <div className="card-body scrollable-tree mt-2">
                             {loading ? (
-                                <div className="text-center"><div className="spinner-border" role="status"><span className="visually-hidden">Cargando...</span></div></div>
+                                <div className="d-flex justify-content-center py-5">
+                                    <div className="spinner-border text-primary">
+                                        <output className="visually-hidden">Cargando...</output>
+                                    </div>
+                                </div>
                             ) : (
                                 <ArbolDepartamentos
                                     departamentos={departamentosFiltrados}
@@ -135,18 +155,30 @@ const DepartamentosPage = () => {
                     </div>
                 </div>
 
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header">
-                            <h5 className="mb-0">Detalles del Departamento</h5>
+                {/* Right Panel: Details */}
+                <div className="col-lg-7 col-md-12">
+                    <div className="card shadow-sm border-0 h-100">
+                        <div className="card-header bg-white border-bottom-0 pt-4 pb-3">
+                            <h5 className="mb-0 text-secondary fw-semibold">
+                                <i className="bi bi-info-circle me-2"></i>{" "}
+                                Detalles y Jefatura
+                            </h5>
                         </div>
-                        <div className="card-body">
-                            <DetallesJefe
-                                departamento={departamentoSeleccionado}
-                                fetchDepartamentos={fetchDepartamentos}
-                                jefeSeleccionado={jefeSeleccionado}
-                                isJefeLoading={isJefeLoading}
-                            />
+                        <div className="card-body bg-light rounded m-3 mt-0 p-4">
+                            {departamentoSeleccionado ? (
+                                <DetallesJefe
+                                    departamento={departamentoSeleccionado}
+                                    fetchDepartamentos={fetchDepartamentos}
+                                    jefeSeleccionado={jefeSeleccionado}
+                                    isJefeLoading={isJefeLoading}
+                                />
+                            ) : (
+                                <div className="text-center py-5 text-muted">
+                                    <i className="bi bi-building fs-1 mb-3 d-block text-secondary opacity-50"></i>{" "}
+                                    <h5>Seleccione un departamento</h5>
+                                    <p>Haga clic en un departamento del árbol organizativo para ver o editar sus detalles y su respectiva jefatura.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

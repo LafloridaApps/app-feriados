@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TabsFeriados from "./TabsFeriados";
 import './FeriadosPageMobile.css';
 
@@ -13,6 +14,11 @@ const FeriadosPageMobile = ({ resumen, detalle }) => {
             </div>
         </div>
     );
+};
+
+FeriadosPageMobile.propTypes = {
+    resumen: PropTypes.array.isRequired,
+    detalle: PropTypes.array.isRequired,
 };
 
 export default FeriadosPageMobile;

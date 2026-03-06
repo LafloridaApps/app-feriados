@@ -9,7 +9,7 @@ export const useFuncionarioResumen = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (funcionario && funcionario.rut) {
+        if (funcionario?.rut) {
             const fetchResumen = async () => {
                 try {
                     setLoading(true);
