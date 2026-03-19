@@ -23,6 +23,13 @@ export const useFuncionarioSearch = () => {
         setIdDepto(null);
     };
 
+    const initData = (rutVal, rutParaApiVal, nombreVal, deptoVal) => {
+        setRut(rutVal);
+        setRutSinDV(rutParaApiVal);
+        setNombre(nombreVal);
+        setDepartamento(deptoVal);
+    };
+
     const handleBuscar = async () => {
         const rutLimpio = rut.replaceAll(/[.-]/g, '');
 
@@ -66,6 +73,7 @@ export const useFuncionarioSearch = () => {
         idDepto,
         handleRutChange,
         handleBuscar,
-        reset // Exportar la función reset
+        reset, // Exportar la función reset
+        initData
     };
 };

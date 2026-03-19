@@ -24,6 +24,20 @@ export const subroganciaService = {
         throw error;
     }
   },
+  buscarSubroganciasExistentes: async ({ rutJefe, subrogante, idDepto }) => {
+    try {
+        const params = {};
+        if (rutJefe)    params.rutJefe    = rutJefe;
+        if (subrogante) params.subrogante = subrogante;
+        if (idDepto)    params.idDepto    = idDepto;
+
+        const response = await axios.get(`${BASE_URL}/solicitudes/subrogancia/search`, { params });
+        return response.data;
+    } catch (error) {
+        console.error("Error al buscar subrogancias existentes:", error);
+        throw error;
+    }
+  },
   
 };
 
@@ -33,7 +47,27 @@ export const saveSubrogancia = async (subrogancia) => {
         return response;
     } catch (error) {
         console.error("Error al guardar la subrogancia:", error);
-        // Re-lanzamos el error para que el componente que llama pueda manejarlo.
         throw error;
     }
 };
+
+export const updateSubrogancia = async (id, subrogancia) => {
+    try {
+        const response = await axios.put(`${BASE_URL}/solicitudes/subrogancia/update/${id}`, subrogancia);
+        return response;
+    } catch (error) {
+        console.error("Error al actualizar la subrogancia:", error);
+        throw error;
+    }
+};
+
+export const deleteSubrogancia = async (id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/solicitudes/subrogancia/${id}/delete`);
+        return response;
+    } catch (error) {
+        console.error("Error al eliminar la subrogancia:", error);
+        throw error;
+    }
+};
+

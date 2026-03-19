@@ -1,6 +1,6 @@
 import {  useState } from 'react';
 import PropTypes from 'prop-types';
-import ModalBuscarPorNombre from './ModalBuscarPorNombre';
+import ModalBuscarPorNombre from '../../../Common/ModalBuscarPorNombre';
 import SubroganteForm from './SubroganteForm';
 
 const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, deptoFuncionario, fechaInicio, fechaFin }) => {
@@ -22,7 +22,13 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
     };
 
     const handleFuncionarioSelectedFromSearch = (selectedFunc) => {
-        setSubrogante(selectedFunc);
+        // La API devuelve nombreCompleto, adaptamos al formato esperado por handleConfirmar
+        setSubrogante({
+            rut: selectedFunc.rut,
+            vrut: selectedFunc.vrut,
+            nombre: selectedFunc.nombreCompleto,
+            departamento: '',
+        });
         setShowBuscarPorNombreModal(false);
     };
 
@@ -57,10 +63,7 @@ const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, 
             <ModalBuscarPorNombre
                 show={showBuscarPorNombreModal}
                 onClose={() => setShowBuscarPorNombreModal(false)}
-                onFuncionarioSelected={handleFuncionarioSelectedFromSearch}
-                deptoFuncionario={deptoFuncionario}
-                fechaInicio={fechaInicio}
-                fechaFin={fechaFin}
+                onSelected={handleFuncionarioSelectedFromSearch}
             />
         </>
     );

@@ -6,6 +6,7 @@ const FirmaDigitalCard = () => {
     const { firma } = useContext(FirmaDigitalContext);
 
 
+
     if (!firma) {
         return null;
     }
@@ -38,7 +39,7 @@ const FirmaDigitalCard = () => {
                     </div>
                     <div className="detail-item">
                         <strong>Vencimiento:</strong>
-                        <span>{firma.fechaVencimiento}</span>
+                        <span>{firma.fechaExpiracion}</span>
                     </div>
                 </div>
                 <p className="mt-3 text-muted small">Para gestionar su firma, debe comunicarse con DTI.</p>

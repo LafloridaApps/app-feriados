@@ -1,0 +1,31 @@
+.detalles-jefe-foto-btn {
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+}
+
+.detalles-jefe-foto-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detalles-jefe-foto-default {
+    width: 70px;
+    height: 70px;
+    cursor: default;
+}
+
+.detalles-jefe-icon-large {
+    font-size: 2.5rem;
+}
+
+.detalles-jefe-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+}
+
+.detalles-jefe-icon-container {
+    width: 40px;
+    height: 40px;
+}

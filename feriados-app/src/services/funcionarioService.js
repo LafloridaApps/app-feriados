@@ -22,6 +22,13 @@ export const getFuncionarioLocalByRut = async (rut) => {
     return response;
 };
 
+export const buscarFuncionariosPorNombre = async (pattern, pageNumber = 0) => {
+    const response = await api.get('/buscar-nombre', {
+        params: { pattern, pageNumber }
+    });
+    return response.data; // { currentPage, totalPages, totalItems, size, funcionarios: [{nombreCompleto, rut, vrut}] }
+};
+
 
 export const searchFuncionarioByNombreAndDepto = async (id, nombre, fechaInicio, fechaFin) => {
 

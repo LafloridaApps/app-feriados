@@ -6,7 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { getDepartamentosList } from '../../../services/departamentosService';
 import './ArbolDepartamentos.css';
-import { getFuncionarioByRutAndVrut } from '../../../services/funcionarioService';
 
 const DepartamentosPage = () => {
     const [departamentos, setDepartamentos] = useState([]);
@@ -16,10 +15,6 @@ const DepartamentosPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showCrearModal, setShowCrearModal] = useState(false);
     const [parentDepartment, setParentDepartment] = useState(null);
-    const [jefeSeleccionado, setJefeSeleccionado] = useState(null);
-    const [isJefeLoading, setIsJefeLoading] = useState(false);
-
-
 
     const fetchDepartamentos = useCallback(async () => {
         try {
@@ -51,28 +46,6 @@ const DepartamentosPage = () => {
         setParentDepartment(null);
     };
 
-
-    useEffect(() => {
-        const buscarJefe = async () => {
-            if (departamentoSeleccionado?.rutJefe) {
-                setIsJefeLoading(true);
-                try {
-                    const response = await getFuncionarioByRutAndVrut(departamentoSeleccionado.rutJefe);
-                    setJefeSeleccionado(response); // Guardar el objeto completo
-                } catch (error) {
-                    console.error("Error al buscar los detalles del jefe:", error);
-                    setJefeSeleccionado(null);
-                } finally {
-                    setIsJefeLoading(false);
-                }
-            } else {
-                setJefeSeleccionado(null); // Limpiar el jefe si no hay depto seleccionado
-            }
-        };
-
-        buscarJefe();
-    }, [departamentoSeleccionado]);
-
     const handleSeleccionarDepartamento = (departamento) => {
         if (departamentoSeleccionado && departamentoSeleccionado.id === departamento.id) {
             setDepartamentoSeleccionado(null);
@@ -100,7 +73,6 @@ const DepartamentosPage = () => {
         return <div className="container mt-5 alert alert-danger"><p>Error al cargar: {error}</p></div>;
     }
 
-    console.log("Departamentos:", departamentos);
 
     return (
         <div className="container-fluid mt-4 mb-5">
@@ -111,7 +83,11 @@ const DepartamentosPage = () => {
                     <p className="text-muted mb-0">Gestione los departamentos y sus correspondientes jefaturas</p>
                 </div>
                 <div>
-                    <button className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2" onClick={() => handleShowCrearModal(null)} title="Crear departamento raíz">
+                    <button 
+                        className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2" 
+                        onClick={() => handleShowCrearModal(departamentoSeleccionado)} 
+                        title={departamentoSeleccionado ? `Crear subdepartamento de ${departamentoSeleccionado.nombre}` : "Crear departamento raíz"}
+                    >
                         <i className="bi bi-plus-circle fs-5"></i>
                         <span>Nuevo Departamento</span>
                     </button>
@@ -137,17 +113,17 @@ const DepartamentosPage = () => {
                         </div>
                         <div className="card-body scrollable-tree mt-2">
                             {loading ? (
-                                <div className="d-flex justify-content-center py-5">
-                                    <div className="spinner-border text-primary">
+                                <div className="d-flex flex-column align-items-center justify-content-center py-5">
+                                    <div className="spinner-border text-primary mb-3">
                                         <output className="visually-hidden">Cargando...</output>
                                     </div>
+                                    <h6 className="text-secondary fw-semibold">Cargando datos...</h6>
                                 </div>
                             ) : (
                                 <ArbolDepartamentos
                                     departamentos={departamentosFiltrados}
                                     onSeleccionarDepartamento={handleSeleccionarDepartamento}
                                     departamentoSeleccionado={departamentoSeleccionado}
-                                    onShowCrearModal={handleShowCrearModal}
                                     fetchDepartamentos={fetchDepartamentos}
                                 />
                             )}
@@ -169,8 +145,7 @@ const DepartamentosPage = () => {
                                 <DetallesJefe
                                     departamento={departamentoSeleccionado}
                                     fetchDepartamentos={fetchDepartamentos}
-                                    jefeSeleccionado={jefeSeleccionado}
-                                    isJefeLoading={isJefeLoading}
+                                    setDepartamentoSeleccionado={setDepartamentoSeleccionado}
                                 />
                             ) : (
                                 <div className="text-center py-5 text-muted">

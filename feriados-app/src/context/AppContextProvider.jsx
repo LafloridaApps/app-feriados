@@ -5,16 +5,20 @@ import { FeriadosProvider } from "./FeriadosProvider";
 import PropTypes from "prop-types";
 import { SolicitudesNoLeidasProvider } from "./SolicitudesNoLeidasProvider";
 
+import { DepartamentoProvider } from "./DepartamentoProvider";
+
 export const AppContextProvider = ({ children }) => {
     return (
         <UsuarioProvider>
-            <FirmaDigitalProvider>
-                <SolicitudesNoLeidasProvider>
-                    <FeriadosProvider>
-                        {children}
-                    </FeriadosProvider>
-                </SolicitudesNoLeidasProvider>
-            </FirmaDigitalProvider>
+            <DepartamentoProvider>
+                <FirmaDigitalProvider>
+                    <SolicitudesNoLeidasProvider>
+                        <FeriadosProvider>
+                            {children}
+                        </FeriadosProvider>
+                    </SolicitudesNoLeidasProvider>
+                </FirmaDigitalProvider>
+            </DepartamentoProvider>
         </UsuarioProvider>
     );
 };

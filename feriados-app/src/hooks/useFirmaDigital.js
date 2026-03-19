@@ -10,7 +10,7 @@ export const useFirmaDigital = () => {
     const funcionario = useContext(UsuarioContext);
 
     useEffect(() => {
-        if (funcionario?.rut) {
+        if (!funcionario?.rut) {
             setLoading(false);
             return;
         }
@@ -21,14 +21,13 @@ export const useFirmaDigital = () => {
                 if (data) {
                     setTieneFirma(true);
                     const hoy = new Date();
-                    const fechaVencimiento = new Date();
-                    fechaVencimiento.setDate(hoy.getDate() + data.diasRestantes);
+                    const fechaExpiracion = new Date(data.fechaExpiracion);
 
                     let estado = 'Vigente';
                     let mensaje = `Su firma está vigente y expira en ${data.diasRestantes} días.`;
                     let statusClass = 'status-ok';
 
-                    if (data.diasRestantes <= 0) {
+                    if (fechaExpiracion < hoy) {
                         estado = 'Vencida';
                         mensaje = 'Su firma digital ha expirado. Por favor, renuévela.';
                         statusClass = 'status-danger';
@@ -40,7 +39,7 @@ export const useFirmaDigital = () => {
 
                     setFirma({
                         ...data,
-                        fechaVencimiento: fechaVencimiento.toLocaleDateString('es-CL'),
+                        fechaVencimiento: fechaExpiracion.toLocaleDateString('es-CL'),
                         estado,
                         mensaje,
                         statusClass

@@ -7,6 +7,7 @@ const WelcomeWidget = ({ funcionario }) => {
     const fotoUrl = foto ? `data:image/jpeg;base64,${foto}` : '';
 
 
+
     return (
         <div className="card shadow-lg rounded-4 p-4 welcome-widget-card">
             <div className="d-flex flex-column flex-md-row align-items-center text-center text-md-start">

@@ -28,8 +28,8 @@ export const useJefeDashboard = () => {
                     setTodayAbsences(resumen.ausenciasEquipoHoy || 0);
                     setSubrogatedDepartments(resumen.departamentosSubrogados || []);
 
-                    setError(err);
-                    console.error("Error fetching dashboard data:", err);
+                    setError(error);
+                    console.error("Error fetching dashboard data:", error);
                 } finally {
                     setLoading(false);
                 }
@@ -37,7 +37,7 @@ export const useJefeDashboard = () => {
 
             fetchData();
         }
-    }, [codDepto, rut]); // Dependencies updated
+    }, [codDepto, error, rut]); // Dependencies updated
 
     return { pendingSolicitudes, upcomingAbsences, todayAbsences, subrogatedDepartments, loading, error };
 };

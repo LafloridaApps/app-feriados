@@ -27,9 +27,6 @@ const Inicio = () => {
         return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
     }
 
-    
-    
-   
     return (
         <div className="container mt-5">
             {isMobile ? (
@@ -37,6 +34,7 @@ const Inicio = () => {
                     funcionario={funcionario}
                     esJefe={esJefe}
                     resumenFunc={resumenFunc}
+                    tieneFirma={tieneFirma}
                 />
             ) : (
                 <div className="row justify-content-center">
