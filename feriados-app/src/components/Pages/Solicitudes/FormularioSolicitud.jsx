@@ -44,9 +44,9 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
     const handleSubmit = (e) => submitForm(e, esJefe, esDirector);
 
     const renderSelect = (id, label, value, onChange, options) => (
-        <div className="mb-3">
-            <label htmlFor={id} className="form-label">{label}</label>
-            <select id={id} className="form-select" value={value} onChange={onChange}>
+        <div className="mb-4">
+            <label htmlFor={id} className="form-label-premium">{label}</label>
+            <select id={id} className="form-select form-select-premium" value={value} onChange={onChange}>
                 {options.map(opt => (
                     <option key={opt.value || opt} value={opt.value || opt}>
                         {opt.label || opt}
@@ -58,100 +58,103 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
 
 
     return (
-        <div className='row'>
-            <div className='col-md-6'>
-                <div className="card shadow-sm">
-                    <div className="card-header bg-secondary text-white">
-                        <i className="bi bi-pen"></i> Nueva Solicitud
+        <div className='row g-4'>
+            <div className='col-lg-6'>
+                <div className="nueva-solicitud-container">
+                    <div className="card-header-premium">
+                        <i className="bi bi-pencil-square"></i>
+                        <span>Nueva Solicitud</span>
                     </div>
-                    <div className="card-body">
-                        <form onSubmit={handleSubmit}>
-                            {renderSelect(
-                                'tipoPermiso',
-                                <><i className="bi bi-question-circle"></i> Tipo de Permiso</>,
-                                tipo,
-                                handlerTipo,
-                                tiposPermiso
-                            )}
+                    <form onSubmit={handleSubmit} className="mt-2">
+                        {renderSelect(
+                            'tipoPermiso',
+                            <><i className="bi bi-info-circle"></i> Tipo de Permiso</>,
+                            tipo,
+                            handlerTipo,
+                            tiposPermiso
+                        )}
 
-                            <div className="mb-3">
-                                <label htmlFor="fechaInicio" className="form-label">
-                                    <i className="bi bi-calendar-date"></i> Fecha Desde
-                                </label>
-                                <input
-                                    id="fechaInicio"
-                                    type="date"
-                                    className="form-control"
-                                    min={minDateInicio}
-                                    value={fechaInicio}
-                                    onChange={handlerFechaInicio}
-                                    onKeyDown={(e) => e.preventDefault()}
-                                    disabled={tipo === ''} // Change this line
-                                />
+                        <div className="mb-4">
+                            <label htmlFor="fechaInicio" className="form-label-premium">
+                                <i className="bi bi-calendar-event"></i> Fecha Desde
+                            </label>
+                            <input
+                                id="fechaInicio"
+                                type="date"
+                                className="form-control form-control-premium"
+                                min={minDateInicio}
+                                value={fechaInicio}
+                                onChange={handlerFechaInicio}
+                                onKeyDown={(e) => e.preventDefault()}
+                                disabled={tipo === ''}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="fechaFin" className="form-label-premium">
+                                <i className="bi bi-calendar-check"></i> Fecha Hasta
+                            </label>
+                            <input
+                                id="fechaFin"
+                                type="date"
+                                className="form-control form-control-premium"
+                                min={fechaInicio}
+                                max={maxDateFin}
+                                value={fechaFin}
+                                onChange={handlerFechaFin}
+                                onKeyDown={(e) => e.preventDefault()}
+                                disabled={tipo === ''}
+                            />
+                        </div>
+                        {tipo === 'ADMINISTRATIVO' && (
+                            <div className="row g-3">
+                                <div className="col-md-6">
+                                    {renderSelect(
+                                        'jornadaInicio',
+                                        <><i className="bi bi-clock"></i> Jornada Inicio</>,
+                                        jornadaInicio,
+                                        e => setJornadaInicio(e.target.value),
+                                        jornadas
+                                    )}
+                                </div>
+                                <div className="col-md-6">
+                                    {renderSelect(
+                                        'jornadaFinal',
+                                        <><i className="bi bi-clock-history"></i> Jornada Final</>,
+                                        jornadaFin,
+                                        e => setJornadaFin(e.target.value),
+                                        jornadas
+                                    )}
+                                </div>
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="fechaFin" className="form-label">
-                                    <i className="bi bi-calendar-date"></i> Fecha Hasta
-                                </label>
-                                <input
-                                    id="fechaFin"
-                                    type="date"
-                                    className="form-control"
-                                    min={fechaInicio}
-                                    max={maxDateFin}
-                                    value={fechaFin}
-                                    onChange={handlerFechaFin}
-                                    onKeyDown={(e) => e.preventDefault()}
-                                    disabled={tipo === ''} // Change this line
-                                />
-                            </div>
-                            {tipo === 'ADMINISTRATIVO' && (
-                                <div className="row">
-                                    <div className="col">
-                                        {renderSelect(
-                                            'jornadaInicio',
-                                            'Jornada Inicio',
-                                            jornadaInicio,
-                                            e => setJornadaInicio(e.target.value),
-                                            jornadas
-                                        )}
+                        )}
+                        <div className="mt-4 pt-2 border-top d-flex flex-column gap-3">
+                            <button
+                                type="submit"
+                                className="btn btn-premium w-100"
+                                disabled={enviando || Boolean(error) || !tipo}
+                            >
+                                {enviando ? (
+                                    <><span className="spinner-border spinner-border-sm me-2"></span>Enviando...</>
+                                ) : (
+                                    <><i className="bi bi-send-fill me-2"></i>Enviar Solicitud</>
+                                )}
+                            </button>
+                            {subrogancia && (
+                                <div className="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-0" role="alert" style={{ background: '#f0f9ff', color: '#0369a1' }}>
+                                    <div className="small">
+                                        <i className="bi bi-person-check-fill me-2"></i> Subrogante seleccionado
                                     </div>
-                                    <div className="col">
-                                        {renderSelect(
-                                            'jornadaFinal',
-                                            'Jornada Final',
-                                            jornadaFin,
-                                            e => setJornadaFin(e.target.value),
-                                            jornadas
-                                        )}
-                                    </div>
+                                    <button
+                                        type='button'
+                                        className="btn btn-sm btn-link text-decoration-none fw-bold"
+                                        onClick={() => setMostrarInfoSubrogante(true)}
+                                    >
+                                        VER DETALLES
+                                    </button>
                                 </div>
                             )}
-                            <div className="mt-4 text-end">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    disabled={enviando || Boolean(error) || !tipo}
-                                >
-                                    {enviando ? 'Enviando...' : 'Enviar Solicitud'}
-                                </button>
-                                {subrogancia && (
-                                    <div className="alert alert-info d-flex justify-content-between align-items-center m-3" role="alert">
-                                        <div>
-                                            <i className="bi bi-info-circle"></i> Esta solicitud tiene un subrogante seleccionado.
-                                        </div>
-                                        <button
-                                            type='button'
-                                            className="btn btn-sm btn-outline-primary"
-                                            onClick={() => setMostrarInfoSubrogante(true)}
-                                        >
-                                            Ver Detalles
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -172,7 +175,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                 fechaFin={fechaFin}
             />
 
-            <div className='col-md-6'>
+            <div className='col-lg-6'>
                 <DetalleSolicitud
                     fechaInicio={fechaInicio}
                     fechaFin={fechaFin}

@@ -17,80 +17,89 @@ const RrhhFilters = ({
     tipoSolicitudOptions,
 }) => {
     return (
-        <div>
-            <div className="row align-items-end">
+        <div className="rrhh-filters">
+            <div className="row g-3 align-items-end">
                 {/* Date Range Filters */}
-                <div className="col-md-3 mb-3">
-                    <label htmlFor="fechaDesde" className="form-label">Fecha Desde</label>
+                <div className="col-md-3">
+                    <label htmlFor="fechaDesde" className="form-label-premium">
+                        <i className="bi bi-calendar-range me-2"></i>Fecha Desde
+                    </label>
                     <input
                         type="date"
-                        className="form-control"
+                        className="form-control form-control-premium"
                         id="fechaDesde"
                         value={fechaDesde}
                         onChange={(e) => setFechaDesde(e.target.value)}
                     />
                 </div>
-                <div className="col-md-3 mb-3">
-                    <label htmlFor="fechaHasta" className="form-label">Fecha Hasta</label>
+                <div className="col-md-3">
+                    <label htmlFor="fechaHasta" className="form-label-premium">
+                        <i className="bi bi-calendar-range me-2"></i>Fecha Hasta
+                    </label>
                     <input
                         type="date"
-                        className="form-control"
+                        className="form-control form-control-premium"
                         id="fechaHasta"
                         value={fechaHasta}
                         onChange={(e) => setFechaHasta(e.target.value)}
                     />
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-md-3">
                     <button
-                        className="btn btn-primary w-100"
+                        className="btn btn-premium w-100"
                         onClick={handleCargarAprobaciones}
                         disabled={loading}
                     >
                         {loading ? (
                             <>
-                                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                <output className="visually-hidden">Cargando...</output>
+                                <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Cargando...
                             </>
                         ) : (
-                            'Cargar Aprobaciones'
+                            <>
+                                <i className="bi bi-search me-2"></i>Buscar Datos
+                            </>
                         )}
                     </button>
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-md-3">
                     <button
-                        className="btn btn-secondary w-100"
+                        className="btn btn-outline-secondary w-100 py-2"
+                        style={{ borderRadius: '10px', fontWeight: '600' }}
                         onClick={handleLimpiarFiltros}
                     >
-                        Limpiar Filtros
+                        <i className="bi bi-eraser me-2"></i>Limpiar
                     </button>
                 </div>
             </div>
 
             {(tipoSolicitudOptions.length > 0 || tipoContratoOptions.length > 0) && (
-                <>
-                    <hr className="my-4" />
-                    <div className="row">
+                <div className="mt-4 pt-4 border-top">
+                    <div className="row g-4">
                         {/* Tipo Solicitud Filter */}
-                        <div className="col-md-6 mb-3">
-                            <label htmlFor="tipoSolicitud" className="form-label">Tipo de Solicitud</label>
+                        <div className="col-md-6">
+                            <label htmlFor="tipoSolicitud" className="form-label-premium">
+                                <i className="bi bi-funnel me-2"></i>Tipo de Solicitud
+                            </label>
                             <select
-                                className="form-select"
+                                className="form-select form-select-premium"
                                 id="tipoSolicitud"
                                 value={selectedTipoSolicitud}
                                 onChange={(e) => setSelectedTipoSolicitud(e.target.value)}
                             >
-                                <option value="">Todos</option>
+                                <option value="">Todos los tipos</option>
                                 {tipoSolicitudOptions.map(option => (
                                     <option key={option} value={option}>{option}</option>
                                 ))}
                             </select>
                         </div>
                         {/* Tipo Contrato Filter */}
-                        <div className="col-md-6 mb-3">
-                            <label className="form-label">Tipo de Contrato</label>
-                            <div>
+                        <div className="col-md-6">
+                            <span className="form-label-premium d-block mb-2">
+                                <i className="bi bi-file-earmark-person me-2"></i>Tipo de Contrato
+                            </span>
+                            <div className="d-flex flex-wrap gap-3 p-2 bg-light rounded shadow-inner">
                                 {tipoContratoOptions.map(option => (
-                                    <div className="form-check form-check-inline" key={option}>
+                                    <div className="form-check custom-checkbox" key={option}>
                                         <input
                                             className="form-check-input"
                                             type="checkbox"
@@ -99,7 +108,7 @@ const RrhhFilters = ({
                                             checked={selectedTipoContrato.includes(option)}
                                             onChange={handleTipoContratoChange}
                                         />
-                                        <label className="form-check-label" htmlFor={`contrato-${option}`}>
+                                        <label className="form-check-label fw-500" htmlFor={`contrato-${option}`}>
                                             {option}
                                         </label>
                                     </div>
@@ -107,7 +116,7 @@ const RrhhFilters = ({
                             </div>
                         </div>
                     </div>
-                </>
+                </div>
             )}
         </div>
     );

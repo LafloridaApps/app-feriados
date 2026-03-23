@@ -6,24 +6,23 @@ const ResumenAdministrativos = ({ resumen }) => {
 
     
     return (
-        <div className="table-responsive mb-4">
-            <table className="table table-bordered table-hover table-striped align-middle">
-                <thead >
+        <div className="table-responsive">
+            <table className="premium-table">
+                <thead>
                     <tr>
-                        <th><i className="bi bi-calendar-event-fill me-2"></i> Año</th>
-                        <th><i className="bi bi-infinity me-2"></i> Máximo</th>
-                        <th><i className="bi bi-arrow-down-square-fill me-2"></i> Usados</th>
-                        <th><i className="bi bi-arrow-left-right me-2"></i> Saldo</th>
+                        <th className="text-center">Año</th>
+                        <th className="text-center">Máximo Permitido</th>
+                        <th className="text-center">Días Usados</th>
+                        <th className="text-center">Saldo Disponible</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr key={anio}>
-                        <td>{anio}</td>
-                        <td>{maximo}</td>
-                        <td>{usados}</td>
-                        <td>{saldo}</td>
+                        <td className="text-center fw-bold">{anio}</td>
+                        <td className="text-center text-muted">{maximo}</td>
+                        <td className="text-center text-danger">{usados}</td>
+                        <td className="text-center text-primary fw-bold fs-4">{saldo}</td>
                     </tr>
-
                 </tbody>
             </table>
         </div>

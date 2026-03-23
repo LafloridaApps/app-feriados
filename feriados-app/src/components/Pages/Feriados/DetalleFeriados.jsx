@@ -4,33 +4,39 @@ import { formatFechaString } from "../../../services/utils";
 const DetalleFeriados = ({ detalle }) => {
 
     return (
-        <div className="card">
-            <div className="card-body">
-                <div className="table-responsive">
-                    <table className="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th><i className="bi bi-hash me-2"></i> Numero</th>
-                                <th><i className="bi bi-calendar-week-fill me-2"></i> Periodo</th>
-                                <th><i className="bi bi-calendar-check-fill me-2"></i> Fecha Resolución</th>
-                                <th><i className="bi bi-calendar-plus-fill me-2"></i> Fecha Inicio</th>
-                                <th><i className="bi bi-calendar-minus-fill me-2"></i> Fecha Término</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {detalle.map(({ fechaResolucion, fechaInicio, fechaTermino, numero, periodo }) => (
-                                <tr key={numero}>
-                                    <td>{numero}</td>
-                                    <td>{periodo}</td>
-                                    <td>{formatFechaString(fechaResolucion)}</td>
-                                    <td>{formatFechaString(fechaInicio)}</td>
-                                    <td>{formatFechaString(fechaTermino)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div className="table-responsive">
+            <table className="premium-table">
+                <thead>
+                    <tr>
+                        <th>N° Solicitud</th>
+                        <th className="text-center">Periodo</th>
+                        <th>Fecha Resolución</th>
+                        <th>Desde</th>
+                        <th>Hasta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {detalle.map(({ fechaResolucion, fechaInicio, fechaTermino, numero, periodo }) => (
+                        <tr key={numero}>
+                            <td className="fw-bold text-primary">#{numero}</td>
+                            <td className="text-center">{periodo}</td>
+                            <td>{formatFechaString(fechaResolucion)}</td>
+                            <td>
+                                <span className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-calendar-check text-success small"></i>
+                                    {formatFechaString(fechaInicio)}
+                                </span>
+                            </td>
+                            <td>
+                                <span className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-calendar-x text-danger small"></i>
+                                    {formatFechaString(fechaTermino)}
+                                </span>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

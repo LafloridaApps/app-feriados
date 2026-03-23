@@ -43,9 +43,25 @@ const AdministrativosPage = () => {
         isMobile ? (
             <AdministrativosPageMobile resumen={resumen} detalle={detalle} />
         ) : (
-            <div className="container py-5 administrativos-page-container">
-                <h1 className="mb-4 border-bottom pb-2 text-center administrativos-page-header">Permisos Administrativos</h1>
-                <TabsAdministrativos resumen={resumen} detalle={detalle} />
+            <div className="container-fluid py-4 administrativos-page-container">
+                {/* Standardized Page Header - Premium Style */}
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
+                    <div className="mb-3 mb-md-0">
+                        <h2 className="mb-1 text-primary fw-bold">
+                            <i className="bi bi-person-badge-fill me-2"></i>{' '}
+                            Permisos Administrativos
+                        </h2>
+                        {funcionario?.nombre && (
+                            <p className="text-muted mb-0">
+                                Gestiona tus días administrativos y revisa tu historial
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="administrativos-section-card">
+                    <TabsAdministrativos resumen={resumen} detalle={detalle} />
+                </div>
             </div>
         )
     );

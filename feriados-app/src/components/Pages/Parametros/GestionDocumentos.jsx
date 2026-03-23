@@ -16,44 +16,67 @@ const GestionDocumentos = () => {
 
         return (
             <div className="gestion-documentos-container">
-                <div className="card shadow-sm gestion-documentos-card">
-                    <div className="card-header gestion-documentos-card-header">
+                <div className="gestion-documentos-card">
+                    <div className="gestion-documentos-card-header">
                         <h3>Gestión de Plantillas de Decretos</h3>
                     </div>
-                    <div className="card-body">
-                        <div className="mb-4 p-3 gestion-documentos-upload-section">
-                            <h5 className="mb-3">Subir Nueva Plantilla</h5>
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Nombre de la Plantilla"
-                                    value={nombrePlantilla}
-                                    onChange={(e) => setNombrePlantilla(e.target.value)}
-                                />
-                                <input
-                                    key={fileInputKey}
-                                    type="file"
-                                    className="form-control"
-                                    accept=".docx"
-                                    onChange={handleFileChange}
-                                />
-                                <button
-                                    className="btn btn-primary"
-                                    onClick={handleUpload}
-                                    disabled={!selectedFile || !nombrePlantilla}
-                                >
-                                    <i className="bi bi-upload me-2"></i>Subir Plantilla
-                                </button>
+                    <div className="p-4">
+                        <div className="gestion-documentos-upload-section">
+                            <h5>Subir Nueva Plantilla</h5>
+                            <div className="row g-3">
+                                <div className="col-12 col-md-4">
+                                    <div className="form-floating">
+                                        <input
+                                            type="text"
+                                            id="templateName"
+                                            className="form-control border-0 bg-white"
+                                            placeholder="Nombre de la Plantilla"
+                                            value={nombrePlantilla}
+                                            onChange={(e) => setNombrePlantilla(e.target.value)}
+                                        />
+                                        <label htmlFor="templateName">Nombre de la Plantilla</label>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-5">
+                                    <div className="form-floating">
+                                        <input
+                                            key={fileInputKey}
+                                            id="templateFile"
+                                            type="file"
+                                            className="form-control border-0 bg-white"
+                                            accept=".docx"
+                                            onChange={handleFileChange}
+                                        />
+                                        <label htmlFor="templateFile">Seleccionar Archivo (.docx)</label>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-3 d-flex align-items-stretch">
+                                    <button
+                                        className="btn upload-button-premium text-white w-100 shadow-sm"
+                                        onClick={handleUpload}
+                                        disabled={!selectedFile || !nombrePlantilla}
+                                    >
+                                        <i className="bi bi-cloud-arrow-up-fill me-2"></i>{' '}
+                                        Subir Plantilla
+                                    </button>
+                                </div>
                             </div>
-                            {feedbackMessage && <div className="form-text text-danger mt-2">{feedbackMessage}</div>}
+                            {feedbackMessage && (
+                                <div className="mt-3 d-flex align-items-center text-danger small fw-bold">
+                                    <i className="bi bi-exclamation-circle-fill me-2"></i>{' '}
+                                    {feedbackMessage}
+                                </div>
+                            )}
                         </div>
     
-                        <div>
-                            <h5>Plantillas Existentes</h5>
+                        <div className="mt-4">
+                            <h5 className="text-dark fw-bold mb-4 d-flex align-items-center">
+                                <i className="bi bi-files me-2 text-primary"></i>{' '}
+                                Plantillas Existentes
+                            </h5>
                             <div className="table-responsive">
-                                <table className="table table-striped table-hover">
-                                    <thead className="gestion-documentos-table-header">
+                                <table className="table gestion-documentos-table">
+                                    <thead>
                                         <tr>
                                             <th>Nombre Plantilla</th>
                                             <th>Nombre Documento</th>
@@ -63,30 +86,35 @@ const GestionDocumentos = () => {
                                     <tbody>
                                         {templates.length > 0 ? (
                                             templates.map(template => (
-                                                <tr key={template.id} className="gestion-documentos-table-row">
-                                                    <td>{template.nombre}</td>
-                                                    <td>{template.docFile || 'No especificado'}</td>
+                                                <tr key={template.id}>
+                                                    <td className="fw-bold">{template.nombre}</td>
+                                                    <td className="text-muted">{template.docFile || 'No especificado'}</td>
                                                     <td className="text-center">
-                                                        <button
-                                                            className="btn btn-outline-primary btn-sm me-2"
-                                                            onClick={() => handleView(template.docFile, template.nombre)}
-                                                            title="Ver Documento"
-                                                        >
-                                                            <i className="bi bi-eye-fill"></i>
-                                                        </button>
-                                                        <button
-                                                            className="btn btn-outline-secondary btn-sm"
-                                                            onClick={() => handleDelete(template.id)}
-                                                            title="Eliminar"
-                                                        >
-                                                            <i className="bi bi-trash"></i>
-                                                        </button>
+                                                        <div className="d-flex justify-content-center gap-2">
+                                                            <button
+                                                                className="btn btn-action-premium btn-action-view"
+                                                                onClick={() => handleView(template.docFile, template.nombre)}
+                                                                title="Ver Documento"
+                                                            >
+                                                                <i className="bi bi-eye-fill"></i>
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-action-premium btn-action-delete"
+                                                                onClick={() => handleDelete(template.id)}
+                                                                title="Eliminar"
+                                                            >
+                                                                <i className="bi bi-trash-fill"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="3" className="text-center">No hay plantillas existentes.</td>
+                                                <td colSpan="3" className="text-center py-5 text-muted">
+                                                    <i className="bi bi-folder-x fs-1 d-block mb-2 opacity-50"></i>{' '}
+                                                    No hay plantillas existentes.
+                                                </td>
                                             </tr>
                                         )}
                                     </tbody>

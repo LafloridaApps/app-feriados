@@ -5,24 +5,34 @@ const DetalleAdministrativos = ({ detalle }) => {
 
     return (
         <div className="table-responsive">
-            <table className="table table-bordered table-hover table-striped align-middle">
-                <thead >
+            <table className="premium-table">
+                <thead>
                     <tr>
-                        <th><i className="bi bi-hash me-2"></i> N°</th>
-                        <th><i className="bi bi-hourglass-split me-2"></i> Duracion</th>
-                        <th><i className="bi bi-calendar-check-fill me-2"></i> Fecha Resolución</th>
-                        <th><i className="bi bi-calendar-plus-fill me-2"></i> Inicio</th>
-                        <th><i className="bi bi-calendar-minus-fill me-2"></i> Término</th>
+                        <th>N° Solicitud</th>
+                        <th className="text-center">Duración</th>
+                        <th>Fecha Resolución</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Término</th>
                     </tr>
                 </thead>
                 <tbody>
                     {detalle.map(({ numero, periodo, fechaResolucion, fechaInicio, fechaTermino }) => (
                         <tr key={numero}>
-                            <td>{numero}</td>
-                            <td>{periodo}</td>
+                            <td className="fw-bold text-primary">#{numero}</td>
+                            <td className="text-center">{periodo}</td>
                             <td>{formatFechaString(fechaResolucion)}</td>
-                            <td>{formatFechaString(fechaInicio)}</td>
-                            <td>{formatFechaString(fechaTermino)}</td>
+                            <td>
+                                <span className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-calendar-check text-success small"></i>
+                                    {formatFechaString(fechaInicio)}
+                                </span>
+                            </td>
+                            <td>
+                                <span className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-calendar-x text-danger small"></i>
+                                    {formatFechaString(fechaTermino)}
+                                </span>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

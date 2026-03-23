@@ -20,55 +20,65 @@ const TablaDecretos = ({ data, selectedItems, onSelectItem, onSelectAll, request
     );
 
     return (
-        <div className="table-responsive mt-4">
-            <table className="table table-striped table-hover">
-                <thead className="thead-dark">
+        <div className="table-responsive mt-2">
+            <table className="premium-table">
+                <thead>
                     <tr>
-                        <th>
+                        <th className="px-3">
                             <input
                                 type="checkbox"
+                                className="form-check-input"
                                 checked={allSelected}
                                 onChange={onSelectAll}
                             />
                         </th>
                         {renderHeader('Id', 'idSolicitud')}
                         {renderHeader('Rut', 'rut')}
-                        {renderHeader('Nombre', 'nombres')}
-                        {renderHeader('Departamento', 'departamento')}
-                        {renderHeader('Fecha Desde', 'desde')}
-                        {renderHeader('Fecha Hasta', 'hasta')}
+                        {renderHeader('Funcionario', 'nombres')}
+                        {renderHeader('Depto', 'departamento')}
+                        {renderHeader('Desde', 'desde')}
+                        {renderHeader('Hasta', 'hasta')}
                         {renderHeader('Jornada', 'jornada')}
-                        {renderHeader('Duración', 'duracion')}
-                        {renderHeader('Fecha Solicitud', 'fechaSolicitud')}
-                        {renderHeader('Tipo Solicitud', 'tipoSolicitud')}
+                        {renderHeader('Días', 'duracion')}
+                        {renderHeader('F. Solicitud', 'fechaSolicitud')}
+                        {renderHeader('Tipo', 'tipoSolicitud')}
                         {renderHeader('Contrato', 'tipoContrato')}
-                        <th>Documento</th>
+                        <th className="text-center">Doc</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item, index) => (
                         <tr key={`${item.idSolicitud}-${index}`}>
-                            <td>
+                            <td className="px-3">
                                 <input
                                     type="checkbox"
+                                    className="form-check-input"
                                     checked={selectedItems.includes(item.idSolicitud)}
                                     onChange={() => onSelectItem(item.idSolicitud)}
                                 />
                             </td>
-                            <td>{item.idSolicitud}</td>
-                            <td>{item.rut}</td>
-                            <td>{item.nombres}</td>
-                            <td>{item.departamento}</td>
+                            <td className="fw-bold text-primary">#{item.idSolicitud}</td>
+                            <td className="text-nowrap">{item.rut}</td>
+                            <td className="fw-500">{item.nombres}</td>
+                            <td className="small text-muted">{item.departamento}</td>
                             <td>{formatFechaString(item.desde)}</td>
                             <td>{formatFechaString(item.hasta)}</td>
-                            <td>{item.jornada}</td>
-                            <td>{item.duracion}</td>
-                            <td>{formatFechaString(item.fechaSolicitud)}</td>
-                            <td>{item.tipoSolicitud}</td>
-                            <td>{item.tipoContrato}</td>
                             <td>
+                                <span className={`badge ${item.jornada === 'Completa' ? 'bg-primary' : 'bg-info'} bg-opacity-10 text-dark fw-normal border`}>
+                                    {item.jornada}
+                                </span>
+                            </td>
+                            <td className="text-center fw-bold">{item.duracion}</td>
+                            <td className="small text-muted">{formatFechaString(item.fechaSolicitud)}</td>
+                            <td>
+                                <span className="small">{item.tipoSolicitud}</span>
+                            </td>
+                            <td>
+                                <span className="small text-muted">{item.tipoContrato}</span>
+                            </td>
+                            <td className="text-center">
                                 {item.url && (
-                                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
+                                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-light border text-danger shadow-sm">
                                         <i className="bi bi-file-earmark-pdf-fill"></i>
                                     </a>
                                 )}

@@ -5,17 +5,16 @@ import { formatFecha } from '../../../services/utils'; // Asegúrate de que esta
 const getStatusBadge = (status) => {
     switch (status) {
         case 'APROBADA':
-            return 'badge badge-estado-aprobado';
+            return 'badge-premium status-aprobada';
         case 'POSTERGADA':
-            return 'badge badge-estado-rechazado'; // Asumiendo que postergada es similar a rechazada en color
+            return 'badge-premium status-postergada';
         case 'PENDIENTE':
-            return 'badge badge-estado-pendiente';
         case 'PENDIENTE VISACION':
-            return 'badge badge-estado-pendiente'; // Usar el mismo color que pendiente
+            return 'badge-premium status-pendiente';
         case 'FINALIZADA':
-            return 'badge badge-estado-finalizado';
+            return 'badge-premium status-finalizada';
         default:
-            return 'badge badge-estado-otro';
+            return 'badge-premium status-finalizada';
     }
 };
 
@@ -23,12 +22,12 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
 
     return (
         <div className="table-responsive">
-            <table className="table table-hover mb-0 mis-solicitudes-table">
-                <thead className="bg-light">
+            <table className="table mis-solicitudes-table mb-0">
+                <thead>
                     <tr>
-                        <th>ID Solicitud</th>
+                        <th style={{ width: '120px' }}>ID</th>
                         <th>Tipo de Solicitud</th>
-                        <th>Fecha de Creación</th>
+                        <th>Fecha Creación</th>
                         <th>Estado</th>
                         <th className="text-center">Acciones</th>
                     </tr>
@@ -36,44 +35,50 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                 <tbody>
                     {solicitudes.map((solicitud, index) => (
                         <React.Fragment key={solicitud?.id || index}>
-                            <tr>
-                                <td>{solicitud?.id || 'N/A'}</td>
-                                <td>{solicitud?.tipoSolicitud || 'No especificado'}</td>
+                            <tr className={openDetailId === solicitud.id ? 'table-active' : ''}>
+                                <td>
+                                    <span className="text-muted">#</span>
+                                    {solicitud?.id || 'N/A'}
+                                </td>
+                                <td>
+                                    <div className="fw-bold">{solicitud?.tipoSolicitud || 'No especificado'}</div>
+                                </td>
                                 <td>{solicitud?.fechaSolicitud ? formatFecha(solicitud.fechaSolicitud) : 'Fecha no disponible'}</td>
                                 <td>
-                                    {solicitud?.estadoSolicitud ? (
-                                        <span className={getStatusBadge(solicitud.estadoSolicitud)}>
-                                            {solicitud.estadoSolicitud}
-                                        </span>
-                                    ) : (
-                                        <span className={getStatusBadge('')}>No especificado</span>
-                                    )}
+                                    <span className={getStatusBadge(solicitud?.estadoSolicitud)}>
+                                        {solicitud?.estadoSolicitud || 'No especificado'}
+                                    </span>
                                 </td>
                                 <td className="text-center">
-                                    <button
-                                        className="btn btn-sm btn-outline-primary"
-                                        onClick={() => handleToggleDetail(solicitud.id)}
-                                        disabled={!solicitud?.id}
-                                    >
-                                        <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
-                                    </button>
-                                    {solicitud.urlPdf && (
-                                        <a
-                                            href={solicitud.urlPdf}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="btn btn-sm btn-danger ms-2"
-                                            title="Ver Documento PDF"
+                                    <div className="d-flex justify-content-center gap-2">
+                                        <button
+                                            className="btn btn-action"
+                                            onClick={() => handleToggleDetail(solicitud.id)}
+                                            disabled={!solicitud?.id}
+                                            title="Ver Detalles"
                                         >
-                                            <i className="bi bi-file-earmark-pdf"></i>
-                                        </a>
-                                    )}
+                                            <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                                        </button>
+                                        {solicitud.urlPdf && (
+                                            <a
+                                                href={solicitud.urlPdf}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn btn-action btn-action-pdf"
+                                                title="Ver PDF"
+                                            >
+                                                <i className="bi bi-file-earmark-pdf"></i>
+                                            </a>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                             {openDetailId === solicitud.id && (
                                 <tr>
-                                    <td colSpan="5" className="p-0">
-                                        <DetalleMiSolicitud solicitud={solicitud} />
+                                    <td colSpan="5" className="p-0 border-0">
+                                        <div className="px-4 pb-4">
+                                            <DetalleMiSolicitud solicitud={solicitud} />
+                                        </div>
                                     </td>
                                 </tr>
                             )}
@@ -83,6 +88,20 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
             </table>
         </div>
     );
+};
+
+import PropTypes from 'prop-types';
+
+MisSolicitudesTable.propTypes = {
+    solicitudes: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        tipoSolicitud: PropTypes.string,
+        fechaSolicitud: PropTypes.string,
+        estadoSolicitud: PropTypes.string,
+        urlPdf: PropTypes.string
+    })).isRequired,
+    openDetailId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    handleToggleDetail: PropTypes.func.isRequired
 };
 
 export default MisSolicitudesTable;

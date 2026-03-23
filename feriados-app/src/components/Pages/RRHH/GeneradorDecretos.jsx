@@ -37,16 +37,30 @@ const GeneradorDecretos = (props) => {
     const totalPages = Math.ceil(totalElements / itemsPerPage);
 
     return (
-        <>
-            <div className="accordion shadow-sm mb-4" id="accordionGeneradorDecretos">
+        <div className="container-fluid py-4 generador-decretos-container">
+            {/* Standardized Page Header - Premium Style */}
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
+                <div className="mb-3 mb-md-0">
+                    <h2 className="mb-1 text-primary fw-bold">
+                        <i className="bi bi-file-earmark-medical me-2"></i>{' '}
+                        Generador de Decretos
+                    </h2>
+                    <p className="text-muted mb-0">
+                        Procesa las aprobaciones y genera los documentos oficiales
+                    </p>
+                </div>
+            </div>
+
+            <div className="accordion accordion-premium mb-5" id="accordionGeneradorDecretos">
+                {/* Step 1: Filters */}
                 <div className="accordion-item">
                     <h2 className="accordion-header" id="headingFiltros">
                         <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros" aria-expanded="true" aria-controls="collapseFiltros">
-                            Paso 1: Filtros y Carga de Datos
+                            <span className="step-indicator">1</span> Búsqueda y Filtros de Datos
                         </button>
                     </h2>
                     <div id="collapseFiltros" className="accordion-collapse collapse show" aria-labelledby="headingFiltros" data-bs-parent="#accordionGeneradorDecretos">
-                        <div className="accordion-body">
+                        <div className="accordion-body px-4 pb-4">
                             <RrhhFilters
                                 fechaDesde={fechaDesde}
                                 setFechaDesde={setFechaDesde}
@@ -65,6 +79,8 @@ const GeneradorDecretos = (props) => {
                         </div>
                     </div>
                 </div>
+
+                {/* Step 2: Actions */}
                 <div className="accordion-item">
                     <h2 className="accordion-header" id="headingAcciones">
                         <button
@@ -76,7 +92,7 @@ const GeneradorDecretos = (props) => {
                             aria-controls="collapseAcciones"
                             disabled={currentAprobaciones.length === 0}
                         >
-                            Paso 2: Acciones sobre Seleccionados
+                            <span className="step-indicator">2</span> Acciones Masivas
                         </button>
                     </h2>
                     <div
@@ -85,7 +101,7 @@ const GeneradorDecretos = (props) => {
                         aria-labelledby="headingAcciones"
                         data-bs-parent="#accordionGeneradorDecretos"
                     >
-                        <div className="accordion-body">
+                        <div className="accordion-body px-4 pb-4">
                             <RrhhActions
                                 selectedItemsCount={selectedItemsCount}
                                 handleGenerarDecreto={handleGenerarDecreto}
@@ -96,7 +112,15 @@ const GeneradorDecretos = (props) => {
             </div>
 
             {currentAprobaciones.length > 0 && (
-                <>
+                <div className="bg-white p-4 rounded shadow-sm border">
+                    <div className="d-flex align-items-center gap-2 mb-4">
+                        <i className="bi bi-table text-primary fs-4"></i>
+                        <h4 className="mb-0 fw-bold">Resultados de la Búsqueda</h4>
+                        <span className="badge bg-light text-dark border ms-2">
+                            {totalElements} registros encontrados
+                        </span>
+                    </div>
+                    
                     <TablaDecretos
                         data={currentAprobaciones}
                         selectedItems={selectedItems}
@@ -105,14 +129,17 @@ const GeneradorDecretos = (props) => {
                         requestSort={requestSort}
                         sortConfig={sortConfig}
                     />
-                    <RrhhPagination
-                        currentPage={componentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                    />
-                </>
+
+                    <div className="mt-4 pt-4 border-top">
+                        <RrhhPagination
+                            currentPage={componentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                </div>
             )}
-        </>
+        </div>
     );
 };
 

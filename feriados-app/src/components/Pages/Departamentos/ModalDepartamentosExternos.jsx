@@ -18,8 +18,16 @@ const ModalDepartamentosExternos = ({ show, onHide, onSelect }) => {
     const fetchDepartamentos = async () => {
         setLoading(true);
         try {
-            const data = await getDepartamentosExterno();
-            setDepartamentos(data || []);
+            const result = await getDepartamentosExterno();
+            
+            let dataArray = [];
+            if (Array.isArray(result)) {
+                dataArray = result;
+            } else if (result && Array.isArray(result.data)) {
+                dataArray = result.data;
+            }
+            
+            setDepartamentos(dataArray);
         } catch (error) {
              console.error('Error fetching external departments:', error);
              Swal.fire('Error', 'No se pudieron cargar los departamentos externos.', 'error');
@@ -28,9 +36,9 @@ const ModalDepartamentosExternos = ({ show, onHide, onSelect }) => {
         }
     };
 
-    const departamentosFiltrados = departamentos.filter(d => 
-        (d.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-        (d.depto || '').toLowerCase().includes(searchTerm.toLowerCase())
+    const departamentosFiltrados = (Array.isArray(departamentos) ? departamentos : []).filter(d => 
+        String(d.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+        String(d.depto || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (!show) {

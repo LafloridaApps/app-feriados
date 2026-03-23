@@ -12,31 +12,27 @@ const ResumenFeriados = ({ resumen }) => {
     } = resumen;
 
     return (
-        <div className="card">
-            <div className="card-body">
-                <div className="table-responsive">
-                    <table className="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th><i className="bi bi-calculator-fill me-2"></i> Total</th>
-                                <th><i className="bi bi-check-circle-fill me-2"></i> Corresponden</th>
-                                <th><i className="bi bi-plus-square-fill me-2"></i> Acumulados</th>
-                                <th><i className="bi bi-arrow-down-square-fill me-2"></i> Usados</th>
-                                <th><i className="bi bi-arrow-left-right me-2"></i> Saldo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr key={anio}>
-                                <td>{total}</td>
-                                <td>{diasCorresponden}</td>
-                                <td>{diasAcumulados}</td>
-                                <td>{diasTomados}</td>
-                                <td>{diasPendientes}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div className="table-responsive">
+            <table className="premium-table">
+                <thead>
+                    <tr>
+                        <th className="text-center">Total Días</th>
+                        <th className="text-center">Corresponden</th>
+                        <th className="text-center">Acumulados</th>
+                        <th className="text-center">Usados</th>
+                        <th className="text-center">Saldo Disponible</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr key={anio}>
+                        <td className="text-center fw-bold fs-5">{total}</td>
+                        <td className="text-center text-muted">{diasCorresponden}</td>
+                        <td className="text-center text-muted">{diasAcumulados}</td>
+                        <td className="text-center text-danger">{diasTomados}</td>
+                        <td className="text-center text-primary fw-bold fs-4">{diasPendientes}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     );
 };

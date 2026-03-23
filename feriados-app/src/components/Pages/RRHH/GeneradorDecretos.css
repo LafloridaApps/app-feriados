@@ -1,0 +1,153 @@
+/* GeneradorDecretos.css - Rediseño Premium */
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #009B4D 0%, #004B8D 100%);
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --border-radius-lg: 16px;
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.generador-decretos-container {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium Accordion Styling */
+.accordion-premium {
+    border: none !important;
+}
+
+.accordion-premium .accordion-item {
+    border: 1px solid #f1f5f9 !important;
+    border-radius: var(--border-radius-lg) !important;
+    box-shadow: var(--shadow-soft) !important;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    background: white;
+}
+
+.accordion-premium .accordion-button {
+    padding: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    background: white;
+    box-shadow: none !important;
+}
+
+.accordion-premium .accordion-button:not(.collapsed) {
+    color: #004B8D;
+    background: #f8fafc;
+}
+
+.accordion-premium .accordion-button::after {
+    transition: var(--transition-base);
+}
+
+/* Steps Indicators */
+.step-indicator {
+    width: 32px;
+    height: 32px;
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    margin-right: 1rem;
+    transition: var(--transition-base);
+}
+
+.accordion-button:not(.collapsed) .step-indicator {
+    background: #004B8D;
+    color: white;
+}
+
+/* Premium Table styles */
+.premium-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.premium-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    border: none;
+    white-space: nowrap;
+}
+
+.premium-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+.premium-table tr:hover td {
+    background-color: #f8fafc;
+}
+
+/* Buttons and Inputs */
+.btn-premium {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: var(--transition-base);
+    box-shadow: 0 4px 15px rgba(0, 75, 141, 0.2);
+}
+
+.btn-premium:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 75, 141, 0.3);
+    color: white;
+}
+
+.btn-premium:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-control-premium, .form-select-premium {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    transition: var(--transition-base);
+}
+
+.form-control-premium:focus, .form-select-premium:focus {
+    border-color: #004B8D;
+    box-shadow: 0 0 0 4px rgba(0, 75, 141, 0.1);
+}
+
+/* Pagination Premium */
+.pagination-premium .page-link {
+    border: none;
+    color: #475569;
+    padding: 0.75rem 1rem;
+    margin: 0 2px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.pagination-premium .page-item.active .page-link {
+    background: #004B8D;
+    color: white;
+}
+
+.pagination-premium .page-item.disabled .page-link {
+    background: transparent;
+    opacity: 0.5;
+}

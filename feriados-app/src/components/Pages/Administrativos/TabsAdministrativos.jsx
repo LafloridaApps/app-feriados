@@ -7,33 +7,45 @@ const TabsAdministrativos = ({ resumen, detalle }) => {
     const { activeYear, setActiveYear, detallePorAnio, years } = useAdministrativosTabs(detalle);
 
     return (
-        <>
-            <div className="mb-3 col-md-3">
-                <label htmlFor="year-select" className="form-label">Seleccione un año:</label>
-                <select 
-                    id="year-select"
-                    className="form-select" 
-                    value={activeYear || ''} 
-                    onChange={(e) => setActiveYear(Number.parseInt(e.target.value, 10))}
-                >
-                    {years.map((anio) => (
-                        <option key={anio} value={anio}>
-                            {anio}
-                        </option>
-                    ))}
-                </select>
+        <div className="tabs-administrativos-container mt-2">
+            <div className="row mb-4 align-items-end">
+                <div className="col-md-4 col-lg-3">
+                    <label htmlFor="year-select" className="form-label-premium">
+                        <i className="bi bi-calendar3"></i> Seleccione un año:
+                    </label>
+                    <select 
+                        id="year-select"
+                        className="form-select form-select-premium" 
+                        value={activeYear || ''} 
+                        onChange={(e) => setActiveYear(Number.parseInt(e.target.value, 10))}
+                    >
+                        {years.map((anio) => (
+                            <option key={anio} value={anio}>
+                                {anio}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
+
             {activeYear != null && (
-                <>
-                    <h5 className="text-primary"><i className="bi bi-bar-chart-line-fill me-2"></i> Resumen </h5>
+                <div className="mt-4">
+                    <div className="card-header-premium mb-4">
+                        <i className="bi bi-activity text-primary"></i>
+                        <span>Resumen Administrativo</span>
+                    </div>
                     <ResumenAdministrativos resumen={resumen} />
-                    <h5 className="text-success d-none d-md-block"><i className="bi bi-list-ul me-2"></i> Detalle {activeYear}</h5>
+                    
+                    <div className="card-header-premium mt-5 mb-4 d-none d-md-flex">
+                        <i className="bi bi-list-stars text-success"></i>
+                        <span>Detalle de Permisos {activeYear}</span>
+                    </div>
                     <div className="d-none d-md-block">
                         <DetalleAdministrativos detalle={detallePorAnio[activeYear] || []} />
                     </div>
-                </>
+                </div>
             )}
-        </>
+        </div>
     );
 };
 

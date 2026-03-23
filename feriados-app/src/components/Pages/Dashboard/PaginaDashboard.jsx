@@ -233,20 +233,19 @@ const PaginaDashboard = () => {
 
 
     return (
-        <div className="container-fluid mt-4 dashboard-container d-flex flex-column">
-            <h2 className="mb-4 dashboard-header">Calendario de Ausencias</h2>
+        <div className="dashboard-container">
+            <h2 className="dashboard-header">Calendario de Ausencias</h2>
 
             {loading && (
-                <div className="text-center">
-                    <output className="spinner-border">
-                        <span className="visually-hidden">Cargando...</span>
-                    </output>
-                    <p>Cargando ausencias...</p>
+                <div className="loading-wrapper">
+                    <div className="spinner-premium"></div>
+                    <p className="mt-3 text-muted fw-medium">Sincronizando ausencias...</p>
                 </div>
             )}
 
             {error && (
-                <div className="alert alert-danger" role="alert">
+                <div className="alert alert-danger border-0 shadow-sm rounded-4" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {error}
                 </div>
             )}

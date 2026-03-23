@@ -18,38 +18,42 @@ const RrhhPagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <nav aria-label="Page navigation">
-            <ul className="pagination justify-content-center">
+            <ul className="pagination pagination-premium justify-content-center mb-0">
                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
-                        Anterior
+                    <button className="page-link shadow-sm border" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+                        <i className="bi bi-chevron-left me-2"></i> Anterior
                     </button>
                 </li>
                 
                 {startPage > 1 && (
-                    <li className="page-item"><button className="page-link" onClick={() => onPageChange(1)}>1</button></li>
+                    <li className="page-item">
+                        <button className="page-link shadow-sm border" onClick={() => onPageChange(1)}>1</button>
+                    </li>
                 )}
                 {startPage > 2 && (
-                    <li className="page-item disabled"><span className="page-link">...</span></li>
+                    <li className="page-item disabled"><span className="page-link bg-transparent">...</span></li>
                 )}
 
                 {pageNumbers.map(number => (
                     <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(number)}>
+                        <button className="page-link shadow-sm border" onClick={() => onPageChange(number)}>
                             {number}
                         </button>
                     </li>
                 ))}
 
                 {endPage < totalPages - 1 && (
-                    <li className="page-item disabled"><span className="page-link">...</span></li>
+                    <li className="page-item disabled"><span className="page-link bg-transparent">...</span></li>
                 )}
                 {endPage < totalPages && (
-                    <li className="page-item"><button className="page-link" onClick={() => onPageChange(totalPages)}>{totalPages}</button></li>
+                    <li className="page-item">
+                        <button className="page-link shadow-sm border" onClick={() => onPageChange(totalPages)}>{totalPages}</button>
+                    </li>
                 )}
 
                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                        Siguiente
+                    <button className="page-link shadow-sm border" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                        Siguiente <i className="bi bi-chevron-right ms-2"></i>
                     </button>
                 </li>
             </ul>

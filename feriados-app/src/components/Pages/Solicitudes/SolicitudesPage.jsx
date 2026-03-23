@@ -90,24 +90,36 @@ const SolicitudesPage = () => {
                 detalleFer={detalleFer}
             />
         ) : (
-            <div className="container py-4 solicitudes-page-container">
-                <h2 className="mb-4 text-primary text-center solicitudes-page-header">Solicitudes de Permisos</h2>
+            <div className="container-fluid py-4 solicitudes-page-container">
+                {/* Standardized Page Header - Premium Style */}
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
+                    <div className="mb-3 mb-md-0">
+                        <h2 className="mb-1 text-primary fw-bold">
+                            <i className="bi bi-calendar-plus me-2"></i>{' '}
+                            Solicitudes de Permisos
+                        </h2>
+                        {funcionario?.nombre && (
+                            <p className="text-muted mb-0">
+                                Gestiona tus feriados y días administrativos para el periodo actual
+                            </p>
+                        )}
+                    </div>
+                </div>
+
                 <div className="row g-4">
-                    <div className="col-md-12">
+                    <div className="col-12">
                         <div className="solicitudes-section-card">
                             <ResumenPermisos resumenAdm={resumenAdm} resumenFer={resumenFer} />
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="solicitudes-section-card">
-                                <FormularioSolicitud
-                                    resumenAdm={resumenAdm}
-                                    resumenFer={resumenFer}
-                                    detalleAdm={detalleAdm}
-                                    detalleFer={detalleFer}
-                                />
-                            </div>
+                    <div className="col-12">
+                        <div className="solicitudes-section-card">
+                            <FormularioSolicitud
+                                resumenAdm={resumenAdm}
+                                resumenFer={resumenFer}
+                                detalleAdm={detalleAdm}
+                                detalleFer={detalleFer}
+                            />
                         </div>
                     </div>
                 </div>

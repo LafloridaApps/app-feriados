@@ -81,15 +81,23 @@ const MisSolicitudes = () => {
 
 
     return (
-        <div className="container-fluid mt-4 mis-solicitudes-container">
-            <div className="card shadow-sm">
-                <div className="card-header bg-white py-3">
-                    <h5 className="mb-0 font-weight-bold text-primary mis-solicitudes-header">
-                        <i className="bi bi-journal-text me-2"></i>
+        <div className="container-fluid py-4 mis-solicitudes-container">
+            {/* Standardized Page Header */}
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
+                <div className="mb-3 mb-md-0">
+                    <h2 className="mb-1 text-primary fw-bold">
+                        <i className="bi bi-journal-text me-2"></i>{' '}
                         Mis Solicitudes
-                        {funcionario?.nombre && <span className="text-muted"> - {funcionario.nombre} {funcionario.apellidoPaterno} {funcionario.apellidoMaterno} </span>}
-                    </h5>
+                    </h2>
+                    {funcionario?.nombre && (
+                        <p className="text-muted mb-0">
+                            Gestión de permisos para {funcionario.nombre} {funcionario.apellidoPaterno} {funcionario.apellidoMaterno}
+                        </p>
+                    )}
                 </div>
+            </div>
+
+            <div className="card mis-solicitudes-card">
                 <div className="card-body p-0">
                     {renderContent()}
                 </div>

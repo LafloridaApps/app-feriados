@@ -27,7 +27,7 @@ const CalendarioDashboard = ({
         diaInicioCalendario.setDate(primerDiaMesActual.getDate() - primerDiaSemana);
 
         // Generar 6 semanas completas (6 * 7 = 42 días)
-        for (let i = 0; i < 42; i++) { // 6 semanas * 7 días
+        for (let i = 0; i < 42; i++) {
             const fechaActual = new Date(diaInicioCalendario);
             const cadenaFecha = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}-${fechaActual.getDate().toString().padStart(2, '0')}`;
             const datosAusenciasDia = ausencias[cadenaFecha];
@@ -40,11 +40,17 @@ const CalendarioDashboard = ({
                 <button
                     type="button"
                     key={cadenaFecha}
-                    className={`col dashboard-calendar-day btn-day-override ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted bg-light'}`}
+                    className={`dashboard-calendar-day btn-day-override ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted'}`}
                     onClick={() => setFechaSeleccionada(cadenaFecha)}
                 >
-                    <strong>{fechaActual.getDate()}</strong>
-                    {totalAusenciasPorDia > 0 && <span className="badge bg-danger rounded-pill mt-1">{totalAusenciasPorDia}</span>}
+                    <div className="d-flex justify-content-between align-items-start w-100">
+                        <strong>{fechaActual.getDate()}</strong>
+                        {totalAusenciasPorDia > 0 && (
+                            <span className="absence-badge">
+                                {totalAusenciasPorDia}
+                            </span>
+                        )}
+                    </div>
                 </button>
             );
             diaInicioCalendario.setDate(diaInicioCalendario.getDate() + 1);
@@ -53,34 +59,40 @@ const CalendarioDashboard = ({
     };
 
     return (
-        <div className="card mb-4 dashboard-card h-100">
-            <div className="card-header dashboard-calendar-header">
-                <div className="d-flex justify-content-between align-items-center">
-                    <button className="btn btn-light" onClick={manejarMesAnterior}>&lt;</button>
-                    <h4>{mesActual.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h4>
-                    <button className="btn btn-light" onClick={manejarMesSiguiente}>&gt;</button>
-                </div>
+        <div className="dashboard-card border-0 shadow-lg">
+            <div className="dashboard-calendar-header d-flex justify-content-between align-items-center">
+                <button className="btn btn-light" onClick={manejarMesAnterior}>
+                    <i className="bi bi-chevron-left"></i>
+                </button>
+                <h4 className="m-0 text-white fw-bold">
+                    {mesActual.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}
+                </h4>
+                <button className="btn btn-light" onClick={manejarMesSiguiente}>
+                    <i className="bi bi-chevron-right"></i>
+                </button>
             </div>
-            <div className="card-body d-flex flex-column">
-                <div className="row row-cols-7 text-center fw-bold mb-2">
-                    <div className="col">Dom</div>
-                    <div className="col">Lun</div>
-                    <div className="col">Mar</div>
-                    <div className="col">Mié</div>
-                    <div className="col">Jue</div>
-                    <div className="col">Vie</div>
-                    <div className="col">Sáb</div>
+            <div className="p-0">
+                <div className="row row-cols-7 text-center fw-bold bg-light py-3 border-bottom m-0">
+                    <div className="col text-danger small text-uppercase letter-spacing-1">Dom</div>
+                    <div className="col text-muted small text-uppercase letter-spacing-1">Lun</div>
+                    <div className="col text-muted small text-uppercase letter-spacing-1">Mar</div>
+                    <div className="col text-muted small text-uppercase letter-spacing-1">Mié</div>
+                    <div className="col text-muted small text-uppercase letter-spacing-1">Jue</div>
+                    <div className="col text-muted small text-uppercase letter-spacing-1">Vie</div>
+                    <div className="col text-danger small text-uppercase letter-spacing-1">Sáb</div>
                 </div>
-                <div className="dashboard-calendar-grid-wrapper flex-grow-1">
+                <div className="dashboard-calendar-grid-wrapper">
                     {renderizarCalendario()}
                 </div>
             </div>
             {detallesFechaSeleccionada && (
-                <DetallesAusencia
-                    fechaSeleccionada={fechaSeleccionada}
-                    detallesFechaSeleccionada={detallesFechaSeleccionada}
-                    manejarClicEmpleado={manejarClicEmpleado}
-                />
+                <div className="p-4 bg-white border-top">
+                    <DetallesAusencia
+                        fechaSeleccionada={fechaSeleccionada}
+                        detallesFechaSeleccionada={detallesFechaSeleccionada}
+                        manejarClicEmpleado={manejarClicEmpleado}
+                    />
+                </div>
             )}
         </div>
     );

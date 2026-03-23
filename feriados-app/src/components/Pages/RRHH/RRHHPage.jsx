@@ -20,26 +20,39 @@ const RRHHPage = () => {
     const consultarDecretos = useConsultarDecretos(mostrarAlertaError);
 
     return (
-        <div className="container-fluid rrhh-page-container">
-            <h2 className="my-4 rrhh-page-header">Gestión de Decretos RRHH</h2>
+        <div className="container-fluid rrhh-page-container pb-5">
+            {/* Standardized Premium Header */}
+            <div className="premium-header mb-4">
+                <div className="d-flex align-items-center gap-3">
+                    <div className="header-icon-hex">
+                        <i className="bi bi-briefcase-fill"></i>
+                    </div>
+                    <div>
+                        <h2 className="mb-0 fw-bold text-dark">Gestión de Decretos</h2>
+                        <p className="text-muted mb-0">Portal Administrativo de Recursos Humanos</p>
+                    </div>
+                </div>
+            </div>
 
-            <ul className="nav nav-tabs mb-3 rrhh-tabs-nav">
-                <li className="nav-item">
-                    <button className={`nav-link ${activeTab === 'generar' ? 'active' : ''}`} onClick={() => setActiveTab('generar')}>
-                        Generar Decretos
-                    </button>
-                </li>
-                <li className="nav-item">
-                    <button className={`nav-link ${activeTab === 'consultar' ? 'active' : ''}`} onClick={() => setActiveTab('consultar')}>
-                        Consultar Decretos Generados
-                    </button>
-                </li>
-                <li className="nav-item">
-                    <button className={`nav-link ${activeTab === 'eliminar' ? 'active' : ''}`} onClick={() => setActiveTab('eliminar')}>
-                        Eliminar Decretos Generados
-                    </button>
-                </li>
-            </ul>
+            <div className="d-flex justify-content-center">
+                <ul className="nav nav-tabs rrhh-tabs-nav shadow-sm">
+                    <li className="nav-item">
+                        <button className={`nav-link ${activeTab === 'generar' ? 'active' : ''}`} onClick={() => setActiveTab('generar')}>
+                            <i className="bi bi-plus-circle me-2"></i> Generar
+                        </button>
+                    </li>
+                    <li className="nav-item">
+                        <button className={`nav-link ${activeTab === 'consultar' ? 'active' : ''}`} onClick={() => setActiveTab('consultar')}>
+                            <i className="bi bi-search me-2"></i> Consultar
+                        </button>
+                    </li>
+                    <li className="nav-item">
+                        <button className={`nav-link ${activeTab === 'eliminar' ? 'active' : ''}`} onClick={() => setActiveTab('eliminar')}>
+                            <i className="bi bi-trash me-2"></i> Eliminar
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
             <div className="tab-content rrhh-tab-content-card">
                 {activeTab === 'generar' && (
@@ -74,17 +87,26 @@ const RRHHPage = () => {
                         />
 
                         {generarDecretos.loading && (
-                            <div className="d-flex justify-content-center mt-4 text-center">
-                                <span className="spinner-border" aria-hidden="true"></span>
-                                <output className="visually-hidden">Cargando...</output>
+                            <div className="empty-state-premium">
+                                <output className="spinner-border text-primary mb-3"></output>
+                                <h4>Cargando Aprobaciones</h4>
+                                <p>Por favor espere mientras procesamos la información...</p>
                             </div>
                         )}
 
                         {generarDecretos.aprobacionesSearchPerformed && generarDecretos.currentAprobaciones.length === 0 && !generarDecretos.loading && (
-                            <div className="alert alert-info mt-4" role="alert">No se encontraron aprobaciones con los filtros aplicados.</div>
+                            <div className="empty-state-premium">
+                                <i className="bi bi-exclamation-circle text-info"></i>
+                                <h4>Sin Resultados</h4>
+                                <p>No se encontraron aprobaciones con los filtros aplicados.</p>
+                            </div>
                         )}
-                        {!generarDecretos.aprobacionesSearchPerformed && (
-                            <div className="alert alert-secondary mt-4" role="alert">Complete los filtros y haga clic en <strong>Cargar Aprobaciones</strong> para ver los resultados.</div>
+                        {!generarDecretos.aprobacionesSearchPerformed && !generarDecretos.loading && (
+                            <div className="empty-state-premium">
+                                <i className="bi bi-funnel"></i>
+                                <h4>Configuración de Filtros</h4>
+                                <p>Complete los filtros y haga clic en <strong>Buscar Datos</strong> para visualizar las aprobaciones.</p>
+                            </div>
                         )}
                     </div>
                 )}
@@ -96,27 +118,41 @@ const RRHHPage = () => {
                             setFilters={consultarDecretos.setFilters}
                             handleSearch={() => consultarDecretos.handleSearch(0)}
                             handleClear={consultarDecretos.handleClear} />
-                        {consultarDecretos.loading && (
-                            <div className="d-flex justify-content-center mt-4 text-center">
-                                <span className="spinner-border" aria-hidden="true"></span>
-                                <output className="visually-hidden">Cargando...</output>
+                        {consultarDecretos.loading ? (
+                            <div className="empty-state-premium">
+                                <output className="spinner-border text-primary mb-3"></output>
+                                <h4>Buscando Decretos</h4>
+                                <p>Localizando registros en el servidor...</p>
                             </div>
-                        )}
-                        {consultarDecretos.searchPerformed && consultarDecretos.totalItems > 0 && (
+                        ) : (
                             <>
-                                <ConsultaDecretosResults data={consultarDecretos.results} />
-                                <RrhhPagination
-                                    currentPage={consultarDecretos.currentPage + 1}
-                                    totalPages={consultarDecretos.totalPages}
-                                    onPageChange={consultarDecretos.handlePageChange}
-                                />
+                                {consultarDecretos.searchPerformed && consultarDecretos.totalItems > 0 && (
+                                    <div className="mt-4">
+                                        <ConsultaDecretosResults data={consultarDecretos.results} />
+                                        <div className="mt-4">
+                                            <RrhhPagination
+                                                currentPage={consultarDecretos.currentPage + 1}
+                                                totalPages={consultarDecretos.totalPages}
+                                                onPageChange={consultarDecretos.handlePageChange}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                                {consultarDecretos.searchPerformed && consultarDecretos.totalItems === 0 && (
+                                    <div className="empty-state-premium">
+                                        <i className="bi bi-search text-warning"></i>
+                                        <h4>Búsqueda sin resultados</h4>
+                                        <p>No se encontraron decretos que coincidan con los criterios de búsqueda.</p>
+                                    </div>
+                                )}
+                                {!consultarDecretos.searchPerformed && (
+                                    <div className="empty-state-premium">
+                                        <i className="bi bi-file-earmark-text"></i>
+                                        <h4>Consulta de Historial</h4>
+                                        <p>Utilice los filtros superiores para buscar decretos anteriormente generados.</p>
+                                    </div>
+                                )}
                             </>
-                        )}
-                        {consultarDecretos.searchPerformed && consultarDecretos.totalItems === 0 && (
-                            <div className="alert alert-info mt-4" role="alert">No se encontraron decretos con los filtros aplicados.</div>
-                        )}
-                        {!consultarDecretos.searchPerformed && (
-                            <div className="alert alert-secondary mt-4" role="alert">Complete los filtros y haga clic en <strong>Buscar</strong> para ver los resultados.</div>
                         )}
                     </div>
                 )}

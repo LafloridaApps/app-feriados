@@ -10,30 +10,43 @@ const ResumenPermisos = ({ resumenAdm , resumenFer  }) => {
     } = resumenFer || {};
 
     return (
-        <div className="card shadow-sm">
-            <div className="card-header bg-info text-white"><i className="bi bi-list-check me-2"></i> Resumen de Saldos</div>
-            <div className="card-body">
-                <table className="table table-hover table-bordered">
-                    <thead className="table-light">
+        <div className="resumen-container">
+            <div className="card-header-premium">
+                <i className="bi bi-pie-chart-fill"></i>
+                <span>Resumen de Saldos Disponibles</span>
+            </div>
+            <div className="table-responsive">
+                <table className="resumen-table">
+                    <thead>
                         <tr>
-                            <th><i className="bi bi-tag-fill me-2"></i> Tipo</th>
-                            <th><i className="bi bi-plus-square-fill me-2"></i> Total</th>
-                            <th><i className="bi bi-arrow-down-square-fill me-2"></i> Usados</th>
-                            <th><i className="bi bi-arrow-left-right me-2"></i> Saldo</th>
+                            <th>Tipo de Permiso</th>
+                            <th className="text-center">Días Totales</th>
+                            <th className="text-center">Días Usados</th>
+                            <th className="text-center">Saldo Actual</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><i className="bi bi-sun-fill me-2"></i> Feriados</td>
-                            <td>{total ?? "-"}</td>
-                            <td>{usadosFer ?? "-"}</td>
-                            <td>{saldoFer ?? "-"}</td>
+                            <td>
+                                <div className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-sun-fill text-warning"></i>
+                                    <span>Feriados Legales</span>
+                                </div>
+                            </td>
+                            <td className="text-center fw-bold">{total ?? "-"}</td>
+                            <td className="text-center text-danger">{usadosFer ?? "-"}</td>
+                            <td className="text-center text-primary fs-5">{saldoFer ?? "-"}</td>
                         </tr>
                         <tr>
-                            <td><i className="bi bi-briefcase-fill me-2"></i> Administrativos</td>
-                            <td>{maximo ?? "-"}</td>
-                            <td>{usados ?? "-"}</td>
-                            <td>{saldo ?? "-"}</td>
+                            <td>
+                                <div className="d-flex align-items-center gap-2">
+                                    <i className="bi bi-briefcase-fill text-info"></i>
+                                    <span>Días Administrativos</span>
+                                </div>
+                            </td>
+                            <td className="text-center fw-bold">{maximo ?? "-"}</td>
+                            <td className="text-center text-danger">{usados ?? "-"}</td>
+                            <td className="text-center text-primary fs-5">{saldo ?? "-"}</td>
                         </tr>
                     </tbody>
                 </table>

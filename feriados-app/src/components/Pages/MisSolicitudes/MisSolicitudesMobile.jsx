@@ -7,45 +7,47 @@ import PropTypes from 'prop-types';
 const getStatusBadge = (status) => {
     switch (status) {
         case 'APROBADA':
-            return 'badge badge-estado-aprobado';
+            return 'badge-premium status-aprobada';
         case 'POSTERGADA':
-            return 'badge badge-estado-rechazado';
+            return 'badge-premium status-postergada';
         case 'PENDIENTE':
-            return 'badge badge-estado-pendiente';
         case 'PENDIENTE VISACION':
-            return 'badge badge-estado-pendiente';
+            return 'badge-premium status-pendiente';
         case 'FINALIZADA':
-            return 'badge badge-estado-finalizado';
+            return 'badge-premium status-finalizada';
         default:
-            return 'badge badge-estado-otro';
+            return 'badge-premium status-finalizada';
     }
 };
 
 const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail }) => {
     return (
-        <div className="mis-solicitudes-mobile-list p-3">
+        <div className="mis-solicitudes-mobile-list">
             {solicitudes.map((solicitud, index) => (
                 <div key={solicitud?.id || index} className="mis-solicitudes-mobile-card">
                     <div className="mis-solicitudes-mobile-card-header">
-                        <span>ID: {solicitud?.id || 'N/A'}</span>
+                        <span className="mis-solicitudes-mobile-id">ID #{solicitud?.id || 'N/A'}</span>
                         <span className={getStatusBadge(solicitud.estadoSolicitud)}>
-                            {solicitud.estadoSolicitud}
+                            {solicitud.estadoSolicitud || 'No especificado'}
                         </span>
                     </div>
                     <div className="mis-solicitudes-mobile-card-body">
-                        <div className="mis-solicitudes-mobile-card-item">
-                            <strong>Tipo:</strong> {solicitud?.tipoSolicitud || 'No especificado'}
+                        <div className="mis-solicitudes-mobile-card-title">
+                            {solicitud?.tipoSolicitud || 'No especificado'}
                         </div>
-                        <div className="mis-solicitudes-mobile-card-item">
-                            <strong>Fecha:</strong> {solicitud?.fechaSolicitud ? formatFecha(solicitud.fechaSolicitud) : 'No disponible'}
+                        <div className="mis-solicitudes-mobile-card-info">
+                            <div className="mis-solicitudes-mobile-card-item">
+                                <i className="bi bi-calendar3"></i>
+                                <span>{solicitud?.fechaSolicitud ? formatFecha(solicitud.fechaSolicitud) : 'Fecha no disponible'}</span>
+                            </div>
                         </div>
-                        {/* Add more details here if needed */}
                     </div>
                     <div className="mis-solicitudes-mobile-card-actions">
                         <button
-                            className="btn btn-sm btn-outline-primary"
+                            className="btn btn-action"
                             onClick={() => handleToggleDetail(solicitud.id)}
                             disabled={!solicitud?.id}
+                            title="Ver Detalles"
                         >
                             <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
                         </button>
@@ -54,15 +56,15 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
                                 href={solicitud.urlPdf}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="btn btn-sm btn-danger ms-2"
-                                title="Ver Documento PDF"
+                                className="btn btn-action btn-action-pdf"
+                                title="Ver PDF"
                             >
                                 <i className="bi bi-file-earmark-pdf"></i>
                             </a>
                         )}
                     </div>
                     {openDetailId === solicitud.id && (
-                        <div className="p-3">
+                        <div className="px-3 pb-3">
                             <DetalleMiSolicitud solicitud={solicitud} />
                         </div>
                     )}
@@ -73,8 +75,14 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
 };
 
 MisSolicitudesMobile.propTypes = {
-    solicitudes: PropTypes.array.isRequired,
-    openDetailId: PropTypes.number,
+    solicitudes: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        tipoSolicitud: PropTypes.string,
+        fechaSolicitud: PropTypes.string,
+        estadoSolicitud: PropTypes.string,
+        urlPdf: PropTypes.string
+    })).isRequired,
+    openDetailId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     handleToggleDetail: PropTypes.func.isRequired,
 };
 

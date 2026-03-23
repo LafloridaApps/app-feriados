@@ -13,14 +13,21 @@ const ConsultaDecretosFilters = ({
   };
 
   return (
-    <div className="card shadow-sm mb-4">
-      <div className="card-body">
-        <div className="row align-items-end g-3">
+    <div className="card border-0 shadow-sm mb-4 rounded-16 overflow-hidden">
+      <div className="card-header bg-white py-3 border-bottom bordr-light">
+        <h5 className="mb-0 fw-bold text-dark d-flex align-items-center">
+          <i className="bi bi-funnel me-2 text-primary"></i> Filtros de Búsqueda
+        </h5>
+      </div>
+      <div className="card-body p-4">
+        <div className="row g-4 align-items-end">
           <div className="col-md-2">
-            <label htmlFor="consultaFechaDesde" className="form-label">Fecha Desde</label>
+            <label htmlFor="consultaFechaDesde" className="form-label-premium">
+              <i className="bi bi-calendar me-2"></i>Fecha Desde
+            </label>
             <input
               type="date"
-              className="form-control"
+              className="form-control form-control-premium"
               id="consultaFechaDesde"
               name="fechaDesde"
               value={filters.fechaDesde}
@@ -28,10 +35,12 @@ const ConsultaDecretosFilters = ({
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaFechaHasta" className="form-label">Fecha Hasta</label>
+            <label htmlFor="consultaFechaHasta" className="form-label-premium">
+              <i className="bi bi-calendar me-2"></i>Fecha Hasta
+            </label>
             <input
               type="date"
-              className="form-control"
+              className="form-control form-control-premium"
               id="consultaFechaHasta"
               name="fechaHasta"
               value={filters.fechaHasta}
@@ -39,59 +48,67 @@ const ConsultaDecretosFilters = ({
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaNombreFuncionario" className="form-label">Nombre Funcionario</label>
+            <label htmlFor="consultaNombreFuncionario" className="form-label-premium">
+              <i className="bi bi-person me-2"></i>Funcionario
+            </label>
             <input
               type="text"
-              className="form-control"
+              className="form-control form-control-premium"
               id="consultaNombreFuncionario"
               name="nombreFuncionario"
               value={filters.nombreFuncionario}
               onChange={onInputChange}
-              placeholder="Buscar por nombre..."
+              placeholder="Nombre..."
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaIdSolicitud" className="form-label">ID Solicitud</label>
+            <label htmlFor="consultaIdSolicitud" className="form-label-premium">
+              <i className="bi bi-hash me-2"></i>Solicitud
+            </label>
             <input
               type="text"
-              className="form-control"
+              className="form-control form-control-premium"
               id="consultaIdSolicitud"
               name="idSolicitud" 
               value={filters.idSolicitud}
               onChange={onInputChange}
-              placeholder="Buscar por ID..."
+              placeholder="ID..."
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaId" className="form-label">ID Decreto</label>
+            <label htmlFor="consultaId" className="form-label-premium">
+              <i className="bi bi-file-earmark-text me-2"></i>Decreto
+            </label>
             <input
               type="text"
-              className="form-control"
+              className="form-control form-control-premium"
               id="consultaId"
               name="id"
               value={filters.id}
               onChange={onInputChange}
-              placeholder="Buscar por ID..."
+              placeholder="ID..."
             />
           </div>
           <div className="col-md-2">
-            <label htmlFor="consultaRut" className="form-label">RUT Funcionario</label>
+            <label htmlFor="consultaRut" className="form-label-premium">
+              <i className="bi bi-card-text me-2"></i>RUT
+            </label>
             <input
               type="text"
-              className="form-control"
+              className="form-control form-control-premium"
               id="consultaRut"
               name="rut"
               value={filters.rut}
               onChange={onInputChange}
-              placeholder="Buscar por RUT..."
+              placeholder="RUT..."
             />
           </div>
-          <div className="col-md-2 d-flex">
-            <button className="btn btn-primary w-100 me-2" onClick={handleSearch}>
-              Buscar
+          <div className="col-12 d-flex justify-content-end gap-2 mt-4">
+            <button className="btn btn-outline-secondary px-4 py-2" onClick={handleClear} style={{ borderRadius: '10px', fontWeight: '600' }}>
+              <i className="bi bi-eraser me-2"></i>Limpiar
             </button>
-            <button className="btn btn-secondary w-100" onClick={handleClear}>
-              Limpiar
+            <button className="btn btn-premium px-5 py-2" onClick={handleSearch}>
+              <i className="bi bi-search me-2"></i>Buscar Decretos
             </button>
           </div>
         </div>
