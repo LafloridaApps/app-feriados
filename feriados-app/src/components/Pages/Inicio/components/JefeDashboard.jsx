@@ -37,7 +37,7 @@ const JefeDashboard = () => {
                         )}
                     </div>
                     <button 
-                        onClick={() => navigate('/feriados/inbox')} 
+                        onClick={() => navigate('/inbox')} 
                         className="jefe-action-btn mt-3 border-0"
                     >
                         Gestionar Inbox
@@ -62,7 +62,7 @@ const JefeDashboard = () => {
                         )}
                     </div>
                     <button 
-                        onClick={() => navigate('/feriados/dashboard')} 
+                        onClick={() => navigate('/dashboard')} 
                         className="jefe-action-btn mt-3 border-0"
                     >
                         Ver Calendario
@@ -78,7 +78,7 @@ const JefeDashboard = () => {
                     <div className="absences-count">{todayAbsences}</div>
                     <div className="absences-label">Funcionarios Ausentes</div>
                     <button 
-                        onClick={() => navigate('/feriados/dashboard')} 
+                        onClick={() => navigate('/dashboard')} 
                         className="jefe-action-btn mt-4 border-0"
                     >
                         Ver Detalles

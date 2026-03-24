@@ -10,14 +10,14 @@ const AccionesRapidasWidget = () => {
                 <h5 className="acciones-title">Acciones Rápidas</h5>
                 <div className="d-grid gap-3">
                     <button 
-                        onClick={() => navigate('/feriados/solicitudes')} 
+                        onClick={() => navigate('/solicitudes')} 
                         className="btn-premium-action btn-primary-action"
                     >
                         <i className="bi bi-file-earmark-plus-fill action-icon"></i>
                         <span>Nueva Solicitud</span>
                     </button>
                     <button 
-                        onClick={() => navigate('/feriados/mis-solicitudes')} 
+                        onClick={() => navigate('/mis-solicitudes')} 
                         className="btn-premium-action btn-secondary-action"
                     >
                         <i className="bi bi-collection-play-fill action-icon"></i>
