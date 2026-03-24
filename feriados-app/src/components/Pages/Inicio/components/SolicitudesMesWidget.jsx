@@ -38,7 +38,7 @@ const SolicitudesMesWidget = ({ solicitudes = [] }) => {
                 </div>
                 
                 <button 
-                    onClick={() => navigate('/feriados/mis-solicitudes')} 
+                    onClick={() => navigate('/mis-solicitudes')} 
                     className="ver-todas-btn border-0"
                 >
                     Ver Todas
