@@ -58,7 +58,7 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
 };
 
 export const getFuncionarioApi = async () => {
-    const url = "https://appx.laflorida.cl/apilogin/log.php";
+    const url = "/apilogin/log.php";
 
     try {
         const response = await axios.post(url, { solicitud: "login", clave: "69" }, {

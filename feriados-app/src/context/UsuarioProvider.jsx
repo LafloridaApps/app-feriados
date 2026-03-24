@@ -20,13 +20,11 @@ export const UsuarioProvider = ({ children }) => {
 			}
 		}
 
-		if (import.meta.env.DEV) {
-			const urlParams = new URLSearchParams(globalThis.location.search);
-			const rutFromUrl = urlParams.get('rut');
-			if (rutFromUrl) {
-				setRut(rutFromUrl);
-				return; // Si encontramos el rut en la URL, no continuamos
-			}
+		const urlParams = new URLSearchParams(globalThis.location.search);
+		const rutFromUrl = urlParams.get('rut');
+		if (rutFromUrl) {
+			setRut(rutFromUrl);
+			return; // Si encontramos el rut en la URL, no continuamos
 		}
 
 		getFuncionarioRut()
