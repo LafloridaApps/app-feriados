@@ -1,73 +1,31 @@
-/* InicioMobile.css */
+/* InicioMobile.css - Rediseño Premium */
 
 .inicio-mobile-container {
-    padding: 15px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeInMobile 0.5s ease-out;
 }
 
-.inicio-mobile-widget-card {
-    background-color: #ffffff;
-    /* White background */
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    padding: 15px;
+@keyframes fadeInMobile {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.inicio-mobile-widget-card-header {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #007bff;
-    /* Azul neutro */
-    margin-bottom: 10px;
+/* On mobile we want the widgets to be full width without extra padding */
+.inicio-mobile-container .col-12,
+.inicio-mobile-container .col-md-6,
+.inicio-mobile-container .col-lg-4,
+.inicio-mobile-container .col-md-4 {
+    padding: 0;
 }
 
-.inicio-mobile-welcome-widget {
-    background: linear-gradient(45deg, #1d7b32, #145523);
-    /* Gradient background with deeper green for contrast */
-    color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-}
-
-.inicio-mobile-welcome-widget h3 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.inicio-mobile-welcome-widget p {
+.inicio-mobile-section-title {
     font-size: 1rem;
-    opacity: 0.9;
-}
-
-.inicio-mobile-quick-actions-button {
-    background-color: #145523;
-    /* Verde profesional accesible */
-    border-color: #145523;
-    color: #fff;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    padding: 8px 12px;
-}
-
-.inicio-mobile-quick-actions-button:hover {
-    background-color: #0f3d19;
-    border-color: #0f3d19;
-}
-
-.inicio-mobile-saldos-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #007bff;
-    /* Azul neutro */
-}
-
-.inicio-mobile-solicitudes-mes-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #6c757d;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid #009B4D;
 }

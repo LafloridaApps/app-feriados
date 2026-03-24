@@ -11,12 +11,10 @@ import './InicioMobile.css';
 const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
     return (
         <div className="inicio-mobile-container">
-            <div className="inicio-mobile-welcome-widget">
-                <WelcomeWidget funcionario={funcionario} />
-            </div>
+            <WelcomeWidget funcionario={funcionario} />
 
-            <div className="inicio-mobile-widget-card">
-                <div className="inicio-mobile-widget-card-header">Saldos</div>
+            <div>
+                <h6 className="inicio-mobile-section-title">Mi Resumen</h6>
                 <SaldosWidget
                     saldoFeriado={resumenFunc?.saldoFeriado}
                     saldoAdministrativo={resumenFunc?.saldoAdministrativo}
@@ -25,26 +23,26 @@ const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
                 />
             </div>
 
-            <div className="inicio-mobile-widget-card">
-                <div className="inicio-mobile-widget-card-header">Acciones Rápidas</div>
+            <div>
+                <h6 className="inicio-mobile-section-title">Acciones</h6>
                 <AccionesRapidasWidget />
             </div>
 
-            <div className="inicio-mobile-widget-card">
-                <div className="inicio-mobile-widget-card-header">Solicitudes del Mes</div>
+            <div>
+                <h6 className="inicio-mobile-section-title">Solicitudes del Mes</h6>
                 <SolicitudesMesWidget solicitudes={resumenFunc?.solicitudMes} />
             </div>
 
             {esJefe && (
-                <div className="inicio-mobile-widget-card">
-                    <div className="inicio-mobile-widget-card-header">Dashboard de Jefe</div>
+                <div className="mt-2">
+                    <h6 className="inicio-mobile-section-title">Dashboard Jefatura</h6>
                     <JefeDashboard />
                 </div>
             )}
 
             {tieneFirma && (
-                <div className="inicio-mobile-widget-card">
-                    <div className="inicio-mobile-widget-card-header">Firma Digital</div>
+                <div className="mt-2">
+                    <h6 className="inicio-mobile-section-title">Firma Digital</h6>
                     <FirmaDigitalCard />
                 </div>
             )}

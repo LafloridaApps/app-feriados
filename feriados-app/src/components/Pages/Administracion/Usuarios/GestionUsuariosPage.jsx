@@ -79,8 +79,7 @@ const GestionUsuariosPage = () => {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="gestion-usuarios-header">Gestión de Usuarios</h2>
                 <button className="btn btn-primary gestion-usuarios-add-button" onClick={() => setShowAddModal(true)}>
-                    <i className="bi bi-plus-lg me-2"></i>
-                    Agregar Usuario
+                    <i className="bi bi-plus-lg me-2"></i>Agregar Usuario
                 </button>
             </div>
 

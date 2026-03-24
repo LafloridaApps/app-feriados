@@ -9,23 +9,23 @@ const WelcomeWidget = ({ funcionario }) => {
 
 
     return (
-        <div className="card shadow-lg rounded-4 p-4 welcome-widget-card">
+        <div className="premium-card welcome-widget-card">
             <div className="d-flex flex-column flex-md-row align-items-center text-center text-md-start">
                 <img
                     src={fotoUrl}
                     alt={`Foto de ${nombre}`}
-                    className="rounded-circle mb-3 mb-md-0 me-md-4 welcome-widget-image"
-                    width="120"
-                    height="120"
+                    className="rounded-circle mb-4 mb-md-0 me-md-5 welcome-widget-image"
+                    width="140"
+                    height="140"
                     style={{ objectFit: 'cover' }}
                 />
                 <div>
-                    <h2 className="font-weight-bold text-primary mb-1">¡Bienvenido, {nombre}!</h2>
-                    <p className="text-muted mb-1">{departamento}</p>
+                    <h2 className="welcome-title mb-2">¡Bienvenido, {nombre}!</h2>
+                    <p className="welcome-subtitle mb-2">{departamento}</p>
                     {
-                        escalafon != 'ALCALDE' && (
-                            <p className="lead text-secondary mb-0">
-                                Tu jefe directo es <span className="fw-bold text-dark">{nombreJefe}</span>.
+                        escalafon !== 'ALCALDE' && (
+                            <p className="welcome-text mb-0">
+                                Tu jefe directo es <span className="fw-bold">{nombreJefe}</span>.
                             </p>
                         )
                     }
@@ -41,6 +41,7 @@ WelcomeWidget.propTypes = {
         departamento: PropTypes.string.isRequired,
         foto: PropTypes.string,
         nombreJefe: PropTypes.string.isRequired,
+        escalafon: PropTypes.string,
     }).isRequired,
 };
 

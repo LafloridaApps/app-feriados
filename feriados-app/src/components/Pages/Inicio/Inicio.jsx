@@ -13,6 +13,8 @@ import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de
 import InicioMobile from './InicioMobile'; // Importar el componente móvil
 import FirmaDigitalCard from './components/FirmaDigitalCard';
 
+import './Inicio.css';
+
 const Inicio = () => {
     const { width } = useWindowSize(); // Obtener el ancho de la ventana
     const isMobile = width < 768; // Definir el breakpoint para móvil
@@ -28,7 +30,7 @@ const Inicio = () => {
     }
 
     return (
-        <div className="container mt-5">
+        <div className="inicio-container container mt-5">
             {isMobile ? (
                 <InicioMobile
                     funcionario={funcionario}
@@ -37,13 +39,13 @@ const Inicio = () => {
                     tieneFirma={tieneFirma}
                 />
             ) : (
-                <div className="row justify-content-center">
-                    <div className="col-md-8 mb-4">
+                <div className="row justify-content-center dashboard-row">
+                    <div className="col-md-10 col-lg-8 mb-4">
                         <WelcomeWidget funcionario={funcionario} />
                     </div>
 
-                    <div className="col-md-8 mb-2">
-                        <div className="row">
+                    <div className="col-md-10 col-lg-8 mb-4">
+                        <div className="row g-4">
                             <SaldosWidget
                                 saldoFeriado={resumenFunc?.saldoFeriado}
                                 saldoAdministrativo={resumenFunc?.saldoAdministrativo}
@@ -56,13 +58,15 @@ const Inicio = () => {
                     </div>
 
                     {esJefe && (
-                        <div className="col-md-8 mb-4">
+                        <div className="col-md-10 col-lg-8 mb-4">
+                            <h3 className="section-title">Dashboard de Jefatura</h3>
                             <JefeDashboard />
                         </div>
                     )}
 
                     {tieneFirma && (
-                        <div className="col-md-8 mb-4">
+                        <div className="col-md-10 col-lg-8 mb-4">
+                            <h3 className="section-title">Firma Digital</h3>
                             <FirmaDigitalCard   />
                         </div>
                     )}

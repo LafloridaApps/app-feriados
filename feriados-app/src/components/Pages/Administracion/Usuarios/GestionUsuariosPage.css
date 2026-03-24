@@ -37,12 +37,12 @@
 }
 
 .gestion-usuarios-add-button {
-    background-color: #28a745; /* Verde profesional */
-    border-color: #28a745;
+    background-color: #198754; /* Verde accesible para contraste */
+    border-color: #198754;
     color: #fff;
 }
 
 .gestion-usuarios-add-button:hover {
-    background-color: #218838;
-    border-color: #218838;
+    background-color: #157347;
+    border-color: #157347;
 }

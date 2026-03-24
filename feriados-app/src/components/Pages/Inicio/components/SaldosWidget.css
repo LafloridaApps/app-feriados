@@ -1,43 +1,105 @@
-/* SaldosWidget.css */
+/* SaldosWidget.css - Rediseño Premium */
 
 .saldos-widget-card {
-    background-color: #ffffff;
-    /* White background */
-    border: 1px solid #e0e0e0;
-    transition: transform 0.2s ease-in-out;
+    padding: 1.5rem !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.saldos-widget-card:hover {
-    transform: translateY(-3px);
+.saldos-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #ecfdf5;
+    color: #047857; /* Improved contrast for accessibility (Green 700) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-right: 1rem;
 }
 
-.saldos-widget-card .card-title {
-    color: #007bff;
-    /* Azul neutro para título */
+.saldos-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--brand-blue); /* Improved contrast */
+    margin: 0;
 }
 
-.saldos-widget-card .bi-wallet-fill {
-    color: #28a745 !important;
-    /* Verde profesional para icono */
+.saldos-list {
+    margin-top: 1rem;
 }
 
-.saldos-widget-card .list-group-item {
-    border-bottom: 1px dashed #e9ecef !important;
+.saldo-item {
+    padding: 0.75rem 0 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: var(--transition-base);
 }
 
-.saldos-widget-card .list-group-item:last-child {
+.saldo-item:last-child {
     border-bottom: none !important;
 }
 
-/* Badge colors for consistency */
-.saldos-widget-card .badge.bg-success {
-    background-color: #1d7b32 !important;
-    /* Darkened from #28a745 to meet minimal contrast */
-    color: #fff !important;
+.saldo-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: var(--transition-base);
 }
 
-.saldos-widget-card .badge.bg-primary {
-    background-color: #0056b3 !important;
-    /* Darkened from #007bff to meet minimal contrast */
-    color: #fff !important;
+.saldo-btn:hover {
+    color: #004B8D;
+    transform: translateX(4px);
+}
+
+.saldo-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.saldo-value {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.status-ok .firma-icon-wrapper { background: #ecfdf5; color: #047857; }
+.status-ok .firma-detail-value { color: #047857; }
+
+.status-warning .firma-icon-wrapper { background: #fffbeb; color: #92400e; } /* Darkened for contrast */
+.status-warning .firma-detail-value { color: #92400e; }
+
+.status-danger .firma-icon-wrapper { background: #fef2f2; color: #b91c1c; }
+.status-danger .firma-detail-value { color: #b91c1c; }
+
+.badge-saldo {
+    background: #ecfdf5;
+    color: #047857;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.badge-ultima {
+    background: #ebf5ff;
+    color: #004B8D;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.ultima-solicitud-row {
+    margin-top: auto;
+    padding-top: 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
 }

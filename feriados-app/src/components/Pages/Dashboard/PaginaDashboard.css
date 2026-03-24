@@ -73,9 +73,9 @@
 }
 
 .dashboard-calendar-header .btn-light {
-    background: rgba(255, 255, 255, 0.15);
+    background: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    color: var(--primary-color);
     border-radius: 12px;
     width: 40px;
     height: 40px;
@@ -86,8 +86,9 @@
 }
 
 .dashboard-calendar-header .btn-light:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: #f8fafc;
     transform: scale(1.05);
+    color: var(--primary-color);
 }
 
 .dashboard-calendar-grid-wrapper {
@@ -117,7 +118,7 @@
 
 .dashboard-calendar-day.text-muted {
     background-color: #f1f5f9;
-    color: #94a3b8 !important;
+    color: #475569 !important;
 }
 
 .dashboard-calendar-day strong {

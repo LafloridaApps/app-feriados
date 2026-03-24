@@ -1,28 +1,48 @@
-
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './SolicitudesMesWidget.css'; // Importar el archivo CSS personalizado
 
 const SolicitudesMesWidget = ({ solicitudes = [] }) => {
+    const navigate = useNavigate();
+
     return (
-        <div className="col-12 col-md-6 col-lg-4 mb-4">
-            <div className="card shadow-sm rounded-3 p-3 h-100 d-flex flex-column justify-content-between solicitudes-mes-widget-card">
-                <div className="d-flex align-items-center mb-2">
-                    <i className="bi bi-file-earmark-text-fill text-primary me-2 fs-4"></i>
-                    <h5 className="card-title mb-0">Solicitudes del Mes</h5>
+        <div className="col-12 col-md-6 col-lg-4">
+            <div className="premium-card solicitudes-mes-card h-100 d-flex flex-column">
+                <div className="solicitudes-header">
+                    <div className="solicitudes-icon-wrapper">
+                        <i className="bi bi-calendar-check"></i>
+                    </div>
+                    <h5 className="solicitudes-title">Solicitudes del Mes</h5>
                 </div>
-                {solicitudes.length > 0 ? (
-                    <ul className="list-group list-group-flush flex-grow-1">
-                        {solicitudes.map(({ tipoSolicitud, estado, fechaSolicitud, idSolicitud }) => (
-                            <li key={idSolicitud} className="list-group-item d-flex justify-content-between align-items-center px-0 py-1 bg-transparent border-0">
-                                <span>{tipoSolicitud} ({fechaSolicitud})</span>
-                                <span className={`badge bg-${estado === 'APROBADA' ? 'success' : 'warning'}`}>{estado}</span>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-muted text-center flex-grow-1 d-flex align-items-center justify-content-center">No hay solicitudes este mes.</p>
-                )}
-                <a href="/feriados/mis-solicitudes" className="btn btn-sm btn-outline-primary mt-auto">Ver Todas</a>
+                
+                <div className="solicitudes-list-premium">
+                    {solicitudes.length > 0 ? (
+                        <div className="d-flex flex-column">
+                            {solicitudes.slice(0, 3).map(({ tipoSolicitud, estado, fechaSolicitud, idSolicitud }) => (
+                                <div key={idSolicitud} className="solicitud-item-premium">
+                                    <div className="solicitud-info">
+                                        <span className="solicitud-type">{tipoSolicitud}</span>
+                                        <span className="solicitud-date">{fechaSolicitud}</span>
+                                    </div>
+                                    <span className={`badge-status status-${estado.toLowerCase()}`}>
+                                        {estado}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="h-100 d-flex align-items-center justify-content-center py-4">
+                            <p className="text-muted small mb-0">No hay solicitudes este mes.</p>
+                        </div>
+                    )}
+                </div>
+                
+                <button 
+                    onClick={() => navigate('/feriados/mis-solicitudes')} 
+                    className="ver-todas-btn border-0"
+                >
+                    Ver Todas
+                </button>
             </div>
         </div>
     );

@@ -25,24 +25,29 @@ const FirmaDigitalCard = () => {
     };
 
     return (
-        <div className={`card shadow-sm firma-digital-card-redesigned ${firma.statusClass}`}>
-            <div className="card-body">
-                <div className="d-flex align-items-center mb-3">
-                    <i className={`icon ${getIcon()}`}></i>
-                    <h5 className="card-title mb-0 ms-2">Firma Digital</h5>
-                </div>
-                <p className="card-text">{firma.mensaje}</p>
-                <div className="firma-details-redesigned">
-                    <div className="detail-item">
-                        <strong>Estado:</strong>
-                        <span>{firma.estado}</span>
+        <div className={`premium-card firma-digital-card-redesigned ${firma.statusClass}`}>
+                <div className="firma-header">
+                    <div className="firma-icon-wrapper">
+                        <i className={getIcon()}></i>
                     </div>
-                    <div className="detail-item">
-                        <strong>Vencimiento:</strong>
-                        <span>{firma.fechaExpiracion}</span>
-                    </div>
+                    <h5 className="firma-title">Firma Digital</h5>
                 </div>
-                <p className="mt-3 text-muted small">Para gestionar su firma, debe comunicarse con DTI.</p>
+            
+            <p className="firma-mensaje">{firma.mensaje}</p>
+            
+            <div className="firma-details-premium">
+                <div className="firma-detail-row">
+                    <span className="firma-detail-label">Estado</span>
+                    <span className="firma-detail-value">{firma.estado}</span>
+                </div>
+                <div className="firma-detail-row">
+                    <span className="firma-detail-label">Vencimiento</span>
+                    <span className="firma-detail-value">{firma.fechaExpiracion}</span>
+                </div>
+            </div>
+            
+            <div className="footer-info">
+                <i className="bi bi-info-circle me-1"></i> Para gestionar su firma, debe comunicarse con DTI.
             </div>
         </div>
     );

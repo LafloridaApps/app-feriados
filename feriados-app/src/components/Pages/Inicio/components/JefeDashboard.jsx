@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useJefeDashboard } from '../../../../hooks/useJefeDashboard';
 import { formatFecha } from '../../../../services/utils';
 import JefeInfoCard from './JefeInfoCard';
@@ -5,11 +6,12 @@ import JefeInfoCard from './JefeInfoCard';
 import './JefeDashboard.css';
 
 const JefeDashboard = () => {
+    const navigate = useNavigate();
     const { pendingSolicitudes, upcomingAbsences, todayAbsences, subrogatedDepartments, loading, error } =
         useJefeDashboard();
 
     if (loading) {
-        return <div className="text-center">Cargando datos del dashboard...</div>;
+        return <div className="text-center py-4">Cargando datos del dashboard...</div>;
     }
 
     if (error) {
@@ -18,55 +20,69 @@ const JefeDashboard = () => {
 
     const cardData = [
         {
-            icon: 'bi bi-bell-fill text-warning',
+            icon: 'bi bi-bell-fill',
             title: 'Solicitudes Pendientes',
             content: (
-                <>
-                    <ul className="list-group list-group-flush jefe-info-list" style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                <div className="d-flex flex-column h-100">
+                    <div className="jefe-info-list-premium flex-grow-1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                         {pendingSolicitudes.length > 0 ? (
                             pendingSolicitudes.slice(0, 5).map((solicitud, index) => (
-                                <li key={solicitud.id || index} className="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>{solicitud.nombreFuncionario}</span>
-                                    <span className="badge bg-warning text-dark">{solicitud.tipoSolicitud}</span>
-                                </li>
+                                <div key={solicitud.id || index} className="jefe-list-item">
+                                    <span className="jefe-item-name">{solicitud.nombreFuncionario}</span>
+                                    <span className="jefe-item-badge badge-status status-pendiente">{solicitud.tipoSolicitud}</span>
+                                </div>
                             ))
                         ) : (
-                            <li className="list-group-item text-muted">No hay solicitudes pendientes.</li>
+                            <div className="py-3 text-center text-muted small">No hay solicitudes pendientes.</div>
                         )}
-                    </ul>
-                    {pendingSolicitudes.length > 5 && (
-                        <div className="text-center mt-2">
-                            <a href="/feriados/inbox" className="btn btn-sm btn-outline-primary">Ver todas</a>
-                        </div>
-                    )}
-                </>
+                    </div>
+                    <button 
+                        onClick={() => navigate('/feriados/inbox')} 
+                        className="jefe-action-btn mt-3 border-0"
+                    >
+                        Gestionar Inbox
+                    </button>
+                </div>
             )
         },
         {
-            icon: 'bi bi-calendar-event-fill text-info',
+            icon: 'bi bi-calendar-event-fill',
             title: 'Próximas Ausencias',
             content: (
-                <ul className="list-group list-group-flush jefe-info-list" style={{ maxHeight: '250px', overflowY: 'auto' }}>
-                    {upcomingAbsences.length > 0 ? (
-                        upcomingAbsences.slice(0, 5).map((absence, index) => (
-                            <li key={absence.id || index} className="list-group-item">
-                                <strong>{absence.nombreFuncionario}</strong>
-                            </li>
-                        ))
-                    ) : (
-                        <li className="list-group-item text-muted">No hay ausencias programadas.</li>
-                    )}
-                </ul>
+                <div className="d-flex flex-column h-100">
+                    <div className="jefe-info-list-premium flex-grow-1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {upcomingAbsences.length > 0 ? (
+                            upcomingAbsences.slice(0, 5).map((absence, index) => (
+                                <div key={absence.id || index} className="jefe-list-item">
+                                    <span className="jefe-item-name">{absence.nombreFuncionario}</span>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="py-3 text-center text-muted small">No hay ausencias programadas.</div>
+                        )}
+                    </div>
+                    <button 
+                        onClick={() => navigate('/feriados/dashboard')} 
+                        className="jefe-action-btn mt-3 border-0"
+                    >
+                        Ver Calendario
+                    </button>
+                </div>
             )
         },
         {
-            icon: 'bi bi-person-x-fill text-danger',
-            title: 'Ausencias del Equipo Hoy',
+            icon: 'bi bi-person-x-fill',
+            title: 'Ausencias Hoy',
             content: (
-                <div className="text-center">
-                    <p className="display-4 fw-bold text-danger">{todayAbsences}</p>
-                    <p className="text-muted">funcionarios ausentes</p>
-                    <a href="/feriados/dashboard" className="btn btn-sm btn-outline-danger mt-3">Ver Dashboard</a>
+                <div className="text-center d-flex flex-column align-items-center justify-content-center h-100">
+                    <div className="absences-count">{todayAbsences}</div>
+                    <div className="absences-label">Funcionarios Ausentes</div>
+                    <button 
+                        onClick={() => navigate('/feriados/dashboard')} 
+                        className="jefe-action-btn mt-4 border-0"
+                    >
+                        Ver Detalles
+                    </button>
                 </div>
             )
         }
@@ -74,30 +90,29 @@ const JefeDashboard = () => {
 
     return (
         <div className="col-12">
-            <div className="card shadow-sm jefe-dashboard-card">
-                <div className="card-header bg-primary text-white">
-                    <h4 className="mb-0"><i className="bi bi-kanban-fill me-2"></i> Panel de Jefe</h4>
-                </div>
-                <div className="card-body p-2">
-                    {subrogatedDepartments.length > 0 && (
-                        <div className="alert alert-info mb-4" role="alert">
-                            <h5 className="alert-heading"><i className="bi bi-person-badge me-2"></i>¡Estás subrogando!</h5>
-                            <p>Actualmente estás a cargo de los siguientes departamentos:</p>
-                            <ul className="mb-0">
-                                {subrogatedDepartments.map((depto, index) => (
-                                    <li key={depto.idDepto || index}><strong>{depto.nombreDepartamento}</strong> (Desde: {formatFecha(depto.fechaDesde)} Hasta: {formatFecha(depto.fechaHasta)})</li>
-                                ))}
-                            </ul>
+            <div className="jefe-dashboard-wrapper">
+                {subrogatedDepartments.length > 0 && (
+                    <div className="subrogacion-alert" role="alert">
+                        <div className="subrogacion-title">
+                            <i className="bi bi-person-badge"></i> ¡Estás subrogando!
                         </div>
-                    )}
-
-                    <div className="row">
-                        {cardData.map((card) => (
-                            <JefeInfoCard key={card.title} icon={card.icon} title={card.title}>
-                                {card.content}
-                            </JefeInfoCard>
-                        ))}
+                        <p className="mb-2 small">Actualmente estás a cargo de los siguientes departamentos:</p>
+                        <div className="subrogacion-list">
+                            {subrogatedDepartments.map((depto, index) => (
+                                <div key={depto.idDepto || index} className="fw-bold small mb-1">
+                                    • {depto.nombreDepartamento} <span className="fw-normal text-muted ms-2">({formatFecha(depto.fechaDesde)} - {formatFecha(depto.fechaHasta)})</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+                )}
+
+                <div className="row g-4">
+                    {cardData.map((card) => (
+                        <JefeInfoCard key={card.title} icon={card.icon} title={card.title}>
+                            {card.content}
+                        </JefeInfoCard>
+                    ))}
                 </div>
             </div>
         </div>

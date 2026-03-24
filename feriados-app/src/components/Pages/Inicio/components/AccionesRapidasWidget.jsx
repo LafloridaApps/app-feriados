@@ -1,18 +1,28 @@
-
+import { useNavigate } from 'react-router-dom';
 import './AccionesRapidasWidget.css'; // Importar el archivo CSS personalizado
 
 const AccionesRapidasWidget = () => {
+    const navigate = useNavigate();
+
     return (
-        <div className="col-12 col-md-6 col-lg-4 mb-4">
-            <div className="card shadow-sm rounded-3 p-3 h-100 d-flex flex-column justify-content-between bg-white acciones-rapidas-widget-card">
-                <h5 className="card-title mb-3 text-secondary">Acciones Rápidas</h5>
-                <div className="d-grid gap-2 flex-grow-1">
-                    <a href="/feriados/solicitudes" className="btn btn-primary btn-lg">
-                        <i className="bi bi-file-earmark-plus me-2"></i>Nueva Solicitud
-                    </a>
-                    <a href="/feriados/mis-solicitudes" className="btn btn-outline-secondary btn-lg">
-                        <i className="bi bi-list-check me-2"></i>Mis Solicitudes
-                    </a>
+        <div className="col-12 col-md-6 col-lg-4">
+            <div className="premium-card acciones-rapidas-widget-card h-100">
+                <h5 className="acciones-title">Acciones Rápidas</h5>
+                <div className="d-grid gap-3">
+                    <button 
+                        onClick={() => navigate('/feriados/solicitudes')} 
+                        className="btn-premium-action btn-primary-action"
+                    >
+                        <i className="bi bi-file-earmark-plus-fill action-icon"></i>
+                        <span>Nueva Solicitud</span>
+                    </button>
+                    <button 
+                        onClick={() => navigate('/feriados/mis-solicitudes')} 
+                        className="btn-premium-action btn-secondary-action"
+                    >
+                        <i className="bi bi-collection-play-fill action-icon"></i>
+                        <span>Mis Solicitudes</span>
+                    </button>
                 </div>
             </div>
         </div>

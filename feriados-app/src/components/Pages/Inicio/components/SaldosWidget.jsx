@@ -7,38 +7,41 @@ const SaldosWidget = ({ saldoFeriado, saldoAdministrativo, idUltimaSolicitud, es
     const navigate = useNavigate();
 
     return (
-        <div className="col-12 col-md-6 col-lg-4 mb-4">
-            <div className="card shadow-sm rounded-3 p-3 h-100 d-flex flex-column justify-content-between saldos-widget-card">
-                <div className="d-flex align-items-center mb-2">
-                    <i className="bi bi-wallet-fill text-success me-2 fs-4"></i>
-                    <h5 className="card-title mb-0">Tus Saldos y Solicitudes</h5>
+        <div className="col-12 col-md-6 col-lg-4">
+            <div className="premium-card saldos-widget-card h-100">
+                <div className="d-flex align-items-center mb-1">
+                    <div className="saldos-icon-wrapper">
+                        <i className="bi bi-wallet2"></i>
+                    </div>
+                    <h5 className="saldos-title">Mis Saldos</h5>
                 </div>
-                <ul className="list-group list-group-flush flex-grow-1">
-                    <li className="list-group-item p-0 bg-transparent border-0">
+                
+                <div className="saldos-list">
+                    <div className="saldo-item">
                         <button
                             type="button"
-                            className="d-flex justify-content-between align-items-center px-0 py-1 w-100 bg-transparent border-0 text-body"
-                            style={{ cursor: 'pointer', textAlign: 'left' }}
+                            className="saldo-btn"
                             onClick={() => navigate('/feriados/feriados')}>
-                            <span>Feriado Legal:</span>
-                            <span className="badge bg-success">{saldoFeriado} días</span>
+                            <span className="saldo-label">Feriado Legal</span>
+                            <span className="badge-saldo">{saldoFeriado} días</span>
                         </button>
-                    </li>
-                    <li className="list-group-item p-0 bg-transparent border-0">
+                    </div>
+                    
+                    <div className="saldo-item">
                         <button
                             type="button"
-                            className="d-flex justify-content-between align-items-center px-0 py-1 w-100 bg-transparent border-0 text-body"
-                            style={{ cursor: 'pointer', textAlign: 'left' }}
+                            className="saldo-btn"
                             onClick={() => navigate('/feriados/administrativos')}>
-                            <span>Administrativo:</span>
-                            <span className="badge bg-success">{saldoAdministrativo} días</span>
+                            <span className="saldo-label">Administrativo</span>
+                            <span className="badge-saldo">{saldoAdministrativo} días</span>
                         </button>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between align-items-center px-0 py-1 bg-transparent border-0">
-                        <span>Última Solicitud:</span>
-                        <span className="badge bg-primary">ID {idUltimaSolicitud} - {estadoUltimaSolicitud}</span>
-                    </li>
-                </ul>
+                    </div>
+                </div>
+
+                <div className="ultima-solicitud-row d-flex justify-content-between align-items-center">
+                    <span>Última Solicitud:</span>
+                    <span className="badge-ultima">ID {idUltimaSolicitud} - {estadoUltimaSolicitud}</span>
+                </div>
             </div>
         </div>
     );
