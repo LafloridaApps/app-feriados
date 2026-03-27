@@ -10,8 +10,8 @@ import useTamanoVentana from '../../../hooks/useTamanoVentana'; // Importar el h
 import './MisSolicitudes.css'; // Importar el archivo CSS personalizado
 
 const MisSolicitudes = () => {
-    const { width } = useTamanoVentana(); // Obtener el ancho de la ventana
-    const isMobile = width < 768; // Definir el breakpoint para móvil
+    const { ancho } = useTamanoVentana(); // Obtener el ancho de la ventana
+    const isMobile = ancho < 768; // Definir el breakpoint para móvil
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(false);

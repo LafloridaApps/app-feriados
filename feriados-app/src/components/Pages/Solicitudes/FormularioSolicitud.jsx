@@ -16,7 +16,7 @@ const tiposPermiso = [
 
 const jornadas = ['AM', 'PM'];
 
-const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer }) => {
+const FormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleAdministrativo, detalleFeriados }) => {
 
     const [mostrarInfoSubrogante, setMostrarInfoSubrogante] = useState(false);
 
@@ -28,6 +28,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         jornadaFin, setJornadaFin,
         diasUsar, saldo,
         error, enviando,
+        errorBloqueDiezDias,
         submitForm,
         mostrarModalSubrogante,
         handleSubroganteSelected,
@@ -37,7 +38,12 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         subrogancia,
         minDateInicio,
         maxDateFin
-    } = useFormularioSolicitud({ resumenAdm, resumenFer, detalleAdm, detalleFer });
+    } = useFormularioSolicitud({ 
+        resumenAdministrativo, 
+        resumenFeriados, 
+        detalleAdministrativo, 
+        detalleFeriados 
+    });
 
     const { esJefe, esDirector } = useEsJefe(depto, rut);
 
@@ -127,6 +133,16 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
                                 </div>
                             </div>
                         )}
+                        {errorBloqueDiezDias && (
+                            <div className="alert alert-warning border-0 shadow-sm d-flex align-items-start gap-3 mb-4" role="alert" style={{ background: '#fffbeb', color: '#92400e' }}>
+                                <i className="bi bi-exclamation-triangle-fill fs-5 mt-1"></i>
+                                <div className="small">
+                                    <span className="fw-bold d-block mb-1">Validación Ley N°18.883</span>
+                                    {errorBloqueDiezDias}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="mt-4 pt-2 border-top d-flex flex-column gap-3">
                             <button
                                 type="submit"
@@ -190,13 +206,11 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
 };
 
 FormularioSolicitud.propTypes = {
-    resumenAdm: PropTypes.array,
-    resumenFer: PropTypes.array,
-    detalleAdm: PropTypes.array,
-    detalleFer: PropTypes.array,
-    funcionario: PropTypes.shape({
-        rut: PropTypes.number.isRequired,
-    }).isRequired
+    resumenAdministrativo: PropTypes.object,
+    resumenFeriados: PropTypes.object,
+    detalleAdministrativo: PropTypes.array,
+    detalleFeriados: PropTypes.array,
 };
+
 
 export default FormularioSolicitud;

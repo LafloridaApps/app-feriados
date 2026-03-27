@@ -24,21 +24,36 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
     return (
         <div className="mis-solicitudes-mobile-list">
             {solicitudes.map((solicitud, index) => (
-                <div key={solicitud?.id || index} className="mis-solicitudes-mobile-card">
+                <div key={solicitud?.id || index} className={`mis-solicitudes-mobile-card ${solicitud.tipoSolicitud?.includes('FERIADO') ? 'feriado' : 'administrativo'}`}>
                     <div className="mis-solicitudes-mobile-card-header">
-                        <span className="mis-solicitudes-mobile-id">ID #{solicitud?.id || 'N/A'}</span>
+                        <div className="d-flex flex-column">
+                            <span className="mis-solicitudes-mobile-type">{solicitud.tipoSolicitud || 'Solicitud'}</span>
+                            <span className="mis-solicitudes-mobile-id">ID #{solicitud?.id || 'N/A'}</span>
+                        </div>
                         <span className={getStatusBadge(solicitud.estadoSolicitud)}>
                             {solicitud.estadoSolicitud || 'No especificado'}
                         </span>
                     </div>
                     <div className="mis-solicitudes-mobile-card-body">
-                        <div className="mis-solicitudes-mobile-card-title">
-                            {solicitud?.tipoSolicitud || 'No especificado'}
-                        </div>
                         <div className="mis-solicitudes-mobile-card-info">
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <div className="mis-solicitudes-mobile-card-item mb-0">
+                                    <i className="bi bi-clock-history"></i>
+                                    <span className="label">Duración:</span>
+                                    <span className="badge bg-light text-dark border rounded-pill px-3">
+                                        {solicitud?.cantidadDias || solicitud?.diasSolicitados || '0'} días
+                                    </span>
+                                </div>
+                            </div>
                             <div className="mis-solicitudes-mobile-card-item">
-                                <i className="bi bi-calendar3"></i>
-                                <span>{solicitud?.fechaSolicitud ? formatFecha(solicitud.fechaSolicitud) : 'Fecha no disponible'}</span>
+                                <i className="bi bi-calendar-event"></i>
+                                <span className="label">Desde:</span>
+                                <span>{solicitud?.fechaInicio ? formatFecha(solicitud.fechaInicio) : 'N/A'}</span>
+                            </div>
+                            <div className="mis-solicitudes-mobile-card-item">
+                                <i className="bi bi-calendar-check"></i>
+                                <span className="label">Hasta:</span>
+                                <span>{(solicitud?.fechaFin || solicitud?.fechaTermino) ? formatFecha(solicitud?.fechaFin || solicitud?.fechaTermino) : 'N/A'}</span>
                             </div>
                         </div>
                     </div>

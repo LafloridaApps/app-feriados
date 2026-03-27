@@ -26,27 +26,27 @@ const DetalleMiSolicitud = ({ solicitud }) => {
     return (
         <div className="p-4 bg-white rounded-3 shadow-sm border mt-2">
             <div className="row g-4">
-                <div className="col-md-5">
+                <div className="col-12 col-md-5">
                     <div className="d-flex align-items-center mb-3">
                         <i className="bi bi-info-circle-fill text-primary me-2 fs-5"></i>
                         <h6 className="mb-0 fw-bold">Detalles del Permiso</h6>
                     </div>
-                    <div className="ps-2">
+                    <div className="ps-0 ps-md-2">
                         <div className="mb-3 d-flex justify-content-between border-bottom pb-2">
-                            <span className="text-muted">Desde:</span>
+                            <span className="text-muted small">Desde:</span>
                             <span className="fw-bold">{formatFecha(solicitud.fechaInicio)}</span>
                         </div>
                         <div className="mb-3 d-flex justify-content-between border-bottom pb-2">
-                            <span className="text-muted">Hasta:</span>
+                            <span className="text-muted small">Hasta:</span>
                             <span className="fw-bold">{formatFecha(solicitud.fechaFin)}</span>
                         </div>
                         <div className="mb-0 d-flex justify-content-between">
-                            <span className="text-muted">Días solicitados:</span>
+                            <span className="text-muted small">Días solicitados:</span>
                             <span className="badge bg-primary rounded-pill px-3">{solicitud.cantidadDias}</span>
                         </div>
                     </div>
                 </div>
-                <div className="col-md-7 border-start ps-md-4">
+                <div className="col-12 col-md-7 border-top border-md-top-0 border-md-start ps-md-4 pt-4 pt-md-0">
                     <div className="d-flex align-items-center mb-4">
                         <i className="bi bi-clock-history text-primary me-2 fs-5"></i>
                         <h6 className="mb-0 fw-bold">Trazabilidad</h6>

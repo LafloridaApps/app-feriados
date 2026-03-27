@@ -154,3 +154,64 @@
     background: #ecfdf5;
     color: #047857;
 }
+
+/* Mobile Summary Cards */
+.resumen-mobile-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.resumen-card {
+    background: white;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.resumen-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f8fafc;
+}
+
+.resumen-card.feriados .resumen-card-header i { color: #f59e0b; }
+.resumen-card.administrativos .resumen-card-header i { color: #0ea5e9; }
+
+.resumen-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.resumen-card-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.resumen-card-stat .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.resumen-card-stat .value {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.resumen-card-stat.highlight {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 0.5rem;
+}
