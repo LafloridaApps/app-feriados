@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import './JefeDashboard.css'; // Asegúrate de que los estilos compartidos estén aquí
 
-const JefeInfoCard = ({ icon, title, children }) => {
+const JefeInfoCard = ({ icono, titulo, children }) => {
     // Determine icon color class based on the icon provided
-    const getIconClass = () => {
-        if (icon.includes('warning')) return 'icon-warning';
-        if (icon.includes('info')) return 'icon-info';
-        if (icon.includes('danger')) return 'icon-danger';
+    const obtenerClaseIcono = () => {
+        if (icono.includes('warning')) return 'icon-warning';
+        if (icono.includes('info')) return 'icon-info';
+        if (icono.includes('danger')) return 'icon-danger';
         return 'icon-info';
     };
 
@@ -14,10 +14,10 @@ const JefeInfoCard = ({ icon, title, children }) => {
         <div className="col-md-4 mb-4">
             <div className="premium-card jefe-info-card-premium">
                 <div className="jefe-card-header">
-                    <div className={`jefe-card-icon-wrapper ${getIconClass()}`}>
-                        <i className={icon}></i>
+                    <div className={`jefe-card-icon-wrapper ${obtenerClaseIcono()}`}>
+                        <i className={icono}></i>
                     </div>
-                    <h5 className="jefe-card-title">{title}</h5>
+                    <h5 className="jefe-card-title">{titulo}</h5>
                 </div>
                 {children}
             </div>
@@ -26,8 +26,8 @@ const JefeInfoCard = ({ icon, title, children }) => {
 };
 
 JefeInfoCard.propTypes = {
-    icon: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    icono: PropTypes.string.isRequired,
+    titulo: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
 };
 

@@ -1,29 +1,25 @@
-import { useContext } from 'react';
-import { UsuarioContext } from '../../../context/UsuarioContext';
-import { FirmaDigitalContext } from '../../../context/FirmaDigitalContext';
-
 import WelcomeWidget from './components/WelcomeWidget';
 import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
 import SolicitudesMesWidget from './components/SolicitudesMesWidget';
 import JefeDashboard from './components/JefeDashboard';
-import { useIsJefe } from '../../../hooks/useIsJefe';
-import { useFuncionarioResumen } from '../../../hooks/useFuncionarioResumen'; // New import
-import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
-import InicioMobile from './InicioMobile'; // Importar el componente móvil
+import { useEsJefe } from '../../../hooks/useEsJefe';
+import { useUsuario } from '../../../hooks/useUsuario';
+import useTamanoVentana from '../../../hooks/useTamanoVentana';
+import { useFirmaDigital } from '../../../hooks/useFirmaDigital';
+import InicioMobile from './InicioMobile';
 import FirmaDigitalCard from './components/FirmaDigitalCard';
 
 import './Inicio.css';
 
 const Inicio = () => {
-    const { width } = useWindowSize(); // Obtener el ancho de la ventana
-    const isMobile = width < 768; // Definir el breakpoint para móvil
+    const { ancho } = useTamanoVentana();
+    const esMovil = ancho < 768;
 
-    const funcionario = useContext(UsuarioContext);
+    const funcionario = useUsuario();
     const { codDepto, rut } = funcionario || {};
-    const { esJefe } = useIsJefe(codDepto, rut);
-    const { resumenFunc } = useFuncionarioResumen(); // Get resumenFunc from the new hook
-    const { tieneFirma } = useContext(FirmaDigitalContext);
+    const { esJefe } = useEsJefe(codDepto, rut);
+    const { tieneFirma } = useFirmaDigital();
 
     if (!funcionario) {
         return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
@@ -31,29 +27,19 @@ const Inicio = () => {
 
     return (
         <div className="inicio-container container mt-5">
-            {isMobile ? (
-                <InicioMobile
-                    funcionario={funcionario}
-                    esJefe={esJefe}
-                    resumenFunc={resumenFunc}
-                    tieneFirma={tieneFirma}
-                />
+            {esMovil ? (
+                <InicioMobile />
             ) : (
                 <div className="row justify-content-center dashboard-row">
                     <div className="col-md-10 col-lg-8 mb-4">
-                        <WelcomeWidget funcionario={funcionario} />
+                        <WelcomeWidget />
                     </div>
 
                     <div className="col-md-10 col-lg-8 mb-4">
                         <div className="row g-4">
-                            <SaldosWidget
-                                saldoFeriado={resumenFunc?.saldoFeriado}
-                                saldoAdministrativo={resumenFunc?.saldoAdministrativo}
-                                idUltimaSolicitud={resumenFunc?.idUltimaSolicitud}
-                                estadoUltimaSolicitud={resumenFunc?.estadoUltimaSolicitud}
-                            />
+                            <SaldosWidget />
                             <AccionesRapidasWidget />
-                            <SolicitudesMesWidget solicitudes={resumenFunc?.solicitudMes} />
+                            <SolicitudesMesWidget />
                         </div>
                     </div>
 
@@ -67,7 +53,7 @@ const Inicio = () => {
                     {tieneFirma && (
                         <div className="col-md-10 col-lg-8 mb-4">
                             <h3 className="section-title">Firma Digital</h3>
-                            <FirmaDigitalCard   />
+                            <FirmaDigitalCard />
                         </div>
                     )}
                 </div>

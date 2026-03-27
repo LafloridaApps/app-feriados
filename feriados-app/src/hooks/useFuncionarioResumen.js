@@ -4,27 +4,27 @@ import { getResumenInicioByRut } from '../services/resumenFuncService';
 
 export const useFuncionarioResumen = () => {
     const funcionario = useContext(UsuarioContext);
-    const [resumenFunc, setResumenFunc] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [resumenFuncionario, setResumenFuncionario] = useState(null);
+    const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         if (funcionario?.rut) {
-            const fetchResumen = async () => {
+            const obtenerResumenFuncionario = async () => {
                 try {
-                    setLoading(true);
+                    setCargando(true);
                     const response = await getResumenInicioByRut(funcionario.rut);
-                    setResumenFunc(response);
+                    setResumenFuncionario(response);
                 } catch (err) {
                     setError(err);
-                    console.error("Error fetching resumen:", err);
+                    console.error("Error al obtener resumen del funcionario:", err);
                 } finally {
-                    setLoading(false);
+                    setCargando(false);
                 }
             };
-            fetchResumen();
+            obtenerResumenFuncionario();
         }
     }, [funcionario]);
 
-    return { resumenFunc, loading, error };
+    return { resumenFuncionario, cargando, error };
 };

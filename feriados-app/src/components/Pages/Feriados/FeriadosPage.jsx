@@ -3,13 +3,13 @@ import { useState, useEffect, useContext } from "react";
 import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import TabsFeriados from "./TabsFeriados";
 import { UsuarioContext } from '../../../context/UsuarioContext';
-import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import useTamanoVentana from '../../../hooks/useTamanoVentana'; // Importar el hook de tamaño de ventana
 import FeriadosPageMobile from './FeriadosPageMobile'; // Importar el componente móvil
 import './FeriadosPage.css'; // Importar el archivo CSS personalizado
 
 const FeriadosPage = () => {
 
-    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const { width } = useTamanoVentana(); // Obtener el ancho de la ventana
     const isMobile = width < 768; // Definir el breakpoint para móvil
 
     const funcionario = useContext(UsuarioContext);

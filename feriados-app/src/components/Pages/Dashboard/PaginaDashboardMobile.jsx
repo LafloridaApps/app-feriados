@@ -39,12 +39,17 @@ const PaginaDashboardMobile = ({
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
             const esDelMesActual = fechaActual.getMonth() === mes;
 
+            const hoy = new Date();
+            const esHoy = fechaActual.getDate() === hoy.getDate() && 
+                          fechaActual.getMonth() === hoy.getMonth() && 
+                          fechaActual.getFullYear() === hoy.getFullYear();
+
             const extraLabel = tieneAusencia ? `, ${totalAusenciasPorDia} ausencias` : '';
             const ariaLabel = `Fecha ${fechaActual.toLocaleDateString()}${extraLabel}`;
             diasCalendario.push(
                 <button
                     key={cadenaFecha}
-                    className={`col dashboard-mobile-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted bg-light'}`}
+                    className={`col dashboard-mobile-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted bg-light'} ${esHoy ? 'is-today' : ''}`}
                     onClick={() => manejarClicEmpleado({ fecha: cadenaFecha, detalles: datosAusenciasDia?.detalles || {} })}
                     aria-label={ariaLabel}
                     type="button"

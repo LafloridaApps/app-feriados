@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import DetalleSolicitud from './DetalleSolicitud';
 import ModalSubrogante from './Subrogancias/ModalSubrogante';
 import { useState } from 'react';
-import { useIsJefe } from '../../../hooks/useIsJefe';
+import { useEsJefe } from '../../../hooks/useEsJefe';
 import { useFormularioSolicitud } from '../../../hooks/useFormularioSolicitud';
 import ModalVerSubrogante from './Subrogancias/ModalVerSubrogante';
 
@@ -39,7 +39,7 @@ const FormularioSolicitud = ({ resumenAdm, resumenFer, detalleAdm, detalleFer })
         maxDateFin
     } = useFormularioSolicitud({ resumenAdm, resumenFer, detalleAdm, detalleFer });
 
-    const { esJefe, esDirector } = useIsJefe(depto, rut);
+    const { esJefe, esDirector } = useEsJefe(depto, rut);
 
     const handleSubmit = (e) => submitForm(e, esJefe, esDirector);
 

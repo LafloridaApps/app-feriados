@@ -1,9 +1,24 @@
 import { useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { useFuncionarioResumen } from '../../../../hooks/useFuncionarioResumen';
 import './SolicitudesMesWidget.css'; // Importar el archivo CSS personalizado
 
-const SolicitudesMesWidget = ({ solicitudes = [] }) => {
+const SolicitudesMesWidget = () => {
     const navigate = useNavigate();
+    const { resumenFuncionario, cargando } = useFuncionarioResumen();
+
+    if (cargando) {
+        return (
+            <div className="col-12 col-md-6 col-lg-4">
+                <div className="premium-card solicitudes-mes-card h-100 d-flex align-items-center justify-content-center">
+                    <output className="spinner-border text-primary">
+                        <span className="visually-hidden">Cargando...</span>
+                    </output>
+                </div>
+            </div>
+        );
+    }
+
+    const solicitudes = resumenFuncionario?.solicitudMes || [];
 
     return (
         <div className="col-12 col-md-6 col-lg-4">
@@ -14,7 +29,7 @@ const SolicitudesMesWidget = ({ solicitudes = [] }) => {
                     </div>
                     <h5 className="solicitudes-title">Solicitudes del Mes</h5>
                 </div>
-                
+
                 <div className="solicitudes-list-premium">
                     {solicitudes.length > 0 ? (
                         <div className="d-flex flex-column">
@@ -36,9 +51,9 @@ const SolicitudesMesWidget = ({ solicitudes = [] }) => {
                         </div>
                     )}
                 </div>
-                
-                <button 
-                    onClick={() => navigate('/feriados/mis-solicitudes')} 
+
+                <button
+                    onClick={() => navigate('/mis-solicitudes')}
                     className="ver-todas-btn border-0"
                 >
                     Ver Todas
@@ -46,19 +61,6 @@ const SolicitudesMesWidget = ({ solicitudes = [] }) => {
             </div>
         </div>
     );
-};
-
-SolicitudesMesWidget.propTypes = {
-    solicitudes: PropTypes.arrayOf(PropTypes.shape({
-        idSolicitud: PropTypes.any.isRequired,
-        tipoSolicitud: PropTypes.string,
-        fechaSolicitud: PropTypes.string,
-        estado: PropTypes.string,
-    })),
-};
-
-SolicitudesMesWidget.defaultProps = {
-    solicitudes: [],
 };
 
 export default SolicitudesMesWidget;

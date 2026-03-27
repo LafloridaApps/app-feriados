@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { UsuarioContext } from '../../context/UsuarioContext';
-import { useIsJefe } from '../../hooks/useIsJefe';
+import { useEsJefe } from '../../hooks/useEsJefe';
 import { useSolicitudesNoLeidas } from '../../hooks/useSolicitudesNoLeidas';
 import { getPermisosByUsuario } from '../../services/usuarioService';
 import { LOGO_URL } from '../../assets/constants';
@@ -53,7 +53,7 @@ const Sidebar = () => {
     const { cantidadNoLeidas } = useSolicitudesNoLeidas();
     const funcionario = useContext(UsuarioContext);
     const { codDepto, rut } = funcionario || {};
-    const { esJefe } = useIsJefe(codDepto, rut);
+    const { esJefe } = useEsJefe(codDepto, rut);
     
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [usuarioPermisos, setUsuarioPermisos] = useState([]);
@@ -124,12 +124,8 @@ const Sidebar = () => {
                             openSubmenus={openSubmenus}
                             toggleSubmenu={toggleSubmenu}
                         >
-                            <li className="submenu-item">
-                                <NavItem to="/feriados" icon="bi-calendar-check" label="Feriados Legales" onClick={closeSidebar} />
-                            </li>
-                            <li className="submenu-item">
-                                <NavItem to="/administrativos" icon="bi-briefcase" label="Administrativos" onClick={closeSidebar} />
-                            </li>
+                            <NavItem to="/feriados" icon="bi-calendar-check" label="Feriados Legales" onClick={closeSidebar} />
+                            <NavItem to="/administrativos" icon="bi-briefcase" label="Administrativos" onClick={closeSidebar} />
                         </SubmenuItem>
 
                         {esJefe && (
@@ -145,12 +141,8 @@ const Sidebar = () => {
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
-                                <li className="submenu-item">
-                                    <NavItem to="/rrhh" icon="bi-file-earmark-text" label="Generador Decretos" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/rrhh/subrogancia" icon="bi-person-plus" label="Ingreso Subrogancia" onClick={closeSidebar} />
-                                </li>
+                                <NavItem to="/rrhh" icon="bi-file-earmark-text" label="Generador Decretos" onClick={closeSidebar} />
+                                <NavItem to="/rrhh/subrogancia" icon="bi-person-plus" label="Ingreso Subrogancia" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
 
@@ -163,12 +155,8 @@ const Sidebar = () => {
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
-                                <li className="submenu-item">
-                                    <NavItem to="/deptos" icon="bi-diagram-3" label="Departamentos" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/parametros/documentos" icon="bi-file-text" label="Gestión de Documentos" onClick={closeSidebar} />
-                                </li>
+                                <NavItem to="/deptos" icon="bi-diagram-3" label="Departamentos" onClick={closeSidebar} />
+                                <NavItem to="/parametros/documentos" icon="bi-file-text" label="Gestión de Documentos" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
 
@@ -181,15 +169,9 @@ const Sidebar = () => {
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
-                                <li className="submenu-item">
-                                    <NavItem to="/administracion/usuarios" icon="bi-person" label="Usuarios" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/administracion/modulos" icon="bi-grid" label="Módulos" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/administracion/adm-solicitudes" icon="bi-pen" label="Actualización" onClick={closeSidebar} />
-                                </li>
+                                <NavItem to="/administracion/usuarios" icon="bi-person" label="Usuarios" onClick={closeSidebar} />
+                                <NavItem to="/administracion/modulos" icon="bi-grid" label="Módulos" onClick={closeSidebar} />
+                                <NavItem to="/administracion/adm-solicitudes" icon="bi-pen" label="Actualización" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
                     </ul>

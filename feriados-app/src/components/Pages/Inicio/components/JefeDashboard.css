@@ -4,7 +4,7 @@
     background: #ebf5ff;
     border: 1px solid #cbd5e1;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 1rem;
     color: #004B8D;
     margin-bottom: 2rem;
     position: relative;
@@ -31,7 +31,7 @@
 
 /* JefeInfoCard styles */
 .jefe-info-card-premium {
-    padding: 1.5rem;
+    padding: 1rem;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -41,7 +41,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .jefe-card-icon-wrapper {
@@ -75,7 +75,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.6rem 0;
+    padding: 0.4rem 0;
     border-bottom: 1px solid #f1f5f9;
 }
 
@@ -97,7 +97,7 @@
 }
 
 .absences-count {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 800;
     background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
     background-clip: text;

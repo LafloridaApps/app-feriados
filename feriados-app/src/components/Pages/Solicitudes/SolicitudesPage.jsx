@@ -5,13 +5,13 @@ import ResumenPermisos from "./ResumenPermisos";
 import { getAdministrativoByRutAnIdent } from "../../../services/adminsitrativoService";
 import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
 import { UsuarioContext } from '../../../context/UsuarioContext';
-import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import useTamanoVentana from '../../../hooks/useTamanoVentana'; // Importar el hook de tamaño de ventana
 import SolicitudesPageMobile from './SolicitudesPageMobile'; // Importar el componente móvil
 import './SolicitudesPage.css'; // Importar el archivo CSS personalizado
 
 const SolicitudesPage = () => {
 
-    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const { width } = useTamanoVentana(); // Obtener el ancho de la ventana
     const isMobile = width < 768; // Definir el breakpoint para móvil
 
     const funcionario = useContext(UsuarioContext);

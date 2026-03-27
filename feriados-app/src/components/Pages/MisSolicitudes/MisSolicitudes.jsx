@@ -6,11 +6,11 @@ import MisSolicitudesNoDataMessage from './MisSolicitudesNoDataMessage';
 import MisSolicitudesTable from './MisSolicitudesTable';
 import MisSolicitudesPagination from './MisSolicitudesPagination';
 import MisSolicitudesMobile from './MisSolicitudesMobile'; // Importar el componente móvil
-import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import useTamanoVentana from '../../../hooks/useTamanoVentana'; // Importar el hook de tamaño de ventana
 import './MisSolicitudes.css'; // Importar el archivo CSS personalizado
 
 const MisSolicitudes = () => {
-    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const { width } = useTamanoVentana(); // Obtener el ancho de la ventana
     const isMobile = width < 768; // Definir el breakpoint para móvil
 
     const [solicitudes, setSolicitudes] = useState([]);

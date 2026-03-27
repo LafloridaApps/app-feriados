@@ -1,9 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UsuarioContext } from '../../../context/UsuarioContext';
 import { getDashboardSummary } from '../../../services/dashboardService';
 import { getTablaFeriados } from '../../../services/tablaFeriados.js'; // Importar servicio de feriados
-import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
+import useTamanoVentana from '../../../hooks/useTamanoVentana'; // Importar el hook de tamaño de ventana
 import PaginaDashboardMobile from './PaginaDashboardMobile'; // Importar el componente móvil
 import CalendarioDashboard from './CalendarioDashboard';
 import ModalDetalleFuncionario from './ModalDetalleFuncionario';
@@ -54,8 +55,10 @@ const procesarAusencias = (absenceList, processedFeriados) => {
 };
 
 const PaginaDashboard = () => {
-    const { width } = useWindowSize(); // Obtener el ancho de la ventana
+    const { width } = useTamanoVentana();
+    const location = useLocation();
     const isMobile = width < 768; // Definir el breakpoint para móvil
+    const detallesRef = useRef(null);
 
     const funcionario = useContext(UsuarioContext);
 
@@ -113,6 +116,25 @@ const PaginaDashboard = () => {
             setError("No se pudo identificar al usuario o su departamento.");
         }
     }, [funcionario, mesActual]); // Recargar si cambia el mes o el funcionario
+
+    // Effect to handle auto-selection and scroll if coming from JefeDashboard
+    useEffect(() => {
+        if (!loading && location.state?.seleccionarHoy) {
+            const hoy = new Date();
+            const anio = hoy.getFullYear();
+            const mes = (hoy.getMonth() + 1).toString().padStart(2, '0');
+            const dia = hoy.getDate().toString().padStart(2, '0');
+            const cadenaHoy = `${anio}-${mes}-${dia}`;
+            
+            // Set today's date as selected
+            setFechaSeleccionada(cadenaHoy);
+            
+            // Scroll to details after a small delay to ensure rendering
+            setTimeout(() => {
+                detallesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+    }, [loading, location.state]);
 
     // Se elimina la función `filtrarAusenciasPorNivel` ya que el backend se encarga del filtro.
     const detallesFechaSeleccionada = fechaSeleccionada ? ausencias[fechaSeleccionada]?.detalles : null;
@@ -278,6 +300,9 @@ const PaginaDashboard = () => {
                     />
                 )
             )}
+
+            {/* Anchor for scrolling to details */}
+            <div ref={detallesRef}></div>
 
             {/* Employee Details Modal */}
             <ModalDetalleFuncionario

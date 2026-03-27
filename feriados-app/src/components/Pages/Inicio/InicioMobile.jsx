@@ -1,5 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useUsuario } from '../../../hooks/useUsuario';
+import { useEsJefe } from '../../../hooks/useEsJefe';
+import { useFirmaDigital } from '../../../hooks/useFirmaDigital';
 import WelcomeWidget from './components/WelcomeWidget';
 import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
@@ -8,19 +10,19 @@ import JefeDashboard from './components/JefeDashboard';
 import FirmaDigitalCard from './components/FirmaDigitalCard';
 import './InicioMobile.css';
 
-const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
+const InicioMobile = () => {
+    const funcionario = useUsuario();
+    const { codDepto, rut } = funcionario || {};
+    const { esJefe } = useEsJefe(codDepto, rut);
+    const { tieneFirma } = useFirmaDigital();
+
     return (
         <div className="inicio-mobile-container">
-            <WelcomeWidget funcionario={funcionario} />
+            <WelcomeWidget />
 
             <div>
                 <h6 className="inicio-mobile-section-title">Mi Resumen</h6>
-                <SaldosWidget
-                    saldoFeriado={resumenFunc?.saldoFeriado}
-                    saldoAdministrativo={resumenFunc?.saldoAdministrativo}
-                    idUltimaSolicitud={resumenFunc?.idUltimaSolicitud}
-                    estadoUltimaSolicitud={resumenFunc?.estadoUltimaSolicitud}
-                />
+                <SaldosWidget />
             </div>
 
             <div>
@@ -30,7 +32,7 @@ const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
 
             <div>
                 <h6 className="inicio-mobile-section-title">Solicitudes del Mes</h6>
-                <SolicitudesMesWidget solicitudes={resumenFunc?.solicitudMes} />
+                <SolicitudesMesWidget />
             </div>
 
             {esJefe && (
@@ -48,19 +50,6 @@ const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
             )}
         </div>
     );
-};
-
-InicioMobile.propTypes = {
-    funcionario: PropTypes.object,
-    esJefe: PropTypes.bool,
-    resumenFunc: PropTypes.shape({
-        saldoFeriado: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        saldoAdministrativo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        idUltimaSolicitud: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        estadoUltimaSolicitud: PropTypes.string,
-        solicitudMes: PropTypes.array
-    }),
-    tieneFirma: PropTypes.bool
 };
 
 export default InicioMobile;

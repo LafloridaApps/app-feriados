@@ -35,12 +35,17 @@ const CalendarioDashboard = ({
             const totalAusenciasPorDia = tieneAusencia ? Object.values(datosAusenciasDia.detalles).flat().length : 0;
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
             const esDelMesActual = fechaActual.getMonth() === mes;
+            
+            const hoy = new Date();
+            const esHoy = fechaActual.getDate() === hoy.getDate() && 
+                          fechaActual.getMonth() === hoy.getMonth() && 
+                          fechaActual.getFullYear() === hoy.getFullYear();
 
             diasCalendario.push(
                 <button
                     type="button"
                     key={cadenaFecha}
-                    className={`dashboard-calendar-day btn-day-override ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted'}`}
+                    className={`dashboard-calendar-day btn-day-override ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted'} ${esHoy ? 'is-today' : ''}`}
                     onClick={() => setFechaSeleccionada(cadenaFecha)}
                 >
                     <div className="d-flex justify-content-between align-items-start w-100">
