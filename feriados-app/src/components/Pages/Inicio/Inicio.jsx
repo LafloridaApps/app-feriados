@@ -11,7 +11,6 @@ import { useIsJefe } from '../../../hooks/useIsJefe';
 import { useFuncionarioResumen } from '../../../hooks/useFuncionarioResumen'; // New import
 import useWindowSize from '../../../hooks/useWindowSize'; // Importar el hook de tamaño de ventana
 import InicioMobile from './InicioMobile'; // Importar el componente móvil
-import FirmaDigitalCard from './components/FirmaDigitalCard';
 
 import './Inicio.css';
 
@@ -64,12 +63,6 @@ const Inicio = () => {
                         </div>
                     )}
 
-                    {tieneFirma && (
-                        <div className="col-md-10 col-lg-8 mb-4">
-                            <h3 className="section-title">Firma Digital</h3>
-                            <FirmaDigitalCard   />
-                        </div>
-                    )}
                 </div>
             )}
         </div>

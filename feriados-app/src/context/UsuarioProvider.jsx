@@ -55,15 +55,3 @@ export const UsuarioProvider = ({ children }) => {
 UsuarioProvider.propTypes = {
 	children: PropTypes.node.isRequired,
 };
-
-//13890844, 5 gonzalo
-//10397956, 0
-//18117330,0 simon
-//15700766,1 gustavo
-//19280310,1 fuenzalida contabilidad
-//10067570,6 pamela perez
-//10735521,9 jorge poveda
-//18740165,8 jorge rementeria
-//15700766,1 gustavo
-//18766677,5 francisco
-//15435599 Elizabeth
