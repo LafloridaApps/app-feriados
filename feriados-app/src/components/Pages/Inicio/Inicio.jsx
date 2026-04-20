@@ -6,9 +6,7 @@ import JefeDashboard from './components/JefeDashboard';
 import { useEsJefe } from '../../../hooks/useEsJefe';
 import { useUsuario } from '../../../hooks/useUsuario';
 import useTamanoVentana from '../../../hooks/useTamanoVentana';
-import { useFirmaDigital } from '../../../hooks/useFirmaDigital';
 import InicioMobile from './InicioMobile';
-import FirmaDigitalCard from './components/FirmaDigitalCard';
 
 import './Inicio.css';
 
@@ -19,7 +17,6 @@ const Inicio = () => {
     const funcionario = useUsuario();
     const { codDepto, rut } = funcionario || {};
     const { esJefe } = useEsJefe(codDepto, rut);
-    const { tieneFirma } = useFirmaDigital();
 
     if (!funcionario) {
         return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
@@ -50,12 +47,6 @@ const Inicio = () => {
                         </div>
                     )}
 
-                    {tieneFirma && (
-                        <div className="col-md-10 col-lg-8 mb-4">
-                            <h3 className="section-title">Firma Digital</h3>
-                            <FirmaDigitalCard />
-                        </div>
-                    )}
                 </div>
             )}
         </div>
