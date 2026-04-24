@@ -1,0 +1,58 @@
+.asistencia-page-container {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.asistencia-page-container .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.asistencia-page-container .table thead th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #6c757d;
+    border-top: none;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.asistencia-page-container .table td {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.asistencia-page-container .badge {
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.bg-info-soft {
+    background-color: #e0f2fe;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f8f9fa !important;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.asistencia-page-container .card-footer {
+    border-top: 1px solid #f1f1f1;
+}

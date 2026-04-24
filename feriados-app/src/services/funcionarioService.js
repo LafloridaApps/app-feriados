@@ -53,7 +53,7 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
             title: 'Error al obtener funcionario',
             text: error.response.data.mensaje,
         });
-        return;
+        return null;
     }
 };
 
@@ -71,8 +71,7 @@ export const getFuncionarioApi = async () => {
 
     } catch (error) {
         console.log(error);
-        return null;
-
+        return {};
     }
 }
 

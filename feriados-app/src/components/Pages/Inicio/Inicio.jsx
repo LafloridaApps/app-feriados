@@ -19,7 +19,7 @@ const Inicio = () => {
     const { esJefe } = useEsJefe(codDepto, rut);
 
     if (!funcionario) {
-        return <p className="alert alert-info text-center mt-5" role='alert'>Cargando funcionario...</p>;
+        return <output className="alert alert-info text-center mt-5 d-block">Cargando funcionario...</output>;
     }
 
     return (

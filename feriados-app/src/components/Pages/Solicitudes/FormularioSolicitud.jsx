@@ -150,7 +150,7 @@ const FormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleAd
                                 disabled={enviando || Boolean(error) || !tipo}
                             >
                                 {enviando ? (
-                                    <><span className="spinner-border spinner-border-sm me-2"></span>Enviando...</>
+                                    <><output className="spinner-border spinner-border-sm me-2"></output>Enviando...</>
                                 ) : (
                                     <><i className="bi bi-send-fill me-2"></i>Enviar Solicitud</>
                                 )}

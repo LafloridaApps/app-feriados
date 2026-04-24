@@ -116,7 +116,7 @@ const ModalBuscarPorNombre = ({ show, onClose, onSelected }) => {
                                     disabled={searching || !searchTerm.trim()}
                                 >
                                     {searching
-                                        ? <><span className="spinner-border spinner-border-sm me-2"></span>Buscando...</>
+                                        ? <><output className="spinner-border spinner-border-sm me-2"></output>Buscando...</>
                                         : <><i className="bi bi-search me-1"></i>Buscar</>
                                     }
                                 </button>

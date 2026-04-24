@@ -3,6 +3,7 @@ import Sidebar from "./components/sidebar/Sidebar";
 import AdministrativosPage from "./components/Pages/Administrativos/AdministrativosPage";
 import FeriadosPage from "./components/Pages/Feriados/FeriadosPage";
 import PaginaSolicitudes from "./components/Pages/Solicitudes/PaginaSolicitudes";
+import AsistenciaPage from "./components/Pages/Asistencia/AsistenciaPage";
 import { AppContextProvider } from "./context/AppContextProvider";
 import InboxSolicitudes from "./components/Pages/Inbox/InboxSolicitudes";
 import DepartamentosPage from "./components/Pages/Departamentos/DepartamentosPage";
@@ -30,6 +31,7 @@ function App() {
                             <Route path="/administrativos" element={<AdministrativosPage />} />
                             <Route path="/feriados" element={<FeriadosPage />} />
                             <Route path="/solicitudes" element={<PaginaSolicitudes />} />
+                            <Route path="/asistencia" element={<AsistenciaPage />} />
                             <Route path="/inbox" element={<InboxSolicitudes />} />
                             <Route path="/deptos" element={<DepartamentosPage />} />
                             <Route path="/mis-solicitudes" element={<MisSolicitudes />} />

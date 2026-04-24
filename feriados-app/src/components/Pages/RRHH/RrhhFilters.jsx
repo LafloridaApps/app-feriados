@@ -52,7 +52,7 @@ const RrhhFilters = ({
                     >
                         {loading ? (
                             <>
-                                <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Cargando...
+                                <output className="spinner-border spinner-border-sm me-2" aria-hidden="true"></output>Cargando...
                             </>
                         ) : (
                             <>

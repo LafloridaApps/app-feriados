@@ -28,7 +28,7 @@ const AdministrativosPage = () => {
         }
     }, [funcionario]);
 
-    if (!funcionario) return <p className="alert alert-info text-center mt-5" role='alert'>Cargando Información...</p>;
+    if (!funcionario) return <output className="alert alert-info text-center mt-5 d-block">Cargando Información...</output>;
 
     const resumen = {
         anio: data.anio || new Date().getFullYear(),

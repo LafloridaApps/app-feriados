@@ -17,11 +17,11 @@ const PaginaSolicitudes = () => {
     } = useSolicitudes();
 
     if (cargando && !funcionario) {
-        return <p className="alert alert-info text-center mt-5" role='alert'>Cargando Información...</p>;
+        return <output className="alert alert-info text-center mt-5 d-block">Cargando Información...</output>;
     }
 
     if (!funcionario) {
-        return <p className="alert alert-warning text-center mt-5" role='alert'>No se encontró información del usuario.</p>;
+        return <output className="alert alert-warning text-center mt-5 d-block" role='alert'>No se encontró información del usuario.</output>;
     }
 
     return (
