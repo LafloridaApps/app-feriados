@@ -13,7 +13,9 @@ const AsistenciaPage = () => {
         obtenerAsistencia,
         formatearHora,
         formatearFecha,
-        formatearDecimal,
+        formatearMinutos,
+        formatearHorasDecimales,
+        formatearTotalHoras,
         totales
     } = useAsistencia();
 
@@ -64,7 +66,7 @@ const AsistenciaPage = () => {
                         </td>
                         <td>
                             <span className={`badge ${row.horsaltartj ? 'bg-white text-dark' : 'bg-light text-muted'} border font-monospace`}>
-                                {formatearHora(row.horsaltartj)}
+                                {formatearHora(row.horsaltartj == null ? row.horsalmantj : row.horsaltartj)}
                             </span>
                         </td>
                         <td>
@@ -72,15 +74,15 @@ const AsistenciaPage = () => {
                                 {row.justinasautext || '-'}
                             </span>
                         </td>
-                        <td className="fw-bold text-warning">{formatearDecimal(row.hatr)}</td>
+                        <td className="fw-bold text-danger">{formatearMinutos(row.hatr)}</td>
                         <td>
                             <span className={Number.parseFloat(row.hext25) > 0 ? 'text-primary fw-bold' : 'text-muted'}>
-                                {formatearDecimal(row.hext25)}
+                                {formatearHorasDecimales(row.hext25)}
                             </span>
                         </td>
                         <td className="pe-4">
-                            <span className={Number.parseFloat(row.hext50) > 0 ? 'text-danger fw-bold' : 'text-muted'}>
-                                {formatearDecimal(row.hext50)}
+                            <span className={Number.parseFloat(row.hext50) > 0 ? 'text-warning fw-bold' : 'text-muted'}>
+                                {formatearHorasDecimales(row.hext50)}
                             </span>
                         </td>
                     </tr>
@@ -186,15 +188,15 @@ const AsistenciaPage = () => {
                     <div className="row text-center g-0">
                         <div className="col-md-4 border-end">
                             <span className="text-muted small d-block text-uppercase fw-semibold" style={{ fontSize: '0.65rem' }}>Total Atrasos</span>
-                            <span className="fs-5 fw-bold text-warning">{formatearDecimal(totales.hatr)}</span>
+                            <span className="fs-5 fw-bold text-danger">{formatearTotalHoras(totales.hatr)}</span>
                         </div>
                         <div className="col-md-4 border-end">
                             <span className="text-muted small d-block text-uppercase fw-semibold" style={{ fontSize: '0.65rem' }}>Total Extras 25%</span>
-                            <span className="fs-5 fw-bold text-primary">{formatearDecimal(totales.h25)}</span>
+                            <span className="fs-5 fw-bold text-primary">{formatearTotalHoras(totales.h25)}</span>
                         </div>
                         <div className="col-md-4">
                             <span className="text-muted small d-block text-uppercase fw-semibold" style={{ fontSize: '0.65rem' }}>Total Extras 50%</span>
-                            <span className="fs-5 fw-bold text-danger">{formatearDecimal(totales.h50)}</span>
+                            <span className="fs-5 fw-bold text-warning">{formatearTotalHoras(totales.h50)}</span>
                         </div>
                     </div>
                 </div>

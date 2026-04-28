@@ -42,6 +42,7 @@ export const useAsistencia = () => {
                 fechaInicio,
                 fechaFin
             );
+            
             setDatosAsistencia(data || []);
         } catch (error) {
             console.error("Error al obtener asistencia:", error);
@@ -74,12 +75,35 @@ export const useAsistencia = () => {
         return partes[0];
     };
 
+
     /**
-     * Formatea un valor numérico a cadena con dos decimales.
+     * Formatea minutos a formato H.mm (ej: 19 -> 0.19, 75 -> 1.15)
      */
-    const formatearDecimal = (val) => {
-        if (!val) return '0.00';
-        return Number.parseFloat(val).toFixed(2);
+    const formatearMinutos = (totalMinutos) => {
+        const mins = Number.parseInt(totalMinutos || 0);
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return `${h}.${m.toString().padStart(2, '0')}`;
+    };
+
+    /**
+     * Formatea horas decimales a formato H.mm (ej: 1.0333 -> 1.02)
+     */
+    const formatearHorasDecimales = (decimalHours) => {
+        const val = Number.parseFloat(decimalHours || 0);
+        const h = Math.floor(val);
+        const m = Math.round((val - h) * 60);
+        return `${h}.${m.toString().padStart(2, '0')}`;
+    };
+
+    /**
+     * Formatea horas decimales a formato legible (ej: 1.5 -> 1h 30m)
+     */
+    const formatearTotalHoras = (horas) => {
+        const totalHoras = Number.parseFloat(horas || 0);
+        const h = Math.floor(totalHoras);
+        const m = Math.round((totalHoras - h) * 60);
+        return `${h}h ${m.toString().padStart(2, '0')}m`;
     };
 
     /**
@@ -92,6 +116,13 @@ export const useAsistencia = () => {
         return acc;
     }, { hatr: 0, h25: 0, h50: 0 });
 
+    // Pre-procesamos los totales para que todos estén en unidades de "horas"
+    const totalesFinal = {
+        hatr: totales.hatr / 60, // de minutos a horas
+        h25: totales.h25,       // ya está en horas
+        h50: totales.h50        // ya está en horas
+    };
+
     return {
         funcionario,
         mes,
@@ -103,7 +134,9 @@ export const useAsistencia = () => {
         obtenerAsistencia,
         formatearHora,
         formatearFecha,
-        formatearDecimal,
-        totales
+        formatearMinutos,
+        formatearHorasDecimales,
+        formatearTotalHoras,
+        totales: totalesFinal
     };
 };
