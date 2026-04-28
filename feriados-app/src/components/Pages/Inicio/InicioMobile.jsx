@@ -5,10 +5,9 @@ import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
 import SolicitudesMesWidget from './components/SolicitudesMesWidget';
 import JefeDashboard from './components/JefeDashboard';
-import FirmaDigitalCard from './components/FirmaDigitalCard';
 import './InicioMobile.css';
 
-const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
+const InicioMobile = ({ funcionario, esJefe, resumenFunc }) => {
     return (
         <div className="inicio-mobile-container">
             <WelcomeWidget funcionario={funcionario} />
@@ -40,12 +39,7 @@ const InicioMobile = ({ funcionario, esJefe, resumenFunc, tieneFirma }) => {
                 </div>
             )}
 
-            {tieneFirma && (
-                <div className="mt-2">
-                    <h6 className="inicio-mobile-section-title">Firma Digital</h6>
-                    <FirmaDigitalCard />
-                </div>
-            )}
+
         </div>
     );
 };
@@ -59,8 +53,7 @@ InicioMobile.propTypes = {
         idUltimaSolicitud: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         estadoUltimaSolicitud: PropTypes.string,
         solicitudMes: PropTypes.array
-    }),
-    tieneFirma: PropTypes.bool
+    })
 };
 
 export default InicioMobile;
