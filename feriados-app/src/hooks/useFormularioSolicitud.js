@@ -15,6 +15,26 @@ const initialState = {
     tipoSolicitud: "",
 };
 
+const MS_POR_DIA = 86400000; // 1000 ms * 60 s * 60 m * 24 h
+
+const extractTipoValue = (e) => {
+    let newTipo = '';
+
+    if (e?.target?.value !== undefined) {
+        newTipo = e.target.value;
+    } else if (e?.value !== undefined) {
+        newTipo = e.value;
+    } else if (typeof e === 'string') {
+        newTipo = e;
+    }
+
+    if (typeof newTipo === 'object' && newTipo !== null) {
+        newTipo = newTipo?.value || newTipo?.label || '';
+    }
+
+    return String(newTipo) === '[object Object]' ? '' : String(newTipo);
+};
+
 export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleAdministrativo, detalleFeriados }) => {
     const [tipo, setTipo] = useState("");
     const [fechaInicio, setFechaInicio] = useState(fechaActual());
@@ -61,7 +81,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             const dia = d.getDay();
             const fechaStr = d.toISOString().split('T')[0];
             return dia !== 0 && dia !== 6 && !fechasFeriadas.includes(fechaStr);
-        }
+        };
 
         if (!esDiaHabil(fecha)) {
             diasRestantes++;
@@ -82,7 +102,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             const i = new Date(sol.fechaInicio);
             const f = new Date(sol.fechaTermino || sol.fechaFin);
             if (Number.isNaN(i.getTime()) || Number.isNaN(f.getTime())) return false;
-            const diff = Math.round(Math.abs((f.getTime() - i.getTime()) / (1000 * 60 * 60 * 24))) + 1;
+            const diff = Math.round(Math.abs((f.getTime() - i.getTime()) / MS_POR_DIA)) + 1;
             return diff >= 10;
         });
     }, [detalleFeriados]);
@@ -101,7 +121,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
     // Auto-ajustar jornadaFin cuando ADMINISTRATIVO tiene saldo con media jornada (.5)
     useEffect(() => {
-        if (tipo === 'ADMINISTRATIVO' && resumenAdministrativo?.saldo != null) {
+        if (tipo === 'ADMINISTRATIVO' && resumenAdministrativo?.saldo !== null && resumenAdministrativo?.saldo !== undefined) {
             const saldoAdm = resumenAdministrativo.saldo;
             if (saldoAdm % 1 === 0) {
                 setJornadaFin('PM');
@@ -111,15 +131,23 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         }
     }, [tipo, resumenAdministrativo]);
 
-    const diasUsar = tipo === "FERIADO" ? diasUsarFeriado : diasUsarAdministrativo;
-    const saldo = tipo === "FERIADO" ? saldoFeriado : saldoAdministrativo;
+    let diasUsar = null;
+    let saldo = null;
+
+    if (tipo === "FERIADO") {
+        diasUsar = diasUsarFeriado;
+        saldo = saldoFeriado;
+    } else if (tipo === "ADMINISTRATIVO") {
+        diasUsar = diasUsarAdministrativo;
+        saldo = saldoAdministrativo;
+    }
 
     useEffect(() => {
         const gestionarFechas = () => {
             if (!tipo) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
 
             const diasDisponibles = tipo === "FERIADO" ? resumenFeriados?.dias_pendientes : resumenAdministrativo?.saldo;
-            if (diasDisponibles == null) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
+            if (diasDisponibles === null || diasDisponibles === undefined) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
 
             // Para ADMINISTRATIVO con media jornada (ej: 1.5), usar Math.ceil para calcular
             // la fecha fin máxima correctamente. La jornadaFin='AM' cubre la fracción.
@@ -130,14 +158,23 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             setMaxDateFin(fechaFinMaxima);
 
             let currentFechaFin = fechaFin;
+            
             if (fechaEditada === 'inicio' || fechaEditada === 'tipo') {
-                if (currentFechaFin !== fechaFinMaxima) {
+                if (fechaFinMaxima && currentFechaFin !== fechaFinMaxima) {
                     setFechaFin(fechaFinMaxima);
                     currentFechaFin = fechaFinMaxima;
                 }
-            } else if (new Date(currentFechaFin) > new Date(fechaFinMaxima)) {
-                setFechaFin(fechaFinMaxima);
-                currentFechaFin = fechaFinMaxima;
+            } else {
+                // Garantizar que la fecha fin no sea nula ni quede antes de la fecha de inicio
+                if (!currentFechaFin || new Date(currentFechaFin) < new Date(fechaInicio)) {
+                    setFechaFin(fechaInicio);
+                    currentFechaFin = fechaInicio;
+                }
+                // Si la fecha fin supera el máximo permitido, la limitamos a dicho máximo
+                if (fechaFinMaxima && new Date(currentFechaFin) > new Date(fechaFinMaxima)) {
+                    setFechaFin(fechaFinMaxima);
+                    currentFechaFin = fechaFinMaxima;
+                }
             }
 
             return { currentFechaFin, fechaFinMaxima };
@@ -151,7 +188,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
             const fInicio = new Date(fechaInicio);
             const fFin = new Date(currentFechaFin);
-            const diasCorridos = Math.round(Math.abs((fFin.getTime() - fInicio.getTime()) / (1000 * 60 * 60 * 24))) + 1;
+            const diasCorridos = Math.round(Math.abs((fFin.getTime() - fInicio.getTime()) / MS_POR_DIA)) + 1;
 
             const cumpleReglaDiezDias = yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
             if (cumpleReglaDiezDias) {
@@ -173,6 +210,8 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             if (!tipo) {
                 setDiasUsarFeriado(null);
                 setDiasUsarAdministrativo(null);
+                setSaldoFeriado(0);
+                setSaldoAdministrativo(0);
                 setErrorSaldo("");
                 setErrorBloqueDiezDias("");
                 return;
@@ -204,14 +243,27 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     }, []);
 
     const handlerTipo = useCallback((e) => {
-        const newTipo = e.target.value;
+        const newTipo = extractTipoValue(e);
+
         setTipo(newTipo);
         setFechaEditada('tipo');
-        if (newTipo === '') {
-            setFechaInicio('');
-            setFechaFin('');
+        if (newTipo) {
+            if (!fechaInicio) {
+                setFechaInicio(fechaActual());
+            }
+            // Sincronizar inmediatamente la jornada para evitar parpadeos y cálculos en negativo
+            if (newTipo === 'ADMINISTRATIVO' && resumenAdministrativo?.saldo !== null && resumenAdministrativo?.saldo !== undefined) {
+                if (resumenAdministrativo.saldo % 1 === 0) {
+                    setJornadaFin('PM');
+                } else {
+                    setJornadaFin('AM');
+                }
+            }
+        } else {
+            setFechaInicio(fechaActual());
+            setFechaFin(fechaActual());
         }
-    }, []);
+    }, [fechaInicio, resumenAdministrativo]);
 
     const mostrarAlertaError = useCallback((mensaje) => {
         if (mensaje) Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
@@ -244,12 +296,19 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
         const diasSolicitados = tipo === "FERIADO" ? diasUsarFeriado : diasUsarAdministrativo;
 
+        let tipoDisplay = tipo || 'Desconocido';
+        if (tipo === 'FERIADO') {
+            tipoDisplay = 'Feriado';
+        } else if (tipo === 'ADMINISTRATIVO') {
+            tipoDisplay = 'Administrativo';
+        }
+
         const confirm = await Swal.fire({
             icon: 'question',
             title: 'Confirmar Solicitud',
             html: `
                     <p>¿Está seguro de enviar la solicitud con los siguientes detalles?</p>
-                    <strong>Tipo:</strong> ${tipo}<br>
+                    <strong>Tipo:</strong> ${tipoDisplay}<br>
                     <strong>Fecha de Inicio:</strong> ${fechaInicio}<br>
                     <strong>Fecha de Término:</strong> ${fechaFin}<br>
                     <strong>Días solicitados:</strong> ${diasSolicitados}
@@ -429,4 +488,3 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         maxDateFin
     };
 };
-
