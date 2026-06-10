@@ -2,6 +2,7 @@ import SolicitudItem from './SolicitudItem';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import FiltrosSolicitudes from './FiltroSolicitudes';
 import { useInboxSolicitudes } from '../../../hooks/useInboxSolicitudes';
+import './Inbox.css';
 
 const InboxSolicitudes = () => {
     const {

@@ -484,6 +484,7 @@ DetallesJefe.propTypes = {
         vrutJefe: PropTypes.any,
         email: PropTypes.any,
         codigoExterno: PropTypes.string,
+        vigente: PropTypes.bool,
     }),
     setDepartamentoSeleccionado: PropTypes.func
 };

@@ -1,5 +1,4 @@
 // context/AppContextProvider.jsx
-import { FirmaDigitalProvider } from "./FirmaDigitalProvider";
 import { UsuarioProvider } from "./UsuarioProvider";
 import { FeriadosProvider } from "./FeriadosProvider";
 import PropTypes from "prop-types";
@@ -11,13 +10,11 @@ export const AppContextProvider = ({ children }) => {
     return (
         <UsuarioProvider>
             <DepartamentoProvider>
-                <FirmaDigitalProvider>
-                    <SolicitudesNoLeidasProvider>
-                        <FeriadosProvider>
-                            {children}
-                        </FeriadosProvider>
-                    </SolicitudesNoLeidasProvider>
-                </FirmaDigitalProvider>
+                <SolicitudesNoLeidasProvider>
+                    <FeriadosProvider>
+                        {children}
+                    </FeriadosProvider>
+                </SolicitudesNoLeidasProvider>
             </DepartamentoProvider>
         </UsuarioProvider>
     );

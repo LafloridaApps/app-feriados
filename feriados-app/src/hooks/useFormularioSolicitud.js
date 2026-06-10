@@ -99,6 +99,18 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         setMinDateInicio(minDate);
     }, []);
 
+    // Auto-ajustar jornadaFin cuando ADMINISTRATIVO tiene saldo con media jornada (.5)
+    useEffect(() => {
+        if (tipo === 'ADMINISTRATIVO' && resumenAdministrativo?.saldo != null) {
+            const saldoAdm = resumenAdministrativo.saldo;
+            if (saldoAdm % 1 === 0) {
+                setJornadaFin('PM');
+            } else {
+                setJornadaFin('AM');
+            }
+        }
+    }, [tipo, resumenAdministrativo]);
+
     const diasUsar = tipo === "FERIADO" ? diasUsarFeriado : diasUsarAdministrativo;
     const saldo = tipo === "FERIADO" ? saldoFeriado : saldoAdministrativo;
 
@@ -109,7 +121,12 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             const diasDisponibles = tipo === "FERIADO" ? resumenFeriados?.dias_pendientes : resumenAdministrativo?.saldo;
             if (diasDisponibles == null) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
 
-            const fechaFinMaxima = calcularFechaFinPropuesta(fechaInicio, diasDisponibles);
+            // Para ADMINISTRATIVO con media jornada (ej: 1.5), usar Math.ceil para calcular
+            // la fecha fin máxima correctamente. La jornadaFin='AM' cubre la fracción.
+            const diasParaCalculo = (tipo === 'ADMINISTRATIVO' && diasDisponibles % 1 !== 0)
+                ? Math.ceil(diasDisponibles)
+                : diasDisponibles;
+            const fechaFinMaxima = calcularFechaFinPropuesta(fechaInicio, diasParaCalculo);
             setMaxDateFin(fechaFinMaxima);
 
             let currentFechaFin = fechaFin;
@@ -271,7 +288,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
     const verificarConflictoFechas = async () => {
         const existe = await getSolicitudByFechaInicioAndTipo(rut, fechaInicio, tipo);
-        if (!existe?.estado || existe.estado === 'POSTERGADA') return false;
+        if (!existe?.estado || ['POSTERGADA', 'ANULADA'].includes(existe.estado)) return false;
 
         let conflict = true;
         if (tipo === 'ADMINISTRATIVO') {
@@ -318,6 +335,17 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         e.preventDefault();
 
         const isValid = validarFechas(fechaInicio, fechaFin, tipo, jornadaInicio, jornadaFin);
+
+        if (errorBloqueDiezDias) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Ley N°18.883 — Bloque de 10 días',
+                text: errorBloqueDiezDias,
+                confirmButtonText: 'Entendido',
+            });
+            return;
+        }
+
         if (!isValid || errorSaldo) {
             mostrarAlertaError(errorSaldo || 'Existen errores en las fechas seleccionadas.');
             return;

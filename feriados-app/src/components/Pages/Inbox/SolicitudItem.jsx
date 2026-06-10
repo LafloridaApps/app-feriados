@@ -1,9 +1,11 @@
 import DetalleSolicitud from './DetalleSolicitud';
 import SolicitudItemMobile from './SolicitudItemMobile';
 import PropTypes from 'prop-types';
+import Swal from 'sweetalert2';
 import { formatFecha } from '../../../services/utils';
 import { useGestionAcciones } from '../../../hooks/useGestionAcciones';
 import { usePostergacion } from '../../../hooks/usePostergacion';
+import { resolverAnulacion } from '../../../services/anulacionService';
 
 const SolicitudItem = ({
     solicitud,
@@ -15,7 +17,57 @@ const SolicitudItem = ({
     open,
     handleVerDetalleClick
 }) => {
-    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo, urlPdf } = solicitud;
+    const { id, nombreFuncionario, fechaSolicitud, tipoSolicitud, estadoSolicitud, subroganciaInfo, urlPdf, tieneAnulacionPendiente } = solicitud;
+
+    const handleVerAnulacion = async () => {
+        const { isConfirmed, isDenied } = await Swal.fire({
+            icon: 'warning',
+            title: '⚠️ Anulación Pendiente',
+            html: `
+                <p>El solicitante <strong>${nombreFuncionario}</strong> ha solicitado la <strong>anulación</strong> de esta solicitud.</p>
+                <p class="text-muted small mb-0">¿Desea aprobar o rechazar la solicitud de anulación?</p>
+            `,
+            showConfirmButton: true,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: '<i class="bi bi-check-circle-fill"></i> Aprobar',
+            denyButtonText: '<i class="bi bi-x-circle-fill"></i> Rechazar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#16a34a',
+            denyButtonColor: '#dc2626',
+            reverseButtons: true,
+        });
+
+        if (!isConfirmed && !isDenied) return;
+
+        const aprueba = isConfirmed;
+        try {
+            const respuesta = await resolverAnulacion(id, rutFuncionario, aprueba);
+            const mensaje =
+                respuesta?.message ||
+                respuesta?.mensaje ||
+                (aprueba ? 'Anulación aprobada correctamente.' : 'Anulación rechazada correctamente.');
+            await Swal.fire({
+                icon: 'success',
+                title: aprueba ? '✅ Anulación aprobada' : '❌ Anulación rechazada',
+                text: mensaje,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#16a34a',
+            });
+            onActualizarSolicitud?.();
+        } catch (error) {
+            const mensajeError =
+                error.response?.data?.message ||
+                error.response?.data?.mensaje ||
+                error.message ||
+                'No se pudo procesar la solicitud de anulación.';
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: mensajeError,
+            });
+        }
+    };
 
 
     const acciones = useGestionAcciones(solicitud.derivaciones?.[0]);
@@ -26,15 +78,41 @@ const SolicitudItem = ({
 
     return (
         <>
-            <tr className={`d-none d-md-table-row align-middle ${acciones.puedeRecibir ? 'fw-bold' : ''}`}>
-                <td>{id}</td>
+            <tr
+                className={`d-none d-md-table-row align-middle ${acciones.puedeRecibir ? 'fw-bold' : ''}`}
+                style={tieneAnulacionPendiente ? {
+                    borderLeft: '4px solid #f97316',
+                    background: 'linear-gradient(90deg, #fff7ed 0%, #ffffff 40%)',
+                } : { borderLeft: '4px solid transparent' }}
+            >
+                <td>
+                    <div className="d-flex align-items-center gap-2">
+                        {id}
+                        {tieneAnulacionPendiente && (
+                            <span
+                                style={{
+                                    width: 9,
+                                    height: 9,
+                                    borderRadius: '50%',
+                                    background: '#f97316',
+                                    display: 'inline-block',
+                                    animation: 'pulse-orange 1.4s infinite',
+                                    flexShrink: 0,
+                                }}
+                                title="Tiene anulación pendiente"
+                            />
+                        )}
+                    </div>
+                </td>
                 <td className="text-truncate" style={{ maxWidth: '250px' }}>
                     {nombreFuncionario}
                     {isSubrogada && <small className="d-block text-info">{subroganciaText}</small>}
                 </td>
                 <td>{tipoSolicitud}</td>
                 <td>{formatFecha(fechaSolicitud)}</td>
-                <td>{estadoSolicitud}</td>
+                <td>
+                    <span>{estadoSolicitud}</span>
+                </td>
                 <td className="text-right">
                     <div className="d-flex justify-content-start">
                         {acciones.puedeRecibir && (
@@ -46,7 +124,7 @@ const SolicitudItem = ({
                                 Recibir <i className="bi bi-box-arrow-in-down"></i>
                             </button>
                         )}
-                        {acciones.puedePostergar && (
+                    {acciones.puedePostergar && estadoSolicitud !== 'ANULADA' && (
                             <button
                                 className="btn btn-warning btn-sm mr-2"
                                 title="Postergar"
@@ -67,7 +145,7 @@ const SolicitudItem = ({
                         {acciones.esDerivada && (
                             <p className='text-success'><strong>DERIVADA</strong></p>
                         )}
-                        {acciones.puedeFirmar && (
+                    {acciones.puedeFirmar && estadoSolicitud !== 'ANULADA' && (
                             <button
                                 onClick={() => handlerAprobar(acciones.idDerivacion)}
                                 className="btn btn-success btn-sm"
@@ -81,6 +159,31 @@ const SolicitudItem = ({
                         )}
                         {acciones.esPostergada && (
                             <p className='text-danger'><strong>POSTERGADA</strong></p>
+                        )}
+                        {tieneAnulacionPendiente && (
+                            <button
+                                className="btn btn-sm ms-1"
+                                onClick={handleVerAnulacion}
+                                title="Anulación pendiente — clic para ver detalle"
+                                style={{
+                                    width: 34,
+                                    height: 34,
+                                    padding: 0,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: '#fff7ed',
+                                    color: '#ea580c',
+                                    border: '1.5px solid #f97316',
+                                    borderRadius: '50%',
+                                    fontSize: '0.95rem',
+                                    boxShadow: '0 0 0 3px rgba(249,115,22,0.15)',
+                                    animation: 'pulse-orange 1.4s infinite',
+                                    transition: 'all 0.2s',
+                                }}
+                            >
+                                <i className="bi bi-bell-fill" />
+                            </button>
                         )}
                     </div>
                 </td>
@@ -148,6 +251,7 @@ SolicitudItem.propTypes = {
         fechaSolicitud: PropTypes.string.isRequired,
         tipoSolicitud: PropTypes.string.isRequired,
         estadoSolicitud: PropTypes.string.isRequired,
+        tieneAnulacionPendiente: PropTypes.bool,
         subroganciaInfo: PropTypes.arrayOf(
             PropTypes.shape({
                 nombreDeptoSubrogado: PropTypes.string,

@@ -82,6 +82,19 @@ const NodoDepartamentoConector = ({
                 <span className="flex-grow-1 text-truncate" title={departamento.nombre} style={{ position: 'relative', zIndex: 2, pointerEvents: 'none' }} aria-hidden="true">
                     {departamento.nombre}
                 </span>
+
+                {/* Badge contrato vencido */}
+                {departamento.rutJefe && departamento.vigente === false && (
+                    <span
+                        className="badge bg-danger ms-2 d-flex align-items-center gap-1"
+                        style={{ position: 'relative', zIndex: 2, pointerEvents: 'none', fontSize: '0.65rem', whiteSpace: 'nowrap' }}
+                        title="El jefe de este departamento tiene contrato vencido"
+                        aria-label="Contrato vencido"
+                    >
+                        <i className="bi bi-exclamation-triangle-fill" />{" "}
+                        Vencido
+                    </span>
+                )}
             </div>
 
             {renderChildren()}

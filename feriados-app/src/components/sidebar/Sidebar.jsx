@@ -115,9 +115,6 @@ const Sidebar = () => {
 
                         <NavItem to="/mis-solicitudes" icon="bi-file-earmark-text" label="Mis Solicitudes" onClick={closeSidebar} />
                         <NavItem to="/solicitudes" icon="bi-file-earmark-plus" label="Nueva Solicitud" onClick={closeSidebar} />
-                        {funcionario?.ident === 1 && (
-                            <NavItem to="/asistencia" icon="bi-clock-history" label="Asistencia" onClick={closeSidebar} />
-                        )}
 
                         <SubmenuItem 
                             label="Información Ausencias" 
