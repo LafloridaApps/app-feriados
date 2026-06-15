@@ -35,7 +35,7 @@ const extractTipoValue = (e) => {
     return String(newTipo) === '[object Object]' ? '' : String(newTipo);
 };
 
-export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleAdministrativo, detalleFeriados }) => {
+export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleFeriados }) => {
     const [tipo, setTipo] = useState("");
     const [fechaInicio, setFechaInicio] = useState(fechaActual());
     const [fechaFin, setFechaFin] = useState(fechaActual());
@@ -64,7 +64,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     const codDeptoJefe = funcionario?.codDeptoJefe;
 
 
-    const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas, detalleFeriados, detalleAdministrativo);
+    const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas);
 
     const parseDateAsLocal = (dateString) => {
         const [year, month, day] = dateString.split('-').map(Number);
@@ -182,7 +182,8 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
         const validarFeriado = (diasSolicitados, currentFechaFin) => {
             setDiasUsarFeriado(diasSolicitados);
-            const nuevoSaldo = (resumenFeriados?.dias_pendientes || 0) - diasSolicitados;
+            const saldoPrevio = resumenFeriados?.dias_pendientes || 0;
+            const nuevoSaldo = saldoPrevio - diasSolicitados;
             setSaldoFeriado(nuevoSaldo);
             setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
 
@@ -190,7 +191,11 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             const fFin = new Date(currentFechaFin);
             const diasCorridos = Math.round(Math.abs((fFin.getTime() - fInicio.getTime()) / MS_POR_DIA)) + 1;
 
-            const cumpleReglaDiezDias = yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
+            // Excepción para casos antiguos: si el saldo previo ya es menor a 10 días,
+            // se le permite usar sus días restantes sin bloquearlo.
+            const excepcionCasosAntiguos = saldoPrevio < 10;
+
+            const cumpleReglaDiezDias = excepcionCasosAntiguos || yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
             if (cumpleReglaDiezDias) {
                 setErrorBloqueDiezDias("");
             } else {
@@ -226,7 +231,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
                 validarAdministrativo(diasSolicitados);
             }
 
-            validarFechas(fechaInicio, currentFechaFin, tipo, jornadaInicio, jornadaFin);
+            validarFechas(fechaInicio, currentFechaFin);
         };
 
         actualizar();
@@ -393,7 +398,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     const submitForm = async (e, esJefe, esDirector) => {
         e.preventDefault();
 
-        const isValid = validarFechas(fechaInicio, fechaFin, tipo, jornadaInicio, jornadaFin);
+        const isValid = validarFechas(fechaInicio, fechaFin);
 
         if (errorBloqueDiezDias) {
             await Swal.fire({

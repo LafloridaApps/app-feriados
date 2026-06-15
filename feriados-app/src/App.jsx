@@ -9,7 +9,7 @@ import DepartamentosPage from "./components/Pages/Departamentos/DepartamentosPag
 import MisSolicitudes from "./components/Pages/MisSolicitudes/MisSolicitudes";
 import RRHHPage from "./components/Pages/RRHH/RRHHPage";
 import ParametrosPage from "./components/Pages/Parametros/ParametrosPage";
-import PaginaDashboard from "./components/Pages/Dashboard/PaginaDashboard";
+import PaginaCalendarioAusencias from "./components/Pages/Dashboard/PaginaCalendarioAusencias";
 import Inicio from "./components/Pages/Inicio/Inicio";
 import IngresoSubrogancia from "./components/Pages/RRHH/IngresoSubrogancia";
 import GestionUsuariosPage from "./components/Pages/Administracion/Usuarios/GestionUsuariosPage";
@@ -35,7 +35,7 @@ function App() {
                             <Route path="/mis-solicitudes" element={<MisSolicitudes />} />
                             <Route path="/rrhh" element={<RRHHPage />} />
                             <Route path="/parametros/documentos" element={<ParametrosPage />} />
-                            <Route path="/dashboard" element={<PaginaDashboard />} />
+                            <Route path="/calendario" element={<PaginaCalendarioAusencias />} />
                             <Route path="/rrhh/subrogancia" element={<IngresoSubrogancia />} />
                             <Route path="/administracion/usuarios" element={<GestionUsuariosPage />} />
                             <Route path="/administracion/modulos" element={<GestionModulosPage />} />

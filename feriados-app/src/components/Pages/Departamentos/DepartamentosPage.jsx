@@ -122,7 +122,6 @@ const DepartamentosPage = () => {
                                     departamentos={departamentosFiltrados}
                                     onSeleccionarDepartamento={handleSeleccionarDepartamento}
                                     departamentoSeleccionado={departamentoSeleccionado}
-                                    fetchDepartamentos={fetchDepartamentos}
                                 />
                             )}
                         </div>

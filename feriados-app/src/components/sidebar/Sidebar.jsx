@@ -110,7 +110,7 @@ const Sidebar = () => {
                         <NavItem to="/home" icon="bi-house" label="Inicio" onClick={closeSidebar} />
                         
                         {usuarioPermisos.some(p => p.nombre === 'DASHBOARD') && (
-                            <NavItem to="/dashboard" icon="bi-speedometer2" label="Dashboard" onClick={closeSidebar} />
+                            <NavItem to="/calendario" icon="bi-calendar3" label="Calendario de Ausencias" onClick={closeSidebar} />
                         )}
 
                         <NavItem to="/mis-solicitudes" icon="bi-file-earmark-text" label="Mis Solicitudes" onClick={closeSidebar} />
@@ -137,12 +137,13 @@ const Sidebar = () => {
                                 label="RRHH" 
                                 icon="bi-people" 
                                 menuId="rrhh"
-                                paths={['/rrhh']}
+                            paths={['/rrhh', '/administracion/adm-solicitudes']}
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
                                 <NavItem to="/rrhh" icon="bi-file-earmark-text" label="Generador Decretos" onClick={closeSidebar} />
                                 <NavItem to="/rrhh/subrogancia" icon="bi-person-plus" label="Ingreso Subrogancia" onClick={closeSidebar} />
+                            <NavItem to="/administracion/adm-solicitudes" icon="bi-pen" label="Visor de Solicitudes" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
 
@@ -165,13 +166,12 @@ const Sidebar = () => {
                                 label="Administración" 
                                 icon="bi-person-rolodex" 
                                 menuId="administracion"
-                                paths={['/administracion']}
+                            paths={['/administracion/usuarios', '/administracion/modulos']}
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
                                 <NavItem to="/administracion/usuarios" icon="bi-person" label="Usuarios" onClick={closeSidebar} />
                                 <NavItem to="/administracion/modulos" icon="bi-grid" label="Módulos" onClick={closeSidebar} />
-                                <NavItem to="/administracion/adm-solicitudes" icon="bi-pen" label="Actualización" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
                     </ul>

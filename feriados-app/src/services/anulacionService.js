@@ -34,7 +34,7 @@ export const resolverAnulacion = async (idSolicitud, rutAprobador, aprueba) => {
         const { data } = await api.post('/aprobar-anulacion', null, {
             params: {
                 idSolicitud,
-                rutAprobador: parseInt(rutAprobador, 10),
+                rutAprobador: Number.parseInt(rutAprobador, 10),
                 aprueba,
             },
         });

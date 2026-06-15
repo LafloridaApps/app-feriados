@@ -39,7 +39,6 @@ export const useInboxSolicitudes = () => {
 
         try {
             const response = await getInboxSolicitudesByDepto(funcionario.codDepto, currentPage, funcionario.rut, { noLeidas });
-            console.log('Respuesta de solicitudes:', response);
             setTotalElements(response.totalElements);
             setTotalPages(response.totalPages);
             setSolicitudes(response.solicitudes);

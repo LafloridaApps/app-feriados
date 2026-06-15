@@ -68,7 +68,7 @@ const JefeDashboard = () => {
                         )}
                     </div>
                     <button 
-                        onClick={() => navigate('/dashboard')} 
+                        onClick={() => navigate('/calendario')} 
                         className="jefe-action-btn mt-3 border-0"
                     >
                         Ver Calendario
@@ -84,7 +84,7 @@ const JefeDashboard = () => {
                     <div className="absences-count">{ausenciasHoy}</div>
                     <div className="absences-label">Funcionarios Ausentes</div>
                     <button 
-                        onClick={() => navigate('/dashboard', { state: { seleccionarHoy: true } })} 
+                        onClick={() => navigate('/calendario', { state: { seleccionarHoy: true } })} 
                         className="jefe-action-btn mt-4 border-0"
                     >
                         Ver Detalles

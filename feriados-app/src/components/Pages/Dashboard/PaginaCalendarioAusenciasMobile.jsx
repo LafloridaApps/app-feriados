@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './PaginaDashboardMobile.css';
+import './PaginaCalendarioAusenciasMobile.css';
 
-const PaginaDashboardMobile = ({
+const PaginaCalendarioAusenciasMobile = ({
     mesActual,
     ausencias,
     fechaSeleccionada,
@@ -10,10 +10,6 @@ const PaginaDashboardMobile = ({
     manejarMesAnterior,
     manejarMesSiguiente,
     manejarClicEmpleado,
-    renderizarMiniCalendario,
-    mostrarModalEmpleado,
-    empleadoSeleccionado,
-    manejarCerrarModal,
 }) => {
 
     const renderizarCalendarioMobile = () => {
@@ -137,7 +133,7 @@ const PaginaDashboardMobile = ({
     );
 };
 
-PaginaDashboardMobile.propTypes = {
+PaginaCalendarioAusenciasMobile.propTypes = {
     mesActual: PropTypes.instanceOf(Date).isRequired,
     ausencias: PropTypes.object.isRequired,
     fechaSeleccionada: PropTypes.string,
@@ -145,10 +141,6 @@ PaginaDashboardMobile.propTypes = {
     manejarMesAnterior: PropTypes.func.isRequired,
     manejarMesSiguiente: PropTypes.func.isRequired,
     manejarClicEmpleado: PropTypes.func.isRequired,
-    renderizarMiniCalendario: PropTypes.func.isRequired,
-    mostrarModalEmpleado: PropTypes.bool.isRequired,
-    empleadoSeleccionado: PropTypes.object,
-    manejarCerrarModal: PropTypes.func.isRequired,
 };
 
-export default PaginaDashboardMobile;
+export default PaginaCalendarioAusenciasMobile;

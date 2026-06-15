@@ -3,7 +3,7 @@ import './ArbolDepartamentosMejorado.css'; // Importamos el CSS mejorado
 import NodoDepartamentoConector from './NodoDepartamentoConector';
 import PropTypes from 'prop-types';
 
-function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departamentoSeleccionado, fetchDepartamentos }) {
+function ArbolDepartamentos({ departamentos, onSeleccionarDepartamento, departamentoSeleccionado }) {
 
     const [nodosExpandidos, setNodosExpandidos] = useState({});
 
@@ -37,5 +37,4 @@ ArbolDepartamentos.propTypes = {
     departamentos: PropTypes.array.isRequired,
     onSeleccionarDepartamento: PropTypes.func.isRequired,
     departamentoSeleccionado: PropTypes.object,
-    fetchDepartamentos: PropTypes.func.isRequired,
 };

@@ -282,10 +282,6 @@ const PaginaCalendarioAusencias = () => {
                         manejarMesAnterior={manejarMesAnterior}
                         manejarMesSiguiente={manejarMesSiguiente}
                         manejarClicEmpleado={manejarClicEmpleado}
-                        renderizarMiniCalendario={renderizarMiniCalendario}
-                        mostrarModalEmpleado={mostrarModalEmpleado}
-                        empleadoSeleccionado={empleadoSeleccionado}
-                        manejarCerrarModal={manejarCerrarModal}
                     />
                 ) : (
                     <CalendarioDashboard

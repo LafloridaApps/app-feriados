@@ -63,7 +63,6 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
             reverseButtons: true,
             inputValidator: (value) => {
                 if (!value?.trim()) return 'Debes ingresar un motivo para continuar.';
-                if (value.trim().length < 10) return 'El motivo debe tener al menos 10 caracteres.';
             },
         });
 
@@ -71,20 +70,27 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
 
         // Paso 3: Llamar al servicio
         try {
-            await anularSolicitud(solicitudId, motivo.trim());
+            const respuesta = await anularSolicitud(solicitudId, motivo.trim());
+            const mensajeServidor = respuesta?.message || respuesta?.mensaje || 'El envío de la solicitud fue anulado correctamente.';
             await Swal.fire({
                 icon: 'success',
                 title: 'Solicitud anulada',
-                text: 'El envío de la solicitud fue anulado correctamente.',
+                text: mensajeServidor,
                 timer: 2500,
                 showConfirmButton: false,
             });
             globalThis.location.reload();
         } catch (error) {
+            const mensajeError =
+                error.response?.data?.message ||
+                error.response?.data?.mensaje ||
+                error.response?.data?.error ||
+                error.message ||
+                'No se pudo anular la solicitud. Intenta nuevamente.';
             Swal.fire({
                 icon: 'error',
                 title: 'Error al anular',
-                text: error.response?.data?.message || 'No se pudo anular la solicitud. Intenta nuevamente.',
+                text: mensajeError,
             });
         }
     };
@@ -125,20 +131,7 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
                             </div>
                         </div>
                     </div>
-                    <div className="mis-solicitudes-mobile-card-actions d-flex justify-content-between align-items-center">
-                        {solicitud?.estadoSolicitud === 'PENDIENTE' ? (
-                            <button
-                                type="button"
-                                className="btn btn-action-anular d-flex align-items-center gap-1"
-                                title="Anular Envío"
-                                onClick={() => handleAnularEnvio(solicitud.id)}
-                            >
-                                <i className="bi bi-x-circle-fill" />
-                                <span>Anular</span>
-                            </button>
-                        ) : (
-                            <span />
-                        )}
+                    <div className="mis-solicitudes-mobile-card-actions d-flex justify-content-end align-items-center">
                         <div className="d-flex align-items-center gap-2">
                             <button
                                 className="btn btn-action"
@@ -162,8 +155,22 @@ const MisSolicitudesMobile = ({ solicitudes, openDetailId, handleToggleDetail })
                         </div>
                     </div>
                     {openDetailId === solicitud.id && (
-                        <div className="px-3 pb-3">
-                            <DetalleMiSolicitud solicitud={solicitud} />
+                        <div className="p-3 bg-light rounded-bottom">
+                            <div className="pt-2">
+                                <DetalleMiSolicitud solicitud={solicitud} />
+                            </div>
+                            {solicitud?.estadoSolicitud === 'PENDIENTE' && (
+                                <div className="mt-3 pt-3 border-top">
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-danger w-100 rounded-pill fw-bold shadow-sm d-flex justify-content-center align-items-center gap-2"
+                                        onClick={() => handleAnularEnvio(solicitud.id)}
+                                    >
+                                        <i className="bi bi-x-circle-fill fs-5" />
+                                        <span>Anular Solicitud</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

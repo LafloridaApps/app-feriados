@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getSolicitudById, updateSolicitud, repairUrl } from '../services/solicitudService';
+import { getSolicitudById, updateSolicitud, repairUrl, anularSolicitudDirecta } from '../services/solicitudService';
 import Swal from 'sweetalert2';
 
 export const useGestionSolicitudes = () => {
@@ -78,6 +78,21 @@ export const useGestionSolicitudes = () => {
         setEditableData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleAnularDirecto = async (idSolicitud, motivo, rutAprobador) => {
+        setLoading(true);
+        try {
+            const response = await anularSolicitudDirecta(idSolicitud, motivo, rutAprobador);
+            const mensaje = response?.message || response?.mensaje || 'La solicitud ha sido anulada exitosamente.';
+            Swal.fire('¡Anulada!', mensaje, 'success');
+            buscarSolicitud(idSolicitud);
+        } catch (err) {
+            const errMsg = err.response?.data?.message || err.response?.data?.mensaje || err.message || 'No se pudo anular la solicitud.';
+            Swal.fire('Error', errMsg, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
         solicitud,
         loading,
@@ -87,5 +102,6 @@ export const useGestionSolicitudes = () => {
         handleUpdateSolicitud,
         handleRepairUrl,
         handleInputChange,
+        handleAnularDirecto,
     };
 };

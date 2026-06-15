@@ -124,18 +124,7 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                                     </span>
                                 </td>
                                 <td className="text-center">
-                                    <div className="position-relative d-flex justify-content-center align-items-center gap-2">
-                                        {solicitud?.estadoSolicitud === 'PENDIENTE' && (
-                                            <button
-                                                type="button"
-                                                className="btn btn-action-anular d-flex align-items-center gap-1 position-absolute start-0"
-                                                title="Anular Envío"
-                                                onClick={() => handleAnularEnvio(solicitud.id)}
-                                            >
-                                                <i className="bi bi-x-circle-fill" />
-                                                <span>Anular</span>
-                                            </button>
-                                        )}
+                                    <div className="d-flex justify-content-center align-items-center gap-2">
                                         <button
                                             className="btn btn-action"
                                             onClick={() => handleToggleDetail(solicitud.id)}
@@ -161,8 +150,20 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                             {openDetailId === solicitud.id && (
                                 <tr>
                                     <td colSpan="5" className="p-0 border-0">
-                                        <div className="px-4 pb-4">
+                                        <div className="p-4 bg-light border-bottom">
                                             <DetalleMiSolicitud solicitud={solicitud} />
+                                            {solicitud?.estadoSolicitud === 'PENDIENTE' && (
+                                                <div className="d-flex justify-content-end mt-4 pt-3 border-top">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger px-4 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2"
+                                                        onClick={() => handleAnularEnvio(solicitud.id)}
+                                                    >
+                                                        <i className="bi bi-x-circle-fill fs-5" />
+                                                        <span>Anular Solicitud</span>
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
