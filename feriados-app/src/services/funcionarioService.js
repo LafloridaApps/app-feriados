@@ -58,14 +58,14 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
 };
 
 export const getFuncionarioApi = async () => {
-    const url = "https://appd2.laflorida.cl/api/auth/me-funcionarios";
+    const url = "http://localhost:8080/api/auth/me-funcionarios";
 
     try {
         const response = await axios.get(url,  {
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include' // Asegura que se envíen las cookies de sesión
+            withCredentials: 'include' // Asegura que se envíen las cookies de sesión
             
         });
         return response.data;
