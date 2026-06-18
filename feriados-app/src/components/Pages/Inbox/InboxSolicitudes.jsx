@@ -4,6 +4,7 @@ import SolicitudItemMobile from './SolicitudItemMobile';
 import FiltrosSolicitudes from './FiltroSolicitudes';
 import { useInboxSolicitudes } from '../../../hooks/useInboxSolicitudes';
 import { formatFecha } from '../../../services/utils';
+import InformesTab from '../Inicio/InformesTab';
 import './Inbox.css';
 
 const InboxSolicitudes = () => {
@@ -175,6 +176,15 @@ const InboxSolicitudes = () => {
                                         )}
                                     </button>
                                 </li>
+                                <li className="nav-item ms-2">
+                                    <button
+                                        className={`nav-link ${activeTab === 'informes' ? 'active text-success fw-bold' : 'text-secondary'}`}
+                                        onClick={() => setActiveTab('informes')}
+                                        style={{ borderTopLeftRadius: '0.5rem', borderTopRightRadius: '0.5rem' }}
+                                    >
+                                        <i className="bi bi-bar-chart-fill me-2"></i> Informes
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                         <div className="card-body p-0">
@@ -313,6 +323,11 @@ const InboxSolicitudes = () => {
                                             ))}
                                         </div>
                                     )}
+                                </div>
+                            )}
+                            {activeTab === 'informes' && (
+                                <div className="p-4 bg-white" style={{ minHeight: '400px' }}>
+                                    <InformesTab />
                                 </div>
                             )}
                         </div>

@@ -13,7 +13,7 @@ export const UsuarioProvider = ({ children }) => {
 			try {
 				const response = await getFuncionarioApi();
 				if (response) {
-					setRut(response.id_user);
+					setRut(response.rut);
 				}
 			} catch (error) {
 				console.error("Error al obtener el rut del funcionario:", error);
