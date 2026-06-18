@@ -178,13 +178,13 @@ const Sidebar = () => {
                 </div>
 
                 <div className="sidebar-footer">
-                    <a className="footer-btn" href="https://appx.laflorida.cl/login/menu.php" title="Volver al Menú Principal">
+                    <a className="footer-btn" href="https://appd2.laflorida.cl/intranet/" title="Volver al Menú Principal">
                         <i className="bi bi-arrow-left-circle"></i>
                         <span>Menú Principal</span>
                     </a>
                     <button className="footer-btn" onClick={() => {
                         sessionStorage.clear();
-                        globalThis.location.href = 'https://appx.laflorida.cl/login/';
+                        globalThis.location.href = 'https://appd2.laflorida.cl/intranet/';
                     }} title="Cerrar Sesión">
                         <i className="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
