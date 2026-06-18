@@ -13,23 +13,14 @@ export const UsuarioProvider = ({ children }) => {
 			try {
 				const response = await getFuncionarioApi();
 				if (response) {
-					setRut(response.rut);
+					setRut(response.data.rut);
 				}
 			} catch (error) {
 				console.error("Error al obtener el rut del funcionario:", error);
 			}
 		}
 
-		if (import.meta.env.DEV) {
-			const urlParams = new URLSearchParams(globalThis.location.search);
-			const rutFromUrl = urlParams.get('rut');
-			if (rutFromUrl) {
-				setRut(rutFromUrl);
-				return; // Si encontramos el rut en la URL, no continuamos
-			}
-		}
-
-		getFuncionarioRut()
+		getFuncionarioRut();
 	}, []);
 
 	useEffect(() => {

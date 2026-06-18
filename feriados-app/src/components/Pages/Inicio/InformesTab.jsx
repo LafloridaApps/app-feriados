@@ -18,9 +18,7 @@ const InformesTab = () => {
             setLoading(true);
             setError(null);
             try {
-                // Soporte para variables de entorno típicas en React (CRA) o Vite
-                // eslint-disable-next-line no-undef
-                const API_URL = (typeof process === 'undefined' ? '' : process.env.REACT_APP_API_URL) || import.meta.env?.VITE_API_URL || 'http://localhost:8081';
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
                 
                 const response = await axios.get(`${API_URL}/solicitudes/dashboard/resumen-permisos`, {
                     params: {
@@ -111,8 +109,8 @@ const InformesTab = () => {
                 <div className="col-6 col-md-3">
                     <div className="card border-0 shadow-sm border-start border-4 border-danger h-100">
                         <div className="card-body">
-                            <p className="text-muted small mb-1">Rechazadas</p>
-                            <h3 className="fw-bold mb-0 text-danger">{informesData.kpis.rechazadas}</h3>
+                            <p className="text-muted small mb-1">Postergadas</p>
+                            <h3 className="fw-bold mb-0 text-danger">{informesData.kpis.postergadas}</h3>
                         </div>
                     </div>
                 </div>

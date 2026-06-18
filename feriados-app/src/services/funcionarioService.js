@@ -61,7 +61,7 @@ export const getFuncionarioApi = async () => {
     const url = "https://appd2.laflorida.cl/api/auth/me-funcionarios";
 
     try {
-        const response = await axios.post(url, { solicitud: "login", clave: "69" }, {
+        const response = await axios.get(url,  {
             headers: {
                 'Content-Type': 'application/json'
             },
