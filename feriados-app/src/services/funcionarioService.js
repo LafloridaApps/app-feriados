@@ -58,7 +58,7 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
 };
 
 export const getFuncionarioApi = async () => {
-    const url = "http://localhost:8080/api/auth/me-funcionarios";
+    const url = "https://appd2.laflorida.cl/api/auth/me-funcionarios";
 
     try {
         const response = await axios.get(url,  {
