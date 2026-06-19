@@ -18,7 +18,7 @@ const InformesTab = () => {
             setLoading(true);
             setError(null);
             try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+                const API_URL = import.meta.env.VITE_API_URL || 'https://appd2.laflorida.cl';
                 
                 const response = await axios.get(`${API_URL}/solicitudes/dashboard/resumen-permisos`, {
                     params: {
