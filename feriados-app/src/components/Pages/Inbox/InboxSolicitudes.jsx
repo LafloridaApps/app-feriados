@@ -4,8 +4,8 @@ import SolicitudItemMobile from './SolicitudItemMobile';
 import FiltrosSolicitudes from './FiltroSolicitudes';
 import { useInboxSolicitudes } from '../../../hooks/useInboxSolicitudes';
 import { formatFecha } from '../../../services/utils';
-import InformesTab from '../Inicio/InformesTab';
 import './Inbox.css';
+import InformesTab from './InformesTab';
 
 const InboxSolicitudes = () => {
     const [activeTab, setActiveTab] = useState('inbox');
