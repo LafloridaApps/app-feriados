@@ -189,13 +189,7 @@ const Sidebar = () => {
                         <i className="bi bi-arrow-left-circle"></i>
                         <span>Menú Principal</span>
                     </a>
-                    <button className="footer-btn" onClick={() => {
-                        sessionStorage.clear();
-                        globalThis.location.href = 'https://intranet.laflorida.cl/intranet/';
-                    }} title="Cerrar Sesión">
-                        <i className="bi bi-box-arrow-right"></i>
-                        <span>Cerrar Sesión</span>
-                    </button>
+                    
                 </div>
             </aside>
         </>
