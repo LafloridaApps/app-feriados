@@ -46,9 +46,7 @@ const InboxSolicitudes = () => {
     const traslapes = useTraslapes(sortedItems);
 
     useEffect(() => {
-        if (isMobile) {
-            setActiveTab('inbox');
-        }
+        setActiveTab(prev => isMobile ? 'inbox' : prev);
     }, [isMobile]);
 
     return (

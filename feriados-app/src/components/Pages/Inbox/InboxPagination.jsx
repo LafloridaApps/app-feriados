@@ -9,11 +9,11 @@ const InboxPagination = ({ currentPage, totalPages, totalElements, itemsToDispla
         const start = Math.max(1, currentPage - delta);
         const end = Math.min(totalPages - 2, currentPage + delta);
 
-        pages.push(0);
-        if (start > 1) pages.push('...');
-        for (let i = start; i <= end; i++) pages.push(i);
-        if (end < totalPages - 2) pages.push('...');
-        if (totalPages > 1) pages.push(totalPages - 1);
+        pages.push({ type: 'page', value: 0 });
+        if (start > 1) pages.push({ type: 'ellipsis', id: 'start' });
+        for (let i = start; i <= end; i++) pages.push({ type: 'page', value: i });
+        if (end < totalPages - 2) pages.push({ type: 'ellipsis', id: 'end' });
+        if (totalPages > 1) pages.push({ type: 'page', value: totalPages - 1 });
 
         return pages;
     };
@@ -37,15 +37,15 @@ const InboxPagination = ({ currentPage, totalPages, totalElements, itemsToDispla
                             <span className="page-link">{currentPage + 1} / {totalPages}</span>
                         </li>
                     ) : (
-                        pageNumbers().map((page, idx) =>
-                            page === '...' ? (
-                                <li key={`ellipsis-${idx}`} className="page-item disabled">
+                        pageNumbers().map((page) =>
+                            page.type === 'ellipsis' ? (
+                                <li key={`ellipsis-${page.id}`} className="page-item disabled">
                                     <span className="page-link">...</span>
                                 </li>
                             ) : (
-                                <li key={page} className={`page-item ${page === currentPage ? 'active' : ''}`}>
-                                    <button className="page-link" onClick={() => handlePageChange(page)}>
-                                        {page + 1}
+                                <li key={page.value} className={`page-item ${page.value === currentPage ? 'active' : ''}`}>
+                                    <button className="page-link" onClick={() => handlePageChange(page.value)}>
+                                        {page.value + 1}
                                     </button>
                                 </li>
                             )
