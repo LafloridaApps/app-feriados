@@ -56,6 +56,7 @@ const Sidebar = () => {
     const { esJefe } = useEsJefe(codDepto, rut);
     
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [usuarioPermisos, setUsuarioPermisos] = useState([]);
     const [openSubmenus, setOpenSubmenus] = useState({
         infoAusencias: false,
@@ -63,6 +64,12 @@ const Sidebar = () => {
         parametros: false,
         administracion: false
     });
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const getPermisos = async () => {
@@ -109,7 +116,7 @@ const Sidebar = () => {
                     <ul className="nav-list">
                         <NavItem to="/home" icon="bi-house" label="Inicio" onClick={closeSidebar} />
                         
-                        {usuarioPermisos.some(p => p.nombre === 'DASHBOARD') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'DASHBOARD') && (
                             <NavItem to="/calendario" icon="bi-calendar3" label="Calendario de Ausencias" onClick={closeSidebar} />
                         )}
 
@@ -132,7 +139,7 @@ const Sidebar = () => {
                             <NavItem to="/inbox" icon="bi-inbox" label="Bandeja de Solicitudes" badge={cantidadNoLeidas} onClick={closeSidebar} />
                         )}
 
-                        {usuarioPermisos.some(p => p.nombre === 'RRHH') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'RRHH') && (
                             <SubmenuItem 
                                 label="RRHH" 
                                 icon="bi-people" 
@@ -147,7 +154,7 @@ const Sidebar = () => {
                             </SubmenuItem>
                         )}
 
-                        {usuarioPermisos.some(p => p.nombre === 'PARAMETROS') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'PARAMETROS') && (
                             <SubmenuItem 
                                 label="Parámetros" 
                                 icon="bi-gear" 
@@ -161,7 +168,7 @@ const Sidebar = () => {
                             </SubmenuItem>
                         )}
 
-                        {usuarioPermisos.some(p => p.nombre === 'ADMINISTRACION') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'ADMINISTRACION') && (
                             <SubmenuItem 
                                 label="Administración" 
                                 icon="bi-person-rolodex" 

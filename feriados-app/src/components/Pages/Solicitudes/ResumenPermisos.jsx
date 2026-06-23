@@ -10,47 +10,18 @@ const ResumenPermisos = ({ resumenAdministrativo, resumenFeriados }) => {
 
     if (esMovil) {
         return (
-            <div className="resumen-mobile-cards">
-                <div className="resumen-card feriados">
-                    <div className="resumen-card-header">
-                        <i className="bi bi-sun-fill"></i>
-                        <span>Feriados Legales</span>
-                    </div>
-                    <div className="resumen-card-grid">
-                        <div className="resumen-card-stat">
-                            <span className="label">Total</span>
-                            <span className="value">{totalFer ?? "-"}</span>
-                        </div>
-                        <div className="resumen-card-stat">
-                            <span className="label">Usados</span>
-                            <span className="value text-danger">{usadosFer ?? "-"}</span>
-                        </div>
-                        <div className="resumen-card-stat highlight">
-                            <span className="label">Saldo</span>
-                            <span className="value text-primary">{saldoFer ?? "-"}</span>
-                        </div>
-                    </div>
+            <div className="resumen-mobile-compact">
+                <div className="rmc-row">
+                    <span className="rmc-label"><i className="bi bi-sun-fill text-warning me-1"></i>Feriados Legales</span>
+                    <span className="rmc-stat"><span className="rmc-sub">Total</span> {totalFer ?? "-"}</span>
+                    <span className="rmc-stat"><span className="rmc-sub">Usados</span> <span className="text-danger">{usadosFer ?? "-"}</span></span>
+                    <span className="rmc-stat rmc-saldo"><span className="rmc-sub">Saldo</span> <span className="text-primary fw-bold">{saldoFer ?? "-"}</span></span>
                 </div>
-
-                <div className="resumen-card administrativos">
-                    <div className="resumen-card-header">
-                        <i className="bi bi-briefcase-fill"></i>
-                        <span>Días Administrativos</span>
-                    </div>
-                    <div className="resumen-card-grid">
-                        <div className="resumen-card-stat">
-                            <span className="label">Total</span>
-                            <span className="value">{maxAdm ?? "-"}</span>
-                        </div>
-                        <div className="resumen-card-stat">
-                            <span className="label">Usados</span>
-                            <span className="value text-danger">{usadosAdm ?? "-"}</span>
-                        </div>
-                        <div className="resumen-card-stat highlight">
-                            <span className="label">Saldo</span>
-                            <span className="value text-primary">{saldoAdm ?? "-"}</span>
-                        </div>
-                    </div>
+                <div className="rmc-row">
+                    <span className="rmc-label"><i className="bi bi-briefcase-fill text-info me-1"></i>Días Administrativos</span>
+                    <span className="rmc-stat"><span className="rmc-sub">Total</span> {maxAdm ?? "-"}</span>
+                    <span className="rmc-stat"><span className="rmc-sub">Usados</span> <span className="text-danger">{usadosAdm ?? "-"}</span></span>
+                    <span className="rmc-stat rmc-saldo"><span className="rmc-sub">Saldo</span> <span className="text-primary fw-bold">{saldoAdm ?? "-"}</span></span>
                 </div>
             </div>
         );
