@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDecretoDocument } from '../../../hooks/useDecretoDocument';
+import { exportToExcel } from '../../../services/utils';
 
 const ConsultaDecretosResults = ({ data }) => {
   const { handleViewDocument } = useDecretoDocument();
@@ -11,6 +12,17 @@ const ConsultaDecretosResults = ({ data }) => {
       </div>
     );
   }
+
+  const handleExportExcel = (decreto) => {
+    const flatData = (decreto.solicitudes || []).map((s) => ({
+      idSolicitud: s.idSolicitud,
+      rut: s.rutFuncionario,
+      funcionario: s.nombreFuncionario,
+      tipoSolicitud: s.tipoSolicitud,
+      nroDecreto: decreto.idDecreto,
+    }));
+    exportToExcel(flatData, `decreto_${decreto.idDecreto}`);
+  };
 
   const rows = data.flatMap((decreto) =>
     Array.isArray(decreto.solicitudes)
@@ -45,9 +57,16 @@ const ConsultaDecretosResults = ({ data }) => {
                 <button
                   className="btn btn-outline-secondary btn-sm rounded-8"
                   onClick={() => handleViewDocument(decreto.idDecreto, true)}
-                  title="Descargar Decreto"
+                  title="Descargar Word"
                 >
                   <i className="bi bi-download"></i>
+                </button>
+                <button
+                  className="btn btn-outline-success btn-sm rounded-8"
+                  onClick={() => handleExportExcel(decreto)}
+                  title="Descargar Excel"
+                >
+                  <i className="bi bi-file-earmark-excel-fill"></i>
                 </button>
               </div>
             )}

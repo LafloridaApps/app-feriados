@@ -1,24 +1,28 @@
 import PropTypes from 'prop-types';
 
-const InboxHeader = ({ isSubrogante, noLeidas, setNoLeidas, activeTab, setActiveTab, traslapesCount, isMobile }) => {
+const InboxHeader = ({ isSubrogante, noLeidas, setNoLeidas, activeTab, setActiveTab, traslapesCount, isMobile, modoBusqueda }) => {
     return (
         <div className="card-header bg-white pt-3 pb-0 border-bottom">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="mb-0 font-weight-bold text-primary">
-                    Bandeja de Solicitudes {isSubrogante && <span className='badge bg-info ms-2'>Subrogante</span>}
+                    {modoBusqueda ? 'Búsqueda de Solicitudes' : 'Bandeja de Solicitudes'}
+                    {isSubrogante && <span className='badge bg-info ms-2'>Subrogante</span>}
+                    {modoBusqueda && <span className='badge bg-warning text-dark ms-2'>Búsqueda</span>}
                 </h5>
-                <div className="form-check">
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="noLeidas"
-                        checked={noLeidas}
-                        onChange={(e) => setNoLeidas(e.target.checked)}
-                    />
-                    <label className="form-check-label" htmlFor="noLeidas">
-                        No Leídas
-                    </label>
-                </div>
+                {!modoBusqueda && (
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="noLeidas"
+                            checked={noLeidas}
+                            onChange={(e) => setNoLeidas(e.target.checked)}
+                        />
+                        <label className="form-check-label" htmlFor="noLeidas">
+                            No Leídas
+                        </label>
+                    </div>
+                )}
             </div>
             <ul className="nav nav-tabs border-bottom-0">
                 <li className="nav-item">
@@ -68,6 +72,7 @@ InboxHeader.propTypes = {
     setActiveTab: PropTypes.func.isRequired,
     traslapesCount: PropTypes.number.isRequired,
     isMobile: PropTypes.bool,
+    modoBusqueda: PropTypes.bool,
 };
 
 export default InboxHeader;

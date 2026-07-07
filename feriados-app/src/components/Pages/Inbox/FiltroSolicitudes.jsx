@@ -3,20 +3,18 @@ import { useFiltroSolicitudes } from '../../../hooks/useFiltroSolicitudes';
 
 const FiltrosSolicitudes = ({ onFiltrar }) => {
     const {
-        anio,
         fechaInicio,
         fechaFin,
         nombreSolicitante,
         rutSolicitante,
         isOpen,
-        handleAnioChange,
+        handleRutChange,
         handleFiltrar,
         handleLimpiarFiltros,
         toggleCollapse,
         setFechaInicio,
         setFechaFin,
         setNombreSolicitante,
-        setRutSolicitante
     } = useFiltroSolicitudes(onFiltrar);
 
     return (
@@ -31,17 +29,6 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
             </div>
             <div className={`card-body collapse ${isOpen ? 'show' : ''}`}>
                 <div className="row g-3">
-                    <div className="col-md-3">
-                        <label htmlFor="anio" className="form-label"><i className="bi bi-calendar-date me-1"></i> Año</label>
-                        <input
-                            type="text" // Cambiado a text para controlar el input
-                            className="form-control"
-                            id="anio" value={anio}
-                            onChange={handleAnioChange}
-                            placeholder="Ej: 2024"
-                            maxLength="4"
-                        />
-                    </div>
                     <div className="col-md-3">
                         <label htmlFor="fechaInicio" className="form-label"><i className="bi bi-calendar-range me-1"></i> Fecha Inicio</label>
                         <input
@@ -79,7 +66,8 @@ const FiltrosSolicitudes = ({ onFiltrar }) => {
                             className="form-control"
                             id="rutSolicitante"
                             value={rutSolicitante}
-                            onChange={(e) => setRutSolicitante(e.target.value)}
+                            onChange={handleRutChange}
+                            placeholder="Ej: 15721809-3"
                         />
                     </div>
                 </div>

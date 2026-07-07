@@ -24,18 +24,20 @@ const InboxSolicitudes = () => {
         handleActualizarSolicitud,
         handleFiltrarSolicitudes,
         handlePageChange,
-        requestSort,
-        sortConfig,
         sortedItems,
         handlerEntrada,
         handlerVisar,
         handlerAprobar,
         noLeidas,
-        setNoLeidas
+        setNoLeidas,
+        anioFiltro,
+        setAnioFiltro,
+        aniosDisponibles,
+        modoBusqueda,
     } = useInboxSolicitudes();
 
     const itemsToDisplay = useMemo(() => {
-        if (!noLeidas) return sortedItems;
+        if (modoBusqueda || !noLeidas) return sortedItems;
         return sortedItems.filter(solicitud => {
             const derivacionActiva = solicitud.derivaciones?.[0];
             const estado = (solicitud.estadoSolicitud || '').trim().toUpperCase();
@@ -45,6 +47,11 @@ const InboxSolicitudes = () => {
 
     const traslapes = useTraslapes(sortedItems);
 
+    const handleAnioChange = (e) => {
+        setAnioFiltro(e.target.value);
+        handlePageChange(0);
+    };
+
     useEffect(() => {
         setActiveTab(prev => isMobile ? 'inbox' : prev);
     }, [isMobile]);
@@ -52,6 +59,26 @@ const InboxSolicitudes = () => {
     return (
         <div className="container-fluid mt-4">
             <FiltrosSolicitudes onFiltrar={handleFiltrarSolicitudes} />
+            {!modoBusqueda && (
+                <div className="d-flex justify-content-end mb-2">
+                    <div className="d-flex align-items-center gap-2">
+                        <label htmlFor="anioSelect" className="form-label mb-0 text-muted small fw-semibold">
+                            <i className="bi bi-calendar-date me-1"></i>Año
+                        </label>
+                        <select
+                            id="anioSelect"
+                            className="form-select form-select-sm"
+                            style={{ width: '100px' }}
+                            value={anioFiltro}
+                            onChange={handleAnioChange}
+                        >
+                            {aniosDisponibles.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
             <div className="row">
                 <div className="col-md-12">
                     <div className="card shadow-sm">
@@ -63,14 +90,13 @@ const InboxSolicitudes = () => {
                             setActiveTab={setActiveTab}
                             traslapesCount={traslapes.length}
                             isMobile={isMobile}
+                            modoBusqueda={modoBusqueda}
                         />
                         <div className="card-body p-0">
                             {(activeTab === 'inbox' || isMobile) && (
                                 <>
                                     <InboxTable
                                         itemsToDisplay={itemsToDisplay}
-                                        sortConfig={sortConfig}
-                                        requestSort={requestSort}
                                         rutFuncionario={rutFuncionario}
                                         handleActualizarSolicitud={handleActualizarSolicitud}
                                         handlerEntrada={handlerEntrada}
