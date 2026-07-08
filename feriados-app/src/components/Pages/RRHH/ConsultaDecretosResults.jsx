@@ -1,9 +1,31 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDecretoDocument } from '../../../hooks/useDecretoDocument';
-import { exportToExcel } from '../../../services/utils';
+import { getExcelDecreto } from '../../../services/docService';
 
 const ConsultaDecretosResults = ({ data }) => {
   const { handleViewDocument } = useDecretoDocument();
+  const [expandedDecretos, setExpandedDecretos] = useState({});
+
+  const toggleDetalle = (idDecreto) => {
+    setExpandedDecretos(prev => ({ ...prev, [idDecreto]: !prev[idDecreto] }));
+  };
+
+  const handleDownloadExcel = async (idDecreto) => {
+    try {
+      const response = await getExcelDecreto(idDecreto);
+      const url = globalThis.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `solicitudes-${idDecreto}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      globalThis.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al descargar Excel:', error);
+    }
+  };
 
   if (!data || data.length === 0) {
     return (
@@ -13,85 +35,104 @@ const ConsultaDecretosResults = ({ data }) => {
     );
   }
 
-  const handleExportExcel = (decreto) => {
-    const flatData = (decreto.solicitudes || []).map((s) => ({
-      idSolicitud: s.idSolicitud,
-      rut: s.rutFuncionario,
-      funcionario: s.nombreFuncionario,
-      tipoSolicitud: s.tipoSolicitud,
-      nroDecreto: decreto.idDecreto,
-    }));
-    exportToExcel(flatData, `decreto_${decreto.idDecreto}`);
-  };
+  return (
+    <div className="d-flex flex-column gap-4 mt-2">
+      {data.map((decreto) => {
+        const isExpanded = expandedDecretos[decreto.idDecreto] || false;
+        const solicitudes = Array.isArray(decreto.solicitudes) ? decreto.solicitudes : [];
 
-  const rows = data.flatMap((decreto) =>
-    Array.isArray(decreto.solicitudes)
-      ? decreto.solicitudes.map((solicitud) => (
-        <tr key={`${decreto.idDecreto}-${solicitud.idSolicitud}`}>
-          <td className="fw-bold text-primary">#{solicitud.idSolicitud}</td>
-          <td className="text-nowrap">{solicitud.rutFuncionario}</td>
-          <td className="fw-500">{solicitud.nombreFuncionario}</td>
-          <td>
-            <span className="badge bg-light text-dark border fw-normal">
-              {solicitud.tipoSolicitud}
-            </span>
-          </td>
-          <td className="fw-bold">{decreto.idDecreto || '---'}</td>
-          <td className="text-center">
-            {solicitud.urlPdf && (
-              <a href={solicitud.urlPdf} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-light border text-danger shadow-sm" title="Ver PDF">
-                <i className="bi bi-file-earmark-pdf-fill"></i>
-              </a>
-            )}
-          </td>
-          <td className="text-center">
-            {decreto.idDecreto && (
-              <div className="d-flex justify-content-center gap-2">
+        return (
+          <div key={decreto.idDecreto} className="card border-0 shadow-sm rounded-16 overflow-hidden">
+            <div className="card-header bg-white py-3 px-4 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2">
+              <div className="d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center gap-2 text-muted small">
+                  <i className="bi bi-calendar3"></i>
+                  <span>{decreto.fechaDecreto || '---'}</span>
+                </div>
+                <h6 className="mb-0 fw-bold text-dark">
+                  <i className="bi bi-file-earmark-text me-1 text-primary"></i>
+                  Decreto #{decreto.idDecreto}
+                </h6>
+              </div>
+              <div className="d-flex gap-2">
                 <button
                   className="btn btn-outline-primary btn-sm rounded-8"
-                  onClick={() => handleViewDocument(decreto.idDecreto, false)}
-                  title="Ver Documento"
-                >
-                  <i className="bi bi-eye-fill"></i>
-                </button>
-                <button
-                  className="btn btn-outline-secondary btn-sm rounded-8"
                   onClick={() => handleViewDocument(decreto.idDecreto, true)}
                   title="Descargar Word"
                 >
-                  <i className="bi bi-download"></i>
+                  <i className="bi bi-download me-1"></i>{' '}Word
                 </button>
                 <button
                   className="btn btn-outline-success btn-sm rounded-8"
-                  onClick={() => handleExportExcel(decreto)}
+                  onClick={() => handleDownloadExcel(decreto.idDecreto)}
                   title="Descargar Excel"
                 >
-                  <i className="bi bi-file-earmark-excel-fill"></i>
+                  <i className="bi bi-file-earmark-excel me-1"></i>{' '}Excel
+                </button>
+                <button
+                  className={`btn btn-sm rounded-8 ${isExpanded ? 'btn-primary' : 'btn-outline-secondary'}`}
+                  onClick={() => toggleDetalle(decreto.idDecreto)}
+                  title={isExpanded ? 'Ocultar detalle' : 'Ver detalle'}
+                >
+                  <i className={`bi ${isExpanded ? 'bi-eye-slash' : 'bi-eye'} me-1`}></i>{' '}
+                  Detalle
                 </button>
               </div>
-            )}
-          </td>
-        </tr>
-      ))
-      : []
-  );
+            </div>
 
-  return (
-    <div className="table-responsive mt-2">
-      <table className="premium-table">
-        <thead>
-          <tr>
-            <th>ID Solicitud</th>
-            <th>RUT</th>
-            <th>Funcionario</th>
-            <th>Tipo Solicitud</th>
-            <th>Nro. Decreto</th>
-            <th className="text-center">Doc</th>
-            <th className="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
+            {isExpanded && (
+              <div className="card-body p-0">
+                <div className="table-responsive">
+                  <table className="premium-table mb-0">
+                    <thead>
+                      <tr>
+                        <th>ID Solicitud</th>
+                        <th>RUT</th>
+                        <th>Funcionario</th>
+                        <th>Tipo Solicitud</th>
+                        <th className="text-center">PDF</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {solicitudes.length > 0 ? solicitudes.map((solicitud) => (
+                        <tr key={`${decreto.idDecreto}-${solicitud.idSolicitud}`}>
+                          <td className="fw-bold text-primary">#{solicitud.idSolicitud}</td>
+                          <td className="text-nowrap">{solicitud.rutFuncionario}</td>
+                          <td className="fw-500">{solicitud.nombreFuncionario}</td>
+                          <td>
+                            <span className="badge bg-light text-dark border fw-normal">
+                              {solicitud.tipoSolicitud}
+                            </span>
+                          </td>
+                          <td className="text-center">
+                            {solicitud.urlPdf && (
+                              <a
+                                href={solicitud.urlPdf}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-sm btn-light border text-danger shadow-sm"
+                                title="Ver PDF"
+                              >
+                                <i className="bi bi-file-earmark-pdf-fill"></i>
+                              </a>
+                            )}
+                          </td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan="5" className="text-center text-muted py-3">
+                            No hay solicitudes asociadas a este decreto.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

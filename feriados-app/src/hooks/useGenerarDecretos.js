@@ -2,11 +2,10 @@ import { useState, useContext, useCallback, useMemo } from 'react';
 import { useRrhhSelection } from './useRrhhSelection';
 import { getAprobacionesBetweenDates } from '../services/aprobacionListService';
 import { decretar } from '../services/decretarService';
-import { getDocDecreto } from '../services/docService.js';
+import { getDocDecreto, getExcelDecreto } from '../services/docService.js';
 import { listTemplates } from '../services/templateService';
 import { useAlertaSweetAlert } from './useAlertaSweetAlert';
 import { UsuarioContext } from '../context/UsuarioContext';
-import { exportToExcel } from '../services/utils';
 
 const ITEMS_PER_PAGE = 10;
 const BACKEND_PAGE_SIZE = 20;
@@ -17,10 +16,6 @@ export const useGenerarDecretos = () => {
     const [allAprobaciones, setAllAprobaciones] = useState([]);
     const [loading, setLoading] = useState(false);
     const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
-
-    // State for backend pagination
-    const [setBackendPage] = useState(0);
-    const [setTotalBackendPages] = useState(0);
 
     // State for component pagination 
     const [componentPage, setComponentPage] = useState(1);
@@ -125,8 +120,6 @@ export const useGenerarDecretos = () => {
         setAprobacionesSearchPerformed(false);
         // Reset pagination and filter state
         setComponentPage(1);
-        setBackendPage(0);
-        setTotalBackendPages(0);
         setSelectedTipoContrato([]);
         setTipoContratoOptions([]);
         setSelectedTipoSolicitud('');
@@ -154,22 +147,12 @@ export const useGenerarDecretos = () => {
         }
     };
 
-    const procesarExcel = async (response) => {
-        try {
-            await exportToExcel(response, 'decretos_generados');
-            return true;
-        } catch (excelError) {
-            mostrarAlertaError('Error al exportar a Excel.', excelError.message || 'Ocurrió un error al exportar el archivo Excel.');
-            console.error('Error exporting to Excel:', excelError.response ? excelError.response.data : excelError);
-            return false;
-        }
-    };
-
     const procesarWord = async (nroDecreto) => {
         try {
             if (!nroDecreto) {
-                throw new Error("No se encontró el 'nroDecreto' en la respuesta para generar el documento Word.");
+                throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
             }
+            console.log('[procesarWord] Descargando Word para nroDecreto:', nroDecreto);
             const wordResponse = await getDocDecreto(nroDecreto);
             const url = globalThis.URL.createObjectURL(wordResponse.data);
             const link = document.createElement('a');
@@ -179,10 +162,35 @@ export const useGenerarDecretos = () => {
             link.click();
             link.remove();
             globalThis.URL.revokeObjectURL(url);
+            console.log('[procesarWord] Word descargado exitosamente');
             return true;
         } catch (wordError) {
+            console.error('[procesarWord] Error:', wordError.response?.data || wordError.message);
             mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
-            console.error('Error downloading Word document:', wordError.response ? wordError.response.data : wordError);
+            return false;
+        }
+    };
+
+    const procesarExcelBackend = async (nroDecreto) => {
+        try {
+            if (!nroDecreto) {
+                throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
+            }
+            console.log('[procesarExcelBackend] Descargando Excel para nroDecreto:', nroDecreto);
+            const excelResponse = await getExcelDecreto(nroDecreto);
+            const url = globalThis.URL.createObjectURL(excelResponse.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `solicitudes-${nroDecreto}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            globalThis.URL.revokeObjectURL(url);
+            console.log('[procesarExcelBackend] Excel descargado exitosamente');
+            return true;
+        } catch (excelError) {
+            console.error('[procesarExcelBackend] Error:', excelError.response?.data || excelError.message);
+            mostrarAlertaError('Error al descargar el Excel.', excelError.message || 'Ocurrió un error inesperado.');
             return false;
         }
     };
@@ -211,34 +219,48 @@ export const useGenerarDecretos = () => {
                 return;
             }
 
-            const decretos = {
+            const payload = {
                 ids: selectedItems,
                 rut: funcionario.rut,
                 template: templateObj.docFile
             };
 
-            const response = await decretar(decretos);
+            console.log('[handleGenerarDecreto] Enviando payload:', JSON.stringify(payload));
+            const response = await decretar(payload);
 
-            if (response && response.length > 0) {
-                console.log('Decretos generated response:', response);
+            const solicitudes = response?.solicitudes;
+            const nroDecreto = solicitudes?.[0]?.nroDecreto;
 
-                const excelSuccess = await procesarExcel(response);
-                const wordSuccess = await procesarWord(response[0]?.nroDecreto);
+            if (solicitudes && solicitudes.length > 0 && nroDecreto) {
+                console.log('[handleGenerarDecreto] Decreto generado exitosamente. nroDecreto:', nroDecreto);
+                console.log('[handleGenerarDecreto] rutaWord:', response.rutaWord);
+                console.log('[handleGenerarDecreto] rutaExcel:', response.rutaExcel);
 
-                if (excelSuccess && wordSuccess) {
-                    mostrarAlertaExito('Generación Exitosa', 'Decretos generados. Archivos Excel y Word descargados.');
-                } else if (excelSuccess) {
-                    mostrarAlertaExito('Generación Parcial', 'Decretos generados y exportados a Excel, pero falló la descarga del Word.');
+                const wordSuccess = await procesarWord(nroDecreto);
+                const excelSuccess = await procesarExcelBackend(nroDecreto);
+
+                if (wordSuccess && excelSuccess) {
+                    mostrarAlertaExito('Generación Exitosa', 'Decretos generados. Archivos Word y Excel descargados.');
                 } else if (wordSuccess) {
-                    mostrarAlertaExito('Generación Parcial', 'El documento Word fue descargado, pero falló la exportación a Excel.');
+                    mostrarAlertaExito('Generación Parcial', 'Word descargado, pero falló la descarga del Excel.');
+                } else if (excelSuccess) {
+                    mostrarAlertaExito('Generación Parcial', 'Excel descargado, pero falló la descarga del Word.');
+                } else {
+                    mostrarAlertaError('Error al descargar los archivos. Los decretos se generaron en el servidor.');
                 }
-
             } else {
-                mostrarAlertaError('No se recibieron datos para generar los archivos o la generación no fue exitosa.');
+                console.error('[handleGenerarDecreto] Respuesta inesperada:', JSON.stringify(response));
+                mostrarAlertaError('No se recibieron datos válidos del servidor.');
             }
         } catch (error) {
-            mostrarAlertaError('Error al generar el decreto.', error.message || 'Ocurrió un error inesperado.');
-            console.error('Error al generar el decreto:', error.response ? error.response.data : error);
+            const errorData = error.response?.data;
+            console.error('[handleGenerarDecreto] Error completo:', {
+                status: error.response?.status,
+                data: errorData,
+                message: error.message
+            });
+            const mensaje = errorData?.mensaje || error.message || 'Error desconocido';
+            mostrarAlertaError('Error al generar el decreto', mensaje);
         } finally {
             setLoading(false);
         }
