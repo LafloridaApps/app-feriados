@@ -23,8 +23,8 @@ export const UsuarioProvider = ({ children }) => {
 		const getFuncionarioRut = async () => {
 			try {
 				const response = await getFuncionarioApi();
-				if (response?.rut) {
-					setRut(response.rut);
+				if (response.data?.rut) {
+					setRut(response.data.rut);
 				}
 			} catch (error) {
 				console.error("Error al obtener el rut del funcionario:", error);
