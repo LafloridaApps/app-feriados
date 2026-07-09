@@ -42,7 +42,7 @@ const ConsultaDecretosResults = ({ data }) => {
       <div className="bg-white p-4 rounded-16 shadow-sm border-start border-4 border-primary d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div>
           <h5 className="mb-1 fw-bold text-dark d-flex align-items-center gap-2">
-            <i className="bi bi-search text-primary"></i>
+            <i className="bi bi-search text-primary"></i>{' '}
             Resultados de la Búsqueda
           </h5>
           <p className="mb-0 text-muted small">
@@ -66,7 +66,7 @@ const ConsultaDecretosResults = ({ data }) => {
                 </div>
                 <div className="vr text-muted" style={{ opacity: 0.3 }}></div>
                 <h6 className="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
-                  <i className="bi bi-file-earmark-text text-primary"></i>
+                  <i className="bi bi-file-earmark-text text-primary"></i>{' '}
                   Decreto #{decreto.idDecreto}
                 </h6>
                 <span className="badge rounded-pill bg-light text-primary border border-primary fs-7 px-2 py-1">
@@ -142,7 +142,7 @@ const ConsultaDecretosResults = ({ data }) => {
                       )) : (
                         <tr>
                           <td colSpan="5" className="text-center text-muted py-4">
-                            <i className="bi bi-inbox d-block mb-2 fs-4"></i>
+                            <i className="bi bi-inbox d-block mb-2 fs-4"></i>{' '}
                             No hay solicitudes asociadas a este decreto.
                           </td>
                         </tr>

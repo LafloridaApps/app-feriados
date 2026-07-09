@@ -56,7 +56,7 @@ const GeneradorDecretos = (props) => {
                 <div className="accordion-item">
                     <h2 className="accordion-header" id="headingFiltros">
                         <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros" aria-expanded="true" aria-controls="collapseFiltros">
-                            <span className="step-indicator">1</span> Búsqueda y Filtros de Datos
+                            <span className="step-indicator"></span> <strong>Búsqueda y Filtros de Datos</strong>
                         </button>
                     </h2>
                     <div id="collapseFiltros" className="accordion-collapse collapse show" aria-labelledby="headingFiltros" data-bs-parent="#accordionGeneradorDecretos">
@@ -92,7 +92,7 @@ const GeneradorDecretos = (props) => {
                             aria-controls="collapseAcciones"
                             disabled={currentAprobaciones.length === 0}
                         >
-                            <span className="step-indicator">2</span> Acciones Masivas
+                            <span className="step-indicator"></span>  <strong>Acciones Masivas</strong> 
                         </button>
                     </h2>
                     <div
