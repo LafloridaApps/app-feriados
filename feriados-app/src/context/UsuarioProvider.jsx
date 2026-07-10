@@ -6,17 +6,17 @@ import { UsuarioContext } from "./UsuarioContext";
 export const UsuarioProvider = ({ children }) => {
 	const [funcionario, setFuncionario] = useState(null);
 	const [rut, setRut] = useState(null);
- 
-	useEffect(() => {
-		// Check if there is a rut in the URL query parameters
-		const urlParams = new URLSearchParams(globalThis.location.search);
-		const rutFromUrl = urlParams.get('rut');
-
-		if (rutFromUrl) {
-			setRut(rutFromUrl);
-		}
-	}, []);
-
+	/**
+	   useEffect(() => {
+		   // Check if there is a rut in the URL query parameters
+		   const urlParams = new URLSearchParams(globalThis.location.search);
+		   const rutFromUrl = urlParams.get('rut');
+   
+		   if (rutFromUrl) {
+			   setRut(rutFromUrl);
+		   }
+	   }, []);
+	*/
 
 
 	useEffect(() => {
