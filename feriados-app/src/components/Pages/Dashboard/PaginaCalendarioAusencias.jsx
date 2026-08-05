@@ -54,6 +54,26 @@ const procesarAusencias = (absenceList, processedFeriados) => {
     return ausenciasProcesadas;
 };
 
+const convertirLicenciaAEmpleado = (licencia) => ({
+    nombreGrupo: licencia.nombreGrupo,
+    nombre: licencia.nombre,
+    rut: String(licencia.rut),
+    motivo: 'LICENCIA',
+    idSolicitud: null,
+    fechaAprobacion: null,
+    periodoAusencia: {
+        fechaInicio: licencia.fechaInicio,
+        fechaFin: licencia.fechaTermino
+    }
+});
+
+const normalizarAusencias = (data) => {
+    if (Array.isArray(data)) return data;
+    const ausencias = Array.isArray(data?.ausencias) ? data.ausencias : [];
+    const licencias = Array.isArray(data?.licencias) ? data.licencias : [];
+    return [...ausencias, ...licencias.map(convertirLicenciaAEmpleado)];
+};
+
 const PaginaCalendarioAusencias = () => {
     const { width } = useTamanoVentana();
     const location = useLocation();
@@ -84,22 +104,24 @@ const PaginaCalendarioAusencias = () => {
                     const fechaParaElBackend = `${anio}-${mes}-${dia}`;
 
                     // Cargar ausencias y feriados en paralelo
-                    const [absenceList, feriadosList] = await Promise.all([
+                    const [dashboardData, feriadosList] = await Promise.all([
                         getDashboardSummary(funcionario.codDepto, fechaParaElBackend),
                         getTablaFeriados()
                     ]);
 
+                    console.log('Datos del backend para el calendario de ausencias:', dashboardData);
 
                     // Procesar feriados en un Set para búsqueda eficiente
                     const processedFeriados = new Set(feriadosList.map(f => f.fecha.split('T')[0]));
                     setFeriadosSet(processedFeriados);
 
-                    if (!Array.isArray(absenceList)) {
+                    if (!Array.isArray(dashboardData) && !Array.isArray(dashboardData?.ausencias) && !Array.isArray(dashboardData?.licencias)) {
                         setError("Los datos de ausencia recibidos no tienen el formato esperado.");
                         setAusencias({});
                         return;
                     }
 
+                    const absenceList = normalizarAusencias(dashboardData);
                     const ausenciasProcesadas = procesarAusencias(absenceList, processedFeriados);
                     setAusencias(ausenciasProcesadas);
                 } catch (err) {
@@ -269,6 +291,19 @@ const PaginaCalendarioAusencias = () => {
                 <div className="alert alert-danger border-0 shadow-sm rounded-4" role="alert">
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {error}
+                </div>
+            )}
+
+            {!loading && !error && (
+                <div className="dashboard-legend d-flex flex-wrap align-items-center gap-4 mb-3">
+                    <span className="legend-item">
+                        <span className="legend-dot legend-dot-feriado"></span>
+                        Feriados
+                    </span>
+                    <span className="legend-item">
+                        <span className="legend-dot legend-dot-licencia"></span>
+                        Licencias
+                    </span>
                 </div>
             )}
 

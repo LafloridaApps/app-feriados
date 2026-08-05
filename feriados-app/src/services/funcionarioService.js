@@ -58,7 +58,7 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
 };
 
 export const getFuncionarioApi = async () => {
-    const url = "https://intranet.laflorida.cl/api/auth/me-funcionarios";
+    const url = `${BASE_URL}/api/auth/me-funcionarios`;
 
     try {
         const response = await axios.get(url,  {

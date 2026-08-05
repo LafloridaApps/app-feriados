@@ -43,7 +43,7 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu, permisos }) => {
                     <Link className={obtenerClaseEnlace('/home')} to="/home" onClick={handleLinkClick}><i className="bi bi-house me-2"></i>Inicio</Link>
                 </li>
                 {
-                    permisos.some(p => p.nombre == 'DASHBOARD') && (
+                    permisos.some(p => p.nombre == 'CALENDARIO AUSENCIAS') && (
                         <li className="nav-item">
                             <Link className={obtenerClaseEnlace('/calendario')} to="/calendario" onClick={handleLinkClick}><i className="bi bi-calendar3 me-2"></i>Calendario de Ausencias</Link>
                         </li>

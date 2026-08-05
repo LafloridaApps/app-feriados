@@ -107,6 +107,18 @@
     margin-bottom: 0.5rem;
 }
 
+.licencias-count {
+    background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status-licencia {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
 .absences-label {
     text-transform: uppercase;
     font-size: 0.75rem;

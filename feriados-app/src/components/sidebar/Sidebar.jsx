@@ -116,7 +116,7 @@ const Sidebar = () => {
                     <ul className="nav-list">
                         <NavItem to="/home" icon="bi-house" label="Inicio" onClick={closeSidebar} />
                         
-                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'DASHBOARD') && (
+                        {usuarioPermisos.some(p => p.nombre === 'CALENDARIO AUSENCIAS') && (
                             <NavItem to="/calendario" icon="bi-calendar3" label="Calendario de Ausencias" onClick={closeSidebar} />
                         )}
 

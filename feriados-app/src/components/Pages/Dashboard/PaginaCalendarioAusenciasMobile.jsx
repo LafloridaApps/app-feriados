@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './PaginaCalendarioAusenciasMobile.css';
+import { contarAusenciasPorTipo, claseBadgeDiaMobilePorTipo, claseBadgeDetalleMobilePorTipo } from './tiposAusencia';
 
 const PaginaCalendarioAusenciasMobile = ({
     mesActual,
@@ -31,7 +32,8 @@ const PaginaCalendarioAusenciasMobile = ({
             const cadenaFecha = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}-${fechaActual.getDate().toString().padStart(2, '0')}`;
             const datosAusenciasDia = ausencias[cadenaFecha];
             const tieneAusencia = datosAusenciasDia && Object.keys(datosAusenciasDia.detalles).length > 0;
-            const totalAusenciasPorDia = tieneAusencia ? Object.values(datosAusenciasDia.detalles).flat().length : 0;
+            const conteoPorTipo = contarAusenciasPorTipo(datosAusenciasDia);
+            const totalAusenciasPorDia = Object.values(conteoPorTipo).reduce((acc, c) => acc + c, 0);
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
             const esDelMesActual = fechaActual.getMonth() === mes;
 
@@ -51,7 +53,9 @@ const PaginaCalendarioAusenciasMobile = ({
                     type="button"
                 >
                     <strong>{fechaActual.getDate()}</strong>
-                    {totalAusenciasPorDia > 0 && <span className="badge bg-danger rounded-pill mt-1">{totalAusenciasPorDia}</span>}
+                    {Object.entries(conteoPorTipo).map(([tipo, cantidad]) => (
+                        <span key={tipo} className={claseBadgeDiaMobilePorTipo(tipo)}>{cantidad}</span>
+                    ))}
                 </button>
             );
             diaInicioCalendario.setDate(diaInicioCalendario.getDate() + 1);
@@ -112,7 +116,7 @@ const PaginaCalendarioAusenciasMobile = ({
                                                     <div className="fw-bold text-dark">{persona.nombre}</div>
                                                     <div className="small text-muted">{persona.rut}</div>
                                                 </div>
-                                                <span className="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">
+                                                <span className={claseBadgeDetalleMobilePorTipo(persona.motivo)}>
                                                     {persona.motivo}
                                                 </span>
                                             </button>

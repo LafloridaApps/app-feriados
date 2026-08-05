@@ -14,7 +14,7 @@ const Inicio = () => {
     const esMovil = ancho < 768;
 
     const funcionario = useUsuario();
-    const { codDepto, rut, nombre, departamento, nombreJefe, escalafon } = funcionario || {};
+    const { codDepto, rut, departamento, nombreJefe, escalafon } = funcionario || {};
     const { esJefe } = useEsJefe(codDepto, rut);
 
     if (!funcionario) {
@@ -30,7 +30,6 @@ const Inicio = () => {
                     <div className="col-md-12 col-lg-10 mb-4">
                         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
                             <div>
-                                <h2 className="mb-1 text-primary fw-bold">¡Bienvenido, {nombre}!</h2>
                                 <p className="text-muted mb-1 fs-5">{departamento}</p>
                                 {escalafon !== 'ALCALDE' && (
                                     <p className="text-muted mb-0 small">

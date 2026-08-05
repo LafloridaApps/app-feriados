@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { claseBadgeDetallePorTipo } from './tiposAusencia';
 
 const DetallesAusencia = ({ fechaSeleccionada, detallesFechaSeleccionada, manejarClicEmpleado }) => {
     return (
@@ -20,7 +21,7 @@ const DetallesAusencia = ({ fechaSeleccionada, detallesFechaSeleccionada, maneja
                                     <div>
                                         <strong>{persona.nombre}</strong> ({persona.rut})
                                     </div>
-                                    <span className="badge bg-info text-dark">{persona.motivo}</span>
+                                    <span className={claseBadgeDetallePorTipo(persona.motivo)}>{persona.motivo}</span>
                                 </button>
                             ))}
                         </div>

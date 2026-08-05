@@ -11,7 +11,7 @@ const JefeInfoCard = ({ icono, titulo, children }) => {
     };
 
     return (
-        <div className="col-md-4 mb-4">
+        <div className="col-md-3 mb-4">
             <div className="premium-card jefe-info-card-premium">
                 <div className="jefe-card-header">
                     <div className={`jefe-card-icon-wrapper ${obtenerClaseIcono()}`}>

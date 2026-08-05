@@ -9,13 +9,12 @@ import './InicioMobile.css';
 
 const InicioMobile = () => {
     const funcionario = useUsuario();
-    const { codDepto, rut, nombre, departamento, escalafon, nombreJefe } = funcionario || {};
+    const { codDepto, rut, departamento, escalafon, nombreJefe } = funcionario || {};
     const { esJefe } = useEsJefe(codDepto, rut);
 
     return (
         <div className="inicio-mobile-container">
             <div className="bg-white p-4 rounded shadow-sm border-start border-4 border-primary mb-4">
-                <h4 className="mb-1 text-primary fw-bold">¡Hola, {nombre}!</h4>
                 <p className="text-muted mb-2 small">{departamento}</p>
                 {escalafon !== 'ALCALDE' && (
                     <p className="text-muted mb-0" style={{ fontSize: '0.8rem' }}>

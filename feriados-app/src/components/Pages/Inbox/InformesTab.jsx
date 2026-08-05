@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUsuario } from '../../../hooks/useUsuario';
 import axios from 'axios';
+import { BASE_URL } from '../../../services/url';
 
 const InformesTab = () => {
     const funcionario = useUsuario();
@@ -18,9 +19,7 @@ const InformesTab = () => {
             setLoading(true);
             setError(null);
             try {
-                const API_URL = import.meta.env.VITE_API_URL || 'https://intranet.laflorida.cl';
-                
-                const response = await axios.get(`${API_URL}/solicitudes/dashboard/resumen-permisos`, {
+                const response = await axios.get(`${BASE_URL}/solicitudes/dashboard/resumen-permisos`, {
                     params: {
                         codDeptoUsuario,
                         anio: filtroAnio,
