@@ -58,3 +58,15 @@ export const repairUrl = async (id) => {
         throw error;
     }
 };
+
+export const anularSolicitudDirecta = async (idSolicitud, motivo, rutAprobador) => {
+    try {
+        const { data } = await api.post('/anular-directo', null, {
+            params: { idSolicitud, motivo, rutAprobador }
+        });
+        return data;
+    } catch (error) {
+        console.error('Error al anular directamente la solicitud:', error);
+        throw error;
+    }
+};

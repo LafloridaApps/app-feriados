@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
 import { searchIsJefeByCodDeptoAndRut } from '../services/jefeService';
 
-export const useIsJefe = (codDepto, rut) => {
+export const useEsJefe = (codDepto, rut) => {
     const [esJefe, setEsJefe] = useState(false);
     const [esDirector, setEsDirector] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
-    const shouldFetch = codDepto && rut;
-
+    const debeConsultar = codDepto && rut;
 
     useEffect(() => {
-        if (!shouldFetch) {
-            setLoading(false);
+        if (!debeConsultar) {
+            setCargando(false);
             return;
         }
 
-        const verificar = async () => {
-            setLoading(true);
+        const verificarJefatura = async () => {
+            setCargando(true);
             try {
                 const response = await searchIsJefeByCodDeptoAndRut(codDepto, rut);
                 setEsJefe(response.esJefe);
@@ -28,12 +27,12 @@ export const useIsJefe = (codDepto, rut) => {
                 setEsDirector(false);
                 console.error('Error al verificar si es jefe/director:', err);
             } finally {
-                setLoading(false);
+                setCargando(false);
             }
         };
 
-        verificar();
-    }, [shouldFetch, codDepto, rut]);
+        verificarJefatura();
+    }, [debeConsultar, codDepto, rut]);
 
-    return { esJefe, esDirector, loading, error };
+    return { esJefe, esDirector, cargando, error };
 };

@@ -9,12 +9,16 @@ const api = axios.create({
 
 export const getInboxSolicitudesByDepto = async (codDepto, pageNumber, rut, filtros = {}) => {
     try {
-        const { noLeidas } = filtros;
+        const { noLeidas, anio } = filtros;
         const params = new URLSearchParams();
         params.append('rut', rut);
 
         if (noLeidas) {
             params.append('noLeidas', 'true');
+        }
+
+        if (anio) {
+            params.append('anio', anio);
         }
 
         const url = `departamento/${codDepto}/page/${pageNumber}`;

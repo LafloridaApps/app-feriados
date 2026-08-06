@@ -5,7 +5,7 @@
     border: none !important;
     position: relative;
     overflow: hidden;
-    padding: 2.5rem !important;
+    padding: 1.5rem !important;
 }
 
 .welcome-widget-card::before {
@@ -37,7 +37,7 @@
 }
 
 .welcome-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: white !important;
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -45,7 +45,7 @@
 
 .welcome-subtitle {
     color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 500;
 }
 

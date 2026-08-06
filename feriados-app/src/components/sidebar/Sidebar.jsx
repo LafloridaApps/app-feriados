@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { UsuarioContext } from '../../context/UsuarioContext';
-import { useIsJefe } from '../../hooks/useIsJefe';
+import { useEsJefe } from '../../hooks/useEsJefe';
 import { useSolicitudesNoLeidas } from '../../hooks/useSolicitudesNoLeidas';
 import { getPermisosByUsuario } from '../../services/usuarioService';
 import { LOGO_URL } from '../../assets/constants';
@@ -53,9 +53,10 @@ const Sidebar = () => {
     const { cantidadNoLeidas } = useSolicitudesNoLeidas();
     const funcionario = useContext(UsuarioContext);
     const { codDepto, rut } = funcionario || {};
-    const { esJefe } = useIsJefe(codDepto, rut);
+    const { esJefe } = useEsJefe(codDepto, rut);
     
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [usuarioPermisos, setUsuarioPermisos] = useState([]);
     const [openSubmenus, setOpenSubmenus] = useState({
         infoAusencias: false,
@@ -63,6 +64,12 @@ const Sidebar = () => {
         parametros: false,
         administracion: false
     });
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const getPermisos = async () => {
@@ -109,8 +116,8 @@ const Sidebar = () => {
                     <ul className="nav-list">
                         <NavItem to="/home" icon="bi-house" label="Inicio" onClick={closeSidebar} />
                         
-                        {usuarioPermisos.some(p => p.nombre === 'DASHBOARD') && (
-                            <NavItem to="/dashboard" icon="bi-speedometer2" label="Dashboard" onClick={closeSidebar} />
+                        {usuarioPermisos.some(p => p.nombre === 'CALENDARIO AUSENCIAS') && (
+                            <NavItem to="/calendario" icon="bi-calendar3" label="Calendario de Ausencias" onClick={closeSidebar} />
                         )}
 
                         <NavItem to="/mis-solicitudes" icon="bi-file-earmark-text" label="Mis Solicitudes" onClick={closeSidebar} />
@@ -124,37 +131,30 @@ const Sidebar = () => {
                             openSubmenus={openSubmenus}
                             toggleSubmenu={toggleSubmenu}
                         >
-                            <li className="submenu-item">
-                                <NavItem to="/feriados" icon="bi-calendar-check" label="Feriados Legales" onClick={closeSidebar} />
-                            </li>
-                            <li className="submenu-item">
-                                <NavItem to="/administrativos" icon="bi-briefcase" label="Administrativos" onClick={closeSidebar} />
-                            </li>
+                            <NavItem to="/feriados" icon="bi-calendar-check" label="Feriados Legales" onClick={closeSidebar} />
+                            <NavItem to="/administrativos" icon="bi-briefcase" label="Administrativos" onClick={closeSidebar} />
                         </SubmenuItem>
 
                         {esJefe && (
                             <NavItem to="/inbox" icon="bi-inbox" label="Bandeja de Solicitudes" badge={cantidadNoLeidas} onClick={closeSidebar} />
                         )}
 
-                        {usuarioPermisos.some(p => p.nombre === 'RRHH') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'RRHH') && (
                             <SubmenuItem 
                                 label="RRHH" 
                                 icon="bi-people" 
                                 menuId="rrhh"
-                                paths={['/rrhh']}
+                            paths={['/rrhh', '/administracion/adm-solicitudes']}
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
-                                <li className="submenu-item">
-                                    <NavItem to="/rrhh" icon="bi-file-earmark-text" label="Generador Decretos" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/rrhh/subrogancia" icon="bi-person-plus" label="Ingreso Subrogancia" onClick={closeSidebar} />
-                                </li>
+                                <NavItem to="/rrhh" icon="bi-file-earmark-text" label="Generador Decretos" onClick={closeSidebar} />
+                                <NavItem to="/rrhh/subrogancia" icon="bi-person-plus" label="Ingreso Subrogancia" onClick={closeSidebar} />
+                            <NavItem to="/administracion/adm-solicitudes" icon="bi-pen" label="Visor de Solicitudes" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
 
-                        {usuarioPermisos.some(p => p.nombre === 'PARAMETROS') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'PARAMETROS') && (
                             <SubmenuItem 
                                 label="Parámetros" 
                                 icon="bi-gear" 
@@ -163,50 +163,33 @@ const Sidebar = () => {
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
-                                <li className="submenu-item">
-                                    <NavItem to="/deptos" icon="bi-diagram-3" label="Departamentos" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/parametros/documentos" icon="bi-file-text" label="Gestión de Documentos" onClick={closeSidebar} />
-                                </li>
+                                <NavItem to="/deptos" icon="bi-diagram-3" label="Departamentos" onClick={closeSidebar} />
+                                <NavItem to="/parametros/documentos" icon="bi-file-text" label="Gestión de Documentos" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
 
-                        {usuarioPermisos.some(p => p.nombre === 'ADMINISTRACION') && (
+                        {!isMobile && usuarioPermisos.some(p => p.nombre === 'ADMINISTRACION') && (
                             <SubmenuItem 
                                 label="Administración" 
                                 icon="bi-person-rolodex" 
                                 menuId="administracion"
-                                paths={['/administracion']}
+                            paths={['/administracion/usuarios', '/administracion/modulos']}
                                 openSubmenus={openSubmenus}
                                 toggleSubmenu={toggleSubmenu}
                             >
-                                <li className="submenu-item">
-                                    <NavItem to="/administracion/usuarios" icon="bi-person" label="Usuarios" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/administracion/modulos" icon="bi-grid" label="Módulos" onClick={closeSidebar} />
-                                </li>
-                                <li className="submenu-item">
-                                    <NavItem to="/administracion/adm-solicitudes" icon="bi-pen" label="Actualización" onClick={closeSidebar} />
-                                </li>
+                                <NavItem to="/administracion/usuarios" icon="bi-person" label="Usuarios" onClick={closeSidebar} />
+                                <NavItem to="/administracion/modulos" icon="bi-grid" label="Módulos" onClick={closeSidebar} />
                             </SubmenuItem>
                         )}
                     </ul>
                 </div>
 
                 <div className="sidebar-footer">
-                    <a className="footer-btn" href="https://appx.laflorida.cl/login/menu.php" title="Volver al Menú Principal">
+                    <a className="footer-btn" href="https://intranet.laflorida.cl/intranet/" title="Volver al Menú Principal">
                         <i className="bi bi-arrow-left-circle"></i>
                         <span>Menú Principal</span>
                     </a>
-                    <button className="footer-btn" onClick={() => {
-                        sessionStorage.clear();
-                        globalThis.location.href = 'https://appx.laflorida.cl/login/';
-                    }} title="Cerrar Sesión">
-                        <i className="bi bi-box-arrow-right"></i>
-                        <span>Cerrar Sesión</span>
-                    </button>
+                    
                 </div>
             </aside>
         </>
@@ -234,4 +217,3 @@ SubmenuItem.propTypes = {
 };
 
 export default Sidebar;
-

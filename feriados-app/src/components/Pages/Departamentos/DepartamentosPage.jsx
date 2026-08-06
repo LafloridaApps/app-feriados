@@ -114,9 +114,7 @@ const DepartamentosPage = () => {
                         <div className="card-body scrollable-tree mt-2">
                             {loading ? (
                                 <div className="d-flex flex-column align-items-center justify-content-center py-5">
-                                    <div className="spinner-border text-primary mb-3">
-                                        <output className="visually-hidden">Cargando...</output>
-                                    </div>
+                                    <output className="spinner-border text-primary mb-3"></output>
                                     <h6 className="text-secondary fw-semibold">Cargando datos...</h6>
                                 </div>
                             ) : (
@@ -124,7 +122,6 @@ const DepartamentosPage = () => {
                                     departamentos={departamentosFiltrados}
                                     onSeleccionarDepartamento={handleSeleccionarDepartamento}
                                     departamentoSeleccionado={departamentoSeleccionado}
-                                    fetchDepartamentos={fetchDepartamentos}
                                 />
                             )}
                         </div>

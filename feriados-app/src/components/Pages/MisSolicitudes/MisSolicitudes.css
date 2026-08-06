@@ -17,6 +17,11 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes pulse-orange {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.5); }
+    50%       { box-shadow: 0 0 0 5px rgba(249, 115, 22, 0); }
+}
+
 .mis-solicitudes-card {
     border: 1px solid #f1f5f9 !important;
     border-radius: var(--border-radius-lg) !important;
@@ -132,6 +137,12 @@
 }
 .status-finalizada::before { background: #64748b; }
 
+.status-anulada {
+    background: #fef2f2;
+    color: #991b1b;
+}
+.status-anulada::before { background: #dc2626; }
+
 /* Action Buttons */
 .btn-action {
     width: 36px;
@@ -162,6 +173,34 @@
 .btn-action-pdf:hover {
     background: #fee2e2;
     color: #b91c1c;
+}
+
+.btn-action-anular {
+    padding: 0.3rem 0.75rem;
+    height: 36px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 1px solid #fb923c;
+    background: #fff1e6;
+    color: #c2410c;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-action-anular:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #b91c1c;
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+}
+
+.btn-action-anular:active {
+    background: #b91c1c;
+    transform: scale(0.98);
+    box-shadow: none;
 }
 
 /* Timeline Redesign */

@@ -53,26 +53,27 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
             title: 'Error al obtener funcionario',
             text: error.response.data.mensaje,
         });
-        return;
+        return null;
     }
 };
 
 export const getFuncionarioApi = async () => {
-    const url = "/apilogin/log.php";
+    const url = `${BASE_URL}/api/auth/me-funcionarios`;
 
     try {
-        const response = await axios.post(url, { solicitud: "login", clave: "69" }, {
+        const response = await axios.get(url,  {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            withCredentials: 'include' // Asegura que se envíen las cookies de sesión
+            
         });
         return response.data;
 
 
     } catch (error) {
         console.log(error);
-        return null;
-
+        return {};
     }
 }
 

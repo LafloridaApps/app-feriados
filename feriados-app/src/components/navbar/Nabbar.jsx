@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import NavbarBrand from './NavbarBrand';
 import NavbarNav from './NavbarNav';
 import { UsuarioContext } from '../../context/UsuarioContext';
-import { useIsJefe } from '../../hooks/useIsJefe';
+import { useEsJefe } from '../../hooks/useEsJefe';
 import { useSolicitudesNoLeidas } from '../../hooks/useSolicitudesNoLeidas';
 import { getPermisosByUsuario } from '../../services/usuarioService';
 
@@ -10,7 +10,7 @@ const Navbar = () => {
     const { cantidadNoLeidas } = useSolicitudesNoLeidas();
     const funcionario = useContext(UsuarioContext);
     const { codDepto, rut } = funcionario || {};
-    const { esJefe } = useIsJefe(codDepto, rut);
+    const { esJefe } = useEsJefe(codDepto, rut);
     const [isNavCollapsed, setIsNavCollapsed] = useState(true);
     const [usuarioPermisos, setUsuarioPermisos] = useState([]);
 

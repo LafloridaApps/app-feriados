@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './PaginaDashboardMobile.css';
+import './PaginaCalendarioAusenciasMobile.css';
+import { contarAusenciasPorTipo, claseBadgeDiaMobilePorTipo, claseBadgeDetalleMobilePorTipo } from './tiposAusencia';
 
-const PaginaDashboardMobile = ({
+const PaginaCalendarioAusenciasMobile = ({
     mesActual,
     ausencias,
     fechaSeleccionada,
@@ -10,10 +11,6 @@ const PaginaDashboardMobile = ({
     manejarMesAnterior,
     manejarMesSiguiente,
     manejarClicEmpleado,
-    renderizarMiniCalendario,
-    mostrarModalEmpleado,
-    empleadoSeleccionado,
-    manejarCerrarModal,
 }) => {
 
     const renderizarCalendarioMobile = () => {
@@ -35,22 +32,30 @@ const PaginaDashboardMobile = ({
             const cadenaFecha = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}-${fechaActual.getDate().toString().padStart(2, '0')}`;
             const datosAusenciasDia = ausencias[cadenaFecha];
             const tieneAusencia = datosAusenciasDia && Object.keys(datosAusenciasDia.detalles).length > 0;
-            const totalAusenciasPorDia = tieneAusencia ? Object.values(datosAusenciasDia.detalles).flat().length : 0;
+            const conteoPorTipo = contarAusenciasPorTipo(datosAusenciasDia);
+            const totalAusenciasPorDia = Object.values(conteoPorTipo).reduce((acc, c) => acc + c, 0);
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
             const esDelMesActual = fechaActual.getMonth() === mes;
+
+            const hoy = new Date();
+            const esHoy = fechaActual.getDate() === hoy.getDate() && 
+                          fechaActual.getMonth() === hoy.getMonth() && 
+                          fechaActual.getFullYear() === hoy.getFullYear();
 
             const extraLabel = tieneAusencia ? `, ${totalAusenciasPorDia} ausencias` : '';
             const ariaLabel = `Fecha ${fechaActual.toLocaleDateString()}${extraLabel}`;
             diasCalendario.push(
                 <button
                     key={cadenaFecha}
-                    className={`col dashboard-mobile-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted bg-light'}`}
+                    className={`col dashboard-mobile-calendar-day ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted bg-light'} ${esHoy ? 'is-today' : ''}`}
                     onClick={() => manejarClicEmpleado({ fecha: cadenaFecha, detalles: datosAusenciasDia?.detalles || {} })}
                     aria-label={ariaLabel}
                     type="button"
                 >
                     <strong>{fechaActual.getDate()}</strong>
-                    {totalAusenciasPorDia > 0 && <span className="badge bg-danger rounded-pill mt-1">{totalAusenciasPorDia}</span>}
+                    {Object.entries(conteoPorTipo).map(([tipo, cantidad]) => (
+                        <span key={tipo} className={claseBadgeDiaMobilePorTipo(tipo)}>{cantidad}</span>
+                    ))}
                 </button>
             );
             diaInicioCalendario.setDate(diaInicioCalendario.getDate() + 1);
@@ -111,7 +116,7 @@ const PaginaDashboardMobile = ({
                                                     <div className="fw-bold text-dark">{persona.nombre}</div>
                                                     <div className="small text-muted">{persona.rut}</div>
                                                 </div>
-                                                <span className="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">
+                                                <span className={claseBadgeDetalleMobilePorTipo(persona.motivo)}>
                                                     {persona.motivo}
                                                 </span>
                                             </button>
@@ -132,7 +137,7 @@ const PaginaDashboardMobile = ({
     );
 };
 
-PaginaDashboardMobile.propTypes = {
+PaginaCalendarioAusenciasMobile.propTypes = {
     mesActual: PropTypes.instanceOf(Date).isRequired,
     ausencias: PropTypes.object.isRequired,
     fechaSeleccionada: PropTypes.string,
@@ -140,10 +145,6 @@ PaginaDashboardMobile.propTypes = {
     manejarMesAnterior: PropTypes.func.isRequired,
     manejarMesSiguiente: PropTypes.func.isRequired,
     manejarClicEmpleado: PropTypes.func.isRequired,
-    renderizarMiniCalendario: PropTypes.func.isRequired,
-    mostrarModalEmpleado: PropTypes.bool.isRequired,
-    empleadoSeleccionado: PropTypes.object,
-    manejarCerrarModal: PropTypes.func.isRequired,
 };
 
-export default PaginaDashboardMobile;
+export default PaginaCalendarioAusenciasMobile;

@@ -10,63 +10,94 @@
 .mis-solicitudes-mobile-card {
     background: white;
     border: 1px solid #f1f5f9;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     overflow: hidden;
-    transition: transform 0.2s ease;
+    position: relative;
+    border-left: 6px solid #CBD5E1; /* Default gray bar */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 1.25rem;
+}
+
+.mis-solicitudes-mobile-card.feriado {
+    border-left-color: #009B4D;
+}
+
+.mis-solicitudes-mobile-card.administrativo {
+    border-left-color: #004B8D;
 }
 
 .mis-solicitudes-mobile-card:active {
-    transform: scale(0.98);
+    transform: scale(0.98) translateY(2px);
 }
 
 .mis-solicitudes-mobile-card-header {
-    background: #f8fafc;
-    padding: 1rem 1.25rem;
+    background: linear-gradient(to right, #f8fafc, #ffffff);
+    padding: 1.25rem;
     border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+}
+
+.mis-solicitudes-mobile-type {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.2;
 }
 
 .mis-solicitudes-mobile-id {
-    color: #64748b;
-    font-size: 0.85rem;
+    color: #94a3b8;
+    font-size: 0.8rem;
     font-weight: 600;
+    margin-top: 0.25rem;
 }
 
 .mis-solicitudes-mobile-card-body {
     padding: 1.25rem;
 }
 
-.mis-solicitudes-mobile-card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.75rem;
-}
-
 .mis-solicitudes-mobile-card-info {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
 }
 
 .mis-solicitudes-mobile-card-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: #475569;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+.mis-solicitudes-mobile-card-item:last-child {
+    margin-bottom: 0;
 }
 
 .mis-solicitudes-mobile-card-item i {
-    color: #009B4D;
-    width: 1.2rem;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    width: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.mis-solicitudes-mobile-card-item .label {
+    color: #94a3b8;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.mis-solicitudes-mobile-card-item span:not(.label) {
+    font-weight: 600;
 }
 
 .mis-solicitudes-mobile-card-actions {
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 1.25rem;
     background: #f8fafc;
     border-top: 1px solid #f1f5f9;
     display: flex;

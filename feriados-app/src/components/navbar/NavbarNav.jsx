@@ -43,9 +43,9 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu, permisos }) => {
                     <Link className={obtenerClaseEnlace('/home')} to="/home" onClick={handleLinkClick}><i className="bi bi-house me-2"></i>Inicio</Link>
                 </li>
                 {
-                    permisos.some(p => p.nombre == 'DASHBOARD') && (
+                    permisos.some(p => p.nombre == 'CALENDARIO AUSENCIAS') && (
                         <li className="nav-item">
-                            <Link className={obtenerClaseEnlace('/dashboard')} to="/dashboard" onClick={handleLinkClick}><i className="bi bi-speedometer2 me-2"></i>Dashboard</Link>
+                            <Link className={obtenerClaseEnlace('/calendario')} to="/calendario" onClick={handleLinkClick}><i className="bi bi-calendar3 me-2"></i>Calendario de Ausencias</Link>
                         </li>
                     )
                 }
@@ -87,6 +87,10 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu, permisos }) => {
                             <ul className={`dropdown-menu dropdown-menu-dark ${openDropdown === 'rrhh' ? 'show' : ''}`}>
                                 <li><Link className={`dropdown-item ${rutaActual === '/rrhh' ? 'active' : ''}`} to="/rrhh" onClick={handleLinkClick}><i className="bi bi-file-earmark-text me-2"></i>Generador Decretos</Link></li>
                                 <li><Link className={`dropdown-item ${rutaActual === '/rrhh/subrogancia' ? 'active' : ''}`} to="/rrhh/subrogancia" onClick={handleLinkClick}><i className="bi bi-person-plus me-2"></i>Ingreso Subrogancia</Link></li>
+                                <li><Link
+                                    className={`dropdown-item ${rutaActual === '/administracion/adm-solicitudes' ? 'active' : ''}`}
+                                    to="/administracion/adm-solicitudes"
+                                    onClick={handleLinkClick}> <i className="bi bi-pen me-2"></i>Visor de Solicitudes</Link></li>
                             </ul>
                         </li>
 
@@ -123,10 +127,6 @@ const NavbarNav = ({ esJefe, cantidadNoLeidas, closeMobileMenu, permisos }) => {
                                     className={`dropdown-item ${rutaActual === '/administracion/modulos' ? 'active' : ''}`}
                                     to="/administracion/modulos"
                                     onClick={handleLinkClick}><i className="bi bi-grid me-2"></i>Módulos</Link></li>
-                                <li><Link
-                                    className={`dropdown-item ${rutaActual === '/administracion/adm-solicitudes' ? 'active' : ''}`}
-                                    to="/administracion/adm-solicitudes"
-                                    onClick={handleLinkClick}> <i className="bi bi-pen me-2"></i> Actualizacion de Solicitudes</Link></li>
                             </ul>
                         </li>
                     )

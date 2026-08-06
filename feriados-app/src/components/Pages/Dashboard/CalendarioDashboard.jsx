@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DetallesAusencia from './DetallesAusencia';
+import { contarAusenciasPorTipo, claseBadgeDiaPorTipo } from './tiposAusencia';
 
 const CalendarioDashboard = ({
     mesActual,
@@ -32,24 +33,29 @@ const CalendarioDashboard = ({
             const cadenaFecha = `${fechaActual.getFullYear()}-${(fechaActual.getMonth() + 1).toString().padStart(2, '0')}-${fechaActual.getDate().toString().padStart(2, '0')}`;
             const datosAusenciasDia = ausencias[cadenaFecha];
             const tieneAusencia = datosAusenciasDia && Object.keys(datosAusenciasDia.detalles).length > 0;
-            const totalAusenciasPorDia = tieneAusencia ? Object.values(datosAusenciasDia.detalles).flat().length : 0;
+            const conteoPorTipo = contarAusenciasPorTipo(datosAusenciasDia);
             const estaSeleccionado = fechaSeleccionada === cadenaFecha;
             const esDelMesActual = fechaActual.getMonth() === mes;
+            
+            const hoy = new Date();
+            const esHoy = fechaActual.getDate() === hoy.getDate() && 
+                          fechaActual.getMonth() === hoy.getMonth() && 
+                          fechaActual.getFullYear() === hoy.getFullYear();
 
             diasCalendario.push(
                 <button
                     type="button"
                     key={cadenaFecha}
-                    className={`dashboard-calendar-day btn-day-override ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted'}`}
+                    className={`dashboard-calendar-day btn-day-override ${tieneAusencia ? 'has-absence' : ''} ${estaSeleccionado ? 'is-selected' : ''} ${esDelMesActual ? '' : 'text-muted'} ${esHoy ? 'is-today' : ''}`}
                     onClick={() => setFechaSeleccionada(cadenaFecha)}
                 >
                     <div className="d-flex justify-content-between align-items-start w-100">
                         <strong>{fechaActual.getDate()}</strong>
-                        {totalAusenciasPorDia > 0 && (
-                            <span className="absence-badge">
-                                {totalAusenciasPorDia}
-                            </span>
-                        )}
+                    </div>
+                    <div className="d-flex flex-column align-items-start gap-1 mt-auto pt-2">
+                        {Object.entries(conteoPorTipo).map(([tipo, cantidad]) => (
+                            <span key={tipo} className={claseBadgeDiaPorTipo(tipo)}>{cantidad}</span>
+                        ))}
                     </div>
                 </button>
             );

@@ -19,7 +19,7 @@ export const useGestionAcciones = (derivacion) => {
 
         const { recepcionada, estadoDerivacion, tipoMovimiento, id } = derivacion;
 
-        const puedeRecibir = !recepcionada;
+        const puedeRecibir = !recepcionada && estadoDerivacion !== 'ANULADA';
 
         const puedePostergar =
             recepcionada &&

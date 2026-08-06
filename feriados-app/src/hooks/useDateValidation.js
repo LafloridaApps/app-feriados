@@ -1,12 +1,12 @@
 // hooks/useDateValidation.js
 import { useState, useCallback } from "react";
 
-export const useDateValidation = (fechasFeriadas, detalleFer, detalleAdm) => {
+export const useDateValidation = (fechasFeriadas) => {
     const [errorFecha, setErrorFecha] = useState("");
     const [errorFeriado, setErrorFeriado] = useState("");
     const [errorRangoFechas, setErrorRangoFechas] = useState("");
 
-    const validarFechas = useCallback((inicio, fin, tipo, jornadaInicio, jornadaFin) => {
+    const validarFechas = useCallback((inicio, fin) => {
         // Basic validation for date order
         const inicioDate = new Date(inicio);
         const finDate = new Date(fin);

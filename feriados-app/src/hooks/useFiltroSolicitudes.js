@@ -1,31 +1,30 @@
 import { useState } from 'react';
-import { useAlertaSweetAlert } from './useAlertaSweetAlert';
 
 export const useFiltroSolicitudes = (onFiltrar) => {
-    const [anio, setAnio] = useState('');
     const [fechaInicio, setFechaInicio] = useState('');
     const [fechaFin, setFechaFin] = useState('');
     const [nombreSolicitante, setNombreSolicitante] = useState('');
     const [rutSolicitante, setRutSolicitante] = useState('');
     const [isOpen, setIsOpen] = useState(false);
 
-    const { mostrarAlertaError } = useAlertaSweetAlert();
-
-    const handleAnioChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value) && value.length <= 4) {
-            setAnio(value);
+    const handleRutChange = (e) => {
+        const raw = e.target.value;
+        const limpio = raw.replace(/[^\dkK-]/gi, '').toUpperCase();
+        if (limpio.length > 10) return;
+        const digitos = limpio.replace(/-/g, '');
+        if (digitos.length > 9) return;
+        const tieneGuion = limpio.includes('-');
+        if (!tieneGuion && digitos.length === 9) {
+            const cuerpo = digitos.slice(0, -1);
+            const dv = digitos.slice(-1);
+            setRutSolicitante(`${cuerpo}-${dv}`);
+        } else {
+            setRutSolicitante(limpio);
         }
     };
 
     const handleFiltrar = () => {
-        if (anio && anio.length !== 4) {
-            mostrarAlertaError('El año ingresado no es válido. Por favor, ingrese un año con 4 dígitos.');
-            return;
-        }
-
         const filtros = {
-            anio,
             fechaInicio,
             fechaFin,
             nombreSolicitante,
@@ -35,7 +34,6 @@ export const useFiltroSolicitudes = (onFiltrar) => {
     };
 
     const handleLimpiarFiltros = () => {
-        setAnio('');
         setFechaInicio('');
         setFechaFin('');
         setNombreSolicitante('');
@@ -48,13 +46,12 @@ export const useFiltroSolicitudes = (onFiltrar) => {
     };
 
     return {
-        anio,
         fechaInicio,
         fechaFin,
         nombreSolicitante,
         rutSolicitante,
         isOpen,
-        handleAnioChange,
+        handleRutChange,
         handleFiltrar,
         handleLimpiarFiltros,
         toggleCollapse,

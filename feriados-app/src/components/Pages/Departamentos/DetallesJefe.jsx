@@ -61,7 +61,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
         setEnEdicion(true);
     };
 
-    const handleGuardarJefe = async (rutNumericoParaGuardar = null, vrutParaGuardar = null, nombreJefeParaGuardar = '', esRemocion = false) => {
+    const handleGuardarJefe = async (esRemocion = false) => {
         const accion = esRemocion ? 'dejar este departamento sin jefe' : 'guardar el jefe';
         const txtBoton = esRemocion ? 'quitar jefe' : 'guardar';
         const colorBoton = esRemocion ? '#d33' : '#3085d6';
@@ -78,10 +78,9 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
         if (!result.isConfirmed) return;
 
         try {
-            let rutNumericoFinal = rutNumericoParaGuardar;
+            let rutNumericoFinal = null;
 
-            // Si no pasamos parámetros explícitos (flujo normal de edición), leemos del estado
-            if (!esRemocion && rutNumericoParaGuardar === null) {
+            if (!esRemocion) {
                 const partesRut = rutCompleto.split('-');
                 rutNumericoFinal = partesRut[0].replaceAll('.', '');
             }
@@ -354,7 +353,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                     {!enEdicion && (
                         <div className="d-flex gap-2">
                             {departamento.rutJefe && (
-                                <button className="btn btn-outline-danger btn-sm" onClick={() => handleGuardarJefe(null, null, null, true)} title="Quitar jefatura">
+                                <button className="btn btn-outline-danger btn-sm" onClick={() => handleGuardarJefe(true)} title="Quitar jefatura">
                                     <i className="bi bi-person-dash me-1"></i>Dejar sin jefe
                                 </button>
                             )}
@@ -484,6 +483,7 @@ DetallesJefe.propTypes = {
         vrutJefe: PropTypes.any,
         email: PropTypes.any,
         codigoExterno: PropTypes.string,
+        vigente: PropTypes.bool,
     }),
     setDepartamentoSeleccionado: PropTypes.func
 };

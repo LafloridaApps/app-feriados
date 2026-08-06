@@ -1,12 +1,12 @@
 import { useState, useContext, useCallback, useMemo } from 'react';
+import Swal from 'sweetalert2';
 import { useRrhhSelection } from './useRrhhSelection';
 import { getAprobacionesBetweenDates } from '../services/aprobacionListService';
 import { decretar } from '../services/decretarService';
-import { getDocDecreto } from '../services/docService.js';
+import { getDocDecreto, getExcelDecreto } from '../services/docService.js';
 import { listTemplates } from '../services/templateService';
 import { useAlertaSweetAlert } from './useAlertaSweetAlert';
 import { UsuarioContext } from '../context/UsuarioContext';
-import { exportToExcel } from '../services/utils';
 
 const ITEMS_PER_PAGE = 10;
 const BACKEND_PAGE_SIZE = 20;
@@ -17,10 +17,6 @@ export const useGenerarDecretos = () => {
     const [allAprobaciones, setAllAprobaciones] = useState([]);
     const [loading, setLoading] = useState(false);
     const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
-
-    // State for backend pagination
-    const [setBackendPage] = useState(0);
-    const [setTotalBackendPages] = useState(0);
 
     // State for component pagination 
     const [componentPage, setComponentPage] = useState(1);
@@ -36,7 +32,7 @@ export const useGenerarDecretos = () => {
     const [selectedTemplate, setSelectedTemplate] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-    const { mostrarAlertaError, mostrarAlertaExito } = useAlertaSweetAlert();
+    const { mostrarAlertaError } = useAlertaSweetAlert();
     const funcionario = useContext(UsuarioContext);
 
     const handleCargarAprobaciones = useCallback(async () => {
@@ -125,8 +121,6 @@ export const useGenerarDecretos = () => {
         setAprobacionesSearchPerformed(false);
         // Reset pagination and filter state
         setComponentPage(1);
-        setBackendPage(0);
-        setTotalBackendPages(0);
         setSelectedTipoContrato([]);
         setTipoContratoOptions([]);
         setSelectedTipoSolicitud('');
@@ -154,22 +148,12 @@ export const useGenerarDecretos = () => {
         }
     };
 
-    const procesarExcel = async (response) => {
-        try {
-            await exportToExcel(response, 'decretos_generados');
-            return true;
-        } catch (excelError) {
-            mostrarAlertaError('Error al exportar a Excel.', excelError.message || 'Ocurrió un error al exportar el archivo Excel.');
-            console.error('Error exporting to Excel:', excelError.response ? excelError.response.data : excelError);
-            return false;
-        }
-    };
-
     const procesarWord = async (nroDecreto) => {
         try {
             if (!nroDecreto) {
-                throw new Error("No se encontró el 'nroDecreto' en la respuesta para generar el documento Word.");
+                throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
             }
+            console.log('[procesarWord] Descargando Word para nroDecreto:', nroDecreto);
             const wordResponse = await getDocDecreto(nroDecreto);
             const url = globalThis.URL.createObjectURL(wordResponse.data);
             const link = document.createElement('a');
@@ -179,66 +163,127 @@ export const useGenerarDecretos = () => {
             link.click();
             link.remove();
             globalThis.URL.revokeObjectURL(url);
+            console.log('[procesarWord] Word descargado exitosamente');
             return true;
         } catch (wordError) {
+            console.error('[procesarWord] Error:', wordError.response?.data || wordError.message);
             mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
-            console.error('Error downloading Word document:', wordError.response ? wordError.response.data : wordError);
             return false;
         }
     };
 
+    const procesarExcelBackend = async (nroDecreto) => {
+        try {
+            if (!nroDecreto) {
+                throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
+            }
+            console.log('[procesarExcelBackend] Descargando Excel para nroDecreto:', nroDecreto);
+            const excelResponse = await getExcelDecreto(nroDecreto);
+            const url = globalThis.URL.createObjectURL(excelResponse.data);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `solicitudes-${nroDecreto}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            globalThis.URL.revokeObjectURL(url);
+            console.log('[procesarExcelBackend] Excel descargado exitosamente');
+            return true;
+        } catch (excelError) {
+            console.error('[procesarExcelBackend] Error:', excelError.response?.data || excelError.message);
+            mostrarAlertaError('Error al descargar el Excel.', excelError.message || 'Ocurrió un error inesperado.');
+            return false;
+        }
+    };
+
+    const validarGeneracion = (templateName) => {
+        if (!templateName) { mostrarAlertaError('Debe seleccionar una plantilla.'); return false; }
+        if (selectedItems.length === 0) { mostrarAlertaError('Debe seleccionar al menos una aprobación para generar un decreto.'); return false; }
+        if (!funcionario?.rut) { mostrarAlertaError('No se pudo obtener el RUT del usuario para generar el decreto.'); return false; }
+        return true;
+    };
+
+    const setupDownloadButtons = (nroDecreto) => {
+        document.querySelectorAll('.swal2-download-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const tipo = e.target.dataset.tipo;
+                e.target.disabled = true;
+                e.target.textContent = 'Descargando...';
+                try {
+                    if (tipo === 'word') await procesarWord(nroDecreto);
+                    else await procesarExcelBackend(nroDecreto);
+                    e.target.textContent = '✅ Descargado';
+                    e.target.style.opacity = '0.6';
+                } catch {
+                    e.target.textContent = 'Reintentar';
+                    e.target.disabled = false;
+                }
+            });
+        });
+    };
+
+    const mostrarDialogoDescarga = (nroDecreto, wordSuccess, excelSuccess) => {
+        const btnWord = wordSuccess ? '' : `<button class="swal2-download-btn" data-tipo="word" style="background:#0d6efd;color:white;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px">Descargar</button>`;
+        const btnExcel = excelSuccess ? '' : `<button class="swal2-download-btn" data-tipo="excel" style="background:#198754;color:white;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px">Descargar</button>`;
+
+        Swal.fire({
+            icon: wordSuccess && excelSuccess ? 'success' : 'warning',
+            title: 'Decreto Generado',
+            html: `
+                <div style="text-align:left">
+                    <p><strong>Nro Decreto:</strong> #${nroDecreto}</p>
+                    <hr>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px${wordSuccess ? '' : ';opacity:0.6'}">
+                        <span>${wordSuccess ? '✅' : '❌'} <strong>Word</strong>${wordSuccess ? ' <small class="text-muted">(descargado)</small>' : ''}</span>
+                        ${btnWord}
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px${excelSuccess ? '' : ';opacity:0.6'}">
+                        <span>${excelSuccess ? '✅' : '❌'} <strong>Excel</strong>${excelSuccess ? ' <small class="text-muted">(descargado)</small>' : ''}</span>
+                        ${btnExcel}
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Cerrar',
+            didRender: () => setupDownloadButtons(nroDecreto),
+        });
+    };
+
     const handleGenerarDecreto = async (templateName) => {
-        if (!templateName) {
-            mostrarAlertaError('Debe seleccionar una plantilla.');
-            return;
-        }
-        if (selectedItems.length === 0) {
-            mostrarAlertaError('Debe seleccionar al menos una aprobación para generar un decreto.');
-            return;
-        }
-        if (!funcionario?.rut) {
-            mostrarAlertaError('No se pudo obtener el RUT del usuario para generar el decreto.');
+        if (!validarGeneracion(templateName)) return;
+
+        const templateObj = templates.find(t => t.nombre === templateName);
+        if (!templateObj) {
+            mostrarAlertaError('La plantilla seleccionada no es válida.');
             return;
         }
 
         setLoading(true);
         setShowTemplateModal(false);
         try {
-            const templateObj = templates.find(t => t.nombre === templateName);
-            if (!templateObj) {
-                mostrarAlertaError('La plantilla seleccionada no es válida.');
-                setLoading(false);
+            const payload = { ids: selectedItems, rut: funcionario.rut, template: templateObj.docFile };
+            console.log('[handleGenerarDecreto] Enviando payload:', JSON.stringify(payload));
+            const response = await decretar(payload);
+
+            const solicitudes = response?.solicitudes;
+            const nroDecreto = solicitudes?.[0]?.nroDecreto;
+
+            if (!solicitudes?.length || !nroDecreto) {
+                console.error('[handleGenerarDecreto] Respuesta inesperada:', JSON.stringify(response));
+                mostrarAlertaError('No se recibieron datos válidos del servidor.');
                 return;
             }
 
-            const decretos = {
-                ids: selectedItems,
-                rut: funcionario.rut,
-                template: templateObj.docFile
-            };
+            console.log('[handleGenerarDecreto] Decreto generado. nroDecreto:', nroDecreto, 'rutaWord:', response.rutaWord, 'rutaExcel:', response.rutaExcel);
 
-            const response = await decretar(decretos);
+            const wordSuccess = await procesarWord(nroDecreto);
+            const excelSuccess = await procesarExcelBackend(nroDecreto);
 
-            if (response && response.length > 0) {
-                console.log('Decretos generated response:', response);
-
-                const excelSuccess = await procesarExcel(response);
-                const wordSuccess = await procesarWord(response[0]?.nroDecreto);
-
-                if (excelSuccess && wordSuccess) {
-                    mostrarAlertaExito('Generación Exitosa', 'Decretos generados. Archivos Excel y Word descargados.');
-                } else if (excelSuccess) {
-                    mostrarAlertaExito('Generación Parcial', 'Decretos generados y exportados a Excel, pero falló la descarga del Word.');
-                } else if (wordSuccess) {
-                    mostrarAlertaExito('Generación Parcial', 'El documento Word fue descargado, pero falló la exportación a Excel.');
-                }
-
-            } else {
-                mostrarAlertaError('No se recibieron datos para generar los archivos o la generación no fue exitosa.');
-            }
+            handleLimpiarFiltros();
+            mostrarDialogoDescarga(nroDecreto, wordSuccess, excelSuccess);
         } catch (error) {
-            mostrarAlertaError('Error al generar el decreto.', error.message || 'Ocurrió un error inesperado.');
-            console.error('Error al generar el decreto:', error.response ? error.response.data : error);
+            const errorData = error.response?.data;
+            console.error('[handleGenerarDecreto] Error completo:', { status: error.response?.status, data: errorData, message: error.message });
+            mostrarAlertaError('Error al generar el decreto', errorData?.mensaje || error.message || 'Error desconocido');
         } finally {
             setLoading(false);
         }

@@ -1,9 +1,17 @@
-import SolicitudItem from './SolicitudItem';
-import SolicitudItemMobile from './SolicitudItemMobile';
+import { useState, useMemo, useEffect } from 'react';
 import FiltrosSolicitudes from './FiltroSolicitudes';
+import InboxHeader from './InboxHeader';
+import InboxTable from './InboxTable';
+import InboxMobileList from './InboxMobileList';
+import AnalisisCobertura from './AnalisisCobertura';
+import InboxPagination from './InboxPagination';
+import InformesTab from './InformesTab';
 import { useInboxSolicitudes } from '../../../hooks/useInboxSolicitudes';
+import { useTraslapes } from '../../../hooks/useTraslapes';
+import './Inbox.css';
 
 const InboxSolicitudes = () => {
+    const [activeTab, setActiveTab] = useState('inbox');
     const {
         isMobile,
         rutFuncionario,
@@ -16,139 +24,120 @@ const InboxSolicitudes = () => {
         handleActualizarSolicitud,
         handleFiltrarSolicitudes,
         handlePageChange,
-        requestSort,
-        sortConfig,
         sortedItems,
         handlerEntrada,
         handlerVisar,
         handlerAprobar,
-        solicitudesFiltradas,
         noLeidas,
-        setNoLeidas
+        setNoLeidas,
+        anioFiltro,
+        setAnioFiltro,
+        aniosDisponibles,
+        modoBusqueda,
     } = useInboxSolicitudes();
 
+    const itemsToDisplay = useMemo(() => {
+        if (modoBusqueda || !noLeidas) return sortedItems;
+        return sortedItems.filter(solicitud => {
+            const derivacionActiva = solicitud.derivaciones?.[0];
+            const estado = (solicitud.estadoSolicitud || '').trim().toUpperCase();
+            return derivacionActiva?.recepcionada === false && estado !== 'ANULADA' && estado !== 'RECHAZADA';
+        });
+    }, [sortedItems, noLeidas]);
 
-    const getSortIcon = (key) => {
-        if (sortConfig.key !== key) {
-            return null;
-        }
-        return sortConfig.direction === 'ascending'
-            ? <i className="bi bi-sort-up ms-1"></i>
-            : <i className="bi bi-sort-down ms-1"></i>;
+    const traslapes = useTraslapes(sortedItems);
+
+    const handleAnioChange = (e) => {
+        setAnioFiltro(e.target.value);
+        handlePageChange(0);
     };
 
-
+    useEffect(() => {
+        setActiveTab(prev => isMobile ? 'inbox' : prev);
+    }, [isMobile]);
 
     return (
         <div className="container-fluid mt-4">
             <FiltrosSolicitudes onFiltrar={handleFiltrarSolicitudes} />
+            {!modoBusqueda && (
+                <div className="d-flex justify-content-end mb-2">
+                    <div className="d-flex align-items-center gap-2">
+                        <label htmlFor="anioSelect" className="form-label mb-0 text-muted small fw-semibold">
+                            <i className="bi bi-calendar-date me-1"></i>Año
+                        </label>
+                        <select
+                            id="anioSelect"
+                            className="form-select form-select-sm"
+                            style={{ width: '100px' }}
+                            value={anioFiltro}
+                            onChange={handleAnioChange}
+                        >
+                            {aniosDisponibles.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
             <div className="row">
                 <div className="col-md-12">
                     <div className="card shadow-sm">
-                        <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                            <h5 className="mb-0 font-weight-bold text-primary">
-                                Bandeja de Solicitudes {isSubrogante && <span className='badge bg-info ms-2'>Subrogante</span>}
-                            </h5>
-                            <div className="form-check">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="noLeidas"
-                                    checked={noLeidas}
-                                    onChange={(e) => setNoLeidas(e.target.checked)}
-                                />
-                                <label className="form-check-label" htmlFor="noLeidas">
-                                    No Leídas
-                                </label>
-                            </div>
-                        </div>
+                        <InboxHeader
+                            isSubrogante={isSubrogante}
+                            noLeidas={noLeidas}
+                            setNoLeidas={setNoLeidas}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                            traslapesCount={traslapes.length}
+                            isMobile={isMobile}
+                            modoBusqueda={modoBusqueda}
+                        />
                         <div className="card-body p-0">
-                            <div className="table-responsive d-none d-md-block">
-                                <table className="table table-striped table-hover mb-0">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th onClick={() => requestSort('id')} style={{ cursor: 'pointer' }}>
-                                                <i className="bi bi-hash me-2"></i> ID {getSortIcon('id')}
-                                            </th>
-                                            <th onClick={() => requestSort('nombreFuncionario')} style={{ cursor: 'pointer' }}>
-                                                <i className="bi bi-person-fill me-2"></i> Solicitante {getSortIcon('nombreFuncionario')}
-                                            </th>
-                                            <th onClick={() => requestSort('tipoSolicitud')} style={{ cursor: 'pointer' }}>
-                                                <i className="bi bi-type me-2"></i> Tipo Solicitud {getSortIcon('tipoSolicitud')}
-                                            </th>
-                                            <th onClick={() => requestSort('fechaSolicitud')} style={{ cursor: 'pointer' }}>
-                                                <i className="bi bi-calendar-date me-2"></i> Fecha Solicitud {getSortIcon('fechaSolicitud')}
-                                            </th>
-                                            <th onClick={() => requestSort('estadoSolicitud')} style={{ cursor: 'pointer' }}>
-                                                <i className="bi bi-exclamation-circle-fill me-2"></i> Estado Solicitud {getSortIcon('estadoSolicitud')}
-                                            </th>
-                                            <th className="text-right"><i className="bi bi-gear-fill me-2"></i> Acciones</th>
-                                            <th className="text-right"><i className="bi bi-info-circle-fill me-2"></i> Detalle</th>
-                                            <th className='text-right'><i className="bi bi-file-earmark-pdf me-23"> Pdf</i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {sortedItems.map((solicitud) => (
-                                            <SolicitudItem
-                                                key={solicitud.id}
-                                                solicitud={solicitud}
-                                                onActualizarSolicitud={handleActualizarSolicitud}
-                                                rutFuncionario={rutFuncionario}
-                                                handlerEntrada={handlerEntrada}
-                                                handlerVisar={handlerVisar}
-                                                open={detalleAbiertoId === solicitud.id}
-                                                handlerAprobar={handlerAprobar}
-                                                handleVerDetalleClick={() => handleVerDetalleClick(solicitud.id)}
-                                            />
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {isMobile && (
-                                <div>
-                                    {sortedItems.map((solicitud) => (
-                                        <SolicitudItemMobile
-                                            key={solicitud.id}
-                                            solicitud={solicitud}
-                                            open={detalleAbiertoId === solicitud.id}
+                            {(activeTab === 'inbox' || isMobile) && (
+                                <>
+                                    <InboxTable
+                                        itemsToDisplay={itemsToDisplay}
+                                        rutFuncionario={rutFuncionario}
+                                        handleActualizarSolicitud={handleActualizarSolicitud}
+                                        handlerEntrada={handlerEntrada}
+                                        handlerVisar={handlerVisar}
+                                        handlerAprobar={handlerAprobar}
+                                        detalleAbiertoId={detalleAbiertoId}
+                                        handleVerDetalleClick={handleVerDetalleClick}
+                                    />
+                                    {isMobile && (
+                                        <InboxMobileList
+                                            itemsToDisplay={itemsToDisplay}
+                                            detalleAbiertoId={detalleAbiertoId}
                                             handlerEntrada={handlerEntrada}
                                             handlerVisar={handlerVisar}
                                             handlerAprobar={handlerAprobar}
                                             rutFuncionario={rutFuncionario}
-                                            onActualizarSolicitud={handleActualizarSolicitud}
-                                            handleVerDetalleClick={() => handleVerDetalleClick(solicitud.id)}
+                                            handleActualizarSolicitud={handleActualizarSolicitud}
+                                            handleVerDetalleClick={handleVerDetalleClick}
                                         />
-                                    ))}
-                                    {solicitudesFiltradas.length === 0 && (
-                                        <div className="p-4 text-center text-muted">
-                                            No se encontraron solicitudes con los filtros aplicados.
-                                        </div>
                                     )}
+                                </>
+                            )}
+                            {!isMobile && activeTab === 'traslapes' && (
+                                <AnalisisCobertura traslapes={traslapes} />
+                            )}
+                            {!isMobile && activeTab === 'informes' && (
+                                <div className="p-4 bg-white" style={{ minHeight: '400px' }}>
+                                    <InformesTab />
                                 </div>
                             )}
                         </div>
-                        <div className="card-footer d-flex justify-content-between align-items-center">
-                            <div className="text-muted">
-                                Mostrando {solicitudesFiltradas.length} de {totalElements} solicitudes
-                            </div>
-                            <nav>
-                                <ul className="pagination mb-0">
-                                    <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
-                                            Anterior
-                                        </button>
-                                    </li>
-                                    <li className="page-item">
-                                        <span className="page-link">{currentPage + 1} de {totalPages}</span>
-                                    </li>
-                                    <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
-                                            Siguiente
-                                        </button>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
+                        {(activeTab === 'inbox' || isMobile) && (
+                            <InboxPagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                totalElements={totalElements}
+                                itemsToDisplay={itemsToDisplay}
+                                handlePageChange={handlePageChange}
+                                isMobile={isMobile}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ModalBuscarPorNombre from '../../../Common/ModalBuscarPorNombre';
 import SubroganteForm from './SubroganteForm';
 
-const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, deptoFuncionario, fechaInicio, fechaFin }) => {
+const ModalSubrogante = ({ show, onClose, onSubroganteSelected, rutFuncionario, fechaInicio, fechaFin }) => {
     const [subrogante, setSubrogante] = useState(null);
     const [showBuscarPorNombreModal, setShowBuscarPorNombreModal] = useState(false);
 
@@ -74,7 +74,6 @@ ModalSubrogante.propTypes = {
     onClose: PropTypes.func.isRequired,
     onSubroganteSelected: PropTypes.func.isRequired,
     rutFuncionario: PropTypes.number.isRequired,
-    deptoFuncionario: PropTypes.string.isRequired,
     fechaInicio: PropTypes.string.isRequired,
     fechaFin: PropTypes.string.isRequired,
 };

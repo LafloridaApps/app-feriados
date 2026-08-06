@@ -1,6 +1,8 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import DetalleMiSolicitud from './DetalleMiSolicitud';
-import { formatFecha } from '../../../services/utils'; // Asegúrate de que esta importación sea correcta
+import { formatFecha } from '../../../services/utils';
+import { anularSolicitud } from '../../../services/anulacionService';
 
 const getStatusBadge = (status) => {
     switch (status) {
@@ -13,12 +15,84 @@ const getStatusBadge = (status) => {
             return 'badge-premium status-pendiente';
         case 'FINALIZADA':
             return 'badge-premium status-finalizada';
+        case 'ANULADA':
+            return 'badge-premium status-anulada';
         default:
             return 'badge-premium status-finalizada';
     }
 };
 
 const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) => {
+
+    const handleAnularEnvio = async (solicitudId) => {
+        // Paso 1: Confirmación
+        const confirmacion = await Swal.fire({
+            icon: 'warning',
+            title: '¿Anular solicitud?',
+            html: `
+                <p>¿Estás seguro de que deseas anular la solicitud <strong>#${solicitudId}</strong>?</p>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Esta acción dejará sin efecto el flujo actual de la solicitud.
+                </p>
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="bi bi-x-circle"></i> Sí, anular',
+            cancelButtonText: 'No, mantener',
+            reverseButtons: true,
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        // Paso 2: Solicitar motivo
+        const { value: motivo, isConfirmed: motivoConfirmado } = await Swal.fire({
+            title: 'Motivo de anulación',
+            input: 'textarea',
+            inputLabel: 'Indica el motivo por el que deseas anular esta solicitud',
+            inputPlaceholder: 'Ej: Error en las fechas seleccionadas...',
+            inputAttributes: { maxlength: 300, rows: 4 },
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Confirmar anulación',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+            inputValidator: (value) => {
+                if (!value?.trim()) return 'Debes ingresar un motivo para continuar.';
+                if (value.trim().length < 10) return 'El motivo debe tener al menos 10 caracteres.';
+            },
+        });
+
+        if (!motivoConfirmado) return;
+
+        // Paso 3: Llamar al servicio
+        try {
+            const respuesta = await anularSolicitud(solicitudId, motivo.trim());
+            const mensajeServidor = respuesta?.message || respuesta?.mensaje || 'El envío de la solicitud fue anulado correctamente.';
+            await Swal.fire({
+                icon: 'success',
+                title: 'Solicitud anulada',
+                text: mensajeServidor,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#16a34a',
+            });
+            globalThis.location.reload();
+        } catch (error) {
+            const mensajeError =
+                error.response?.data?.message ||
+                error.response?.data?.mensaje ||
+                error.response?.data?.error ||
+                error.message ||
+                'No se pudo anular la solicitud. Intenta nuevamente.';
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al anular',
+                text: mensajeError,
+            });
+        }
+    };
 
     return (
         <div className="table-responsive">
@@ -50,14 +124,14 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                                     </span>
                                 </td>
                                 <td className="text-center">
-                                    <div className="d-flex justify-content-center gap-2">
+                                    <div className="d-flex justify-content-center align-items-center gap-2">
                                         <button
                                             className="btn btn-action"
                                             onClick={() => handleToggleDetail(solicitud.id)}
                                             disabled={!solicitud?.id}
                                             title="Ver Detalles"
                                         >
-                                            <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                                            <i className={`bi ${openDetailId === solicitud.id ? 'bi-chevron-up' : 'bi-chevron-down'}`} />
                                         </button>
                                         {solicitud.urlPdf && (
                                             <a
@@ -67,7 +141,7 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                                                 className="btn btn-action btn-action-pdf"
                                                 title="Ver PDF"
                                             >
-                                                <i className="bi bi-file-earmark-pdf"></i>
+                                                <i className="bi bi-file-earmark-pdf" />
                                             </a>
                                         )}
                                     </div>
@@ -76,8 +150,20 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                             {openDetailId === solicitud.id && (
                                 <tr>
                                     <td colSpan="5" className="p-0 border-0">
-                                        <div className="px-4 pb-4">
+                                        <div className="p-4 bg-light border-bottom">
                                             <DetalleMiSolicitud solicitud={solicitud} />
+                                            {solicitud?.estadoSolicitud === 'PENDIENTE' && (
+                                                <div className="d-flex justify-content-end mt-4 pt-3 border-top">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger px-4 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2"
+                                                        onClick={() => handleAnularEnvio(solicitud.id)}
+                                                    >
+                                                        <i className="bi bi-x-circle-fill fs-5" />
+                                                        <span>Anular Solicitud</span>
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

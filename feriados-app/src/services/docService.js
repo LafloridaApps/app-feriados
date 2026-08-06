@@ -9,11 +9,24 @@ export const getDocDecreto = async (id) => {
   try {
     const response = await api.get(`/documento`, { 
       params: { id }, 
-      responseType: 'blob', // Important for file downloads
+      responseType: 'blob',
     });
     return response;
   } catch (error) {
     console.error('Error al descargar el documento Word:', error);
+    throw error;
+  }
+};
+
+export const getExcelDecreto = async (id) => {
+  try {
+    const response = await api.get(`/excel`, {
+      params: { id },
+      responseType: 'blob',
+    });
+    return response;
+  } catch (error) {
+    console.error('Error al descargar el documento Excel:', error);
     throw error;
   }
 };

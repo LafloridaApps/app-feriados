@@ -21,7 +21,17 @@ export const useConsultarDecretos = (mostrarAlertaError) => {
     }, [allResults]); // Only re-run when allResults (content from backend) changes
 
     const handleSearch = async (pageNumber = 0) => {
+        const { fechaDesde, fechaHasta } = filters;
 
+        if (!fechaDesde || !fechaHasta) {
+            mostrarAlertaError('Debe seleccionar ambas fechas (Desde y Hasta) para realizar la búsqueda.');
+            return;
+        }
+
+        if (new Date(fechaDesde) > new Date(fechaHasta)) {
+            mostrarAlertaError('La fecha "Desde" no puede ser mayor a la fecha "Hasta".');
+            return;
+        }
 
         setLoading(true);
         setSearchPerformed(false);
