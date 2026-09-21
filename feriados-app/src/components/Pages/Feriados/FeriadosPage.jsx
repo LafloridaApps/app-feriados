@@ -21,6 +21,7 @@ const FeriadosPage = () => {
             const fetchPermisos = async () => {
                 try {
                     const response = await getFeriadosByRutAndIdent(funcionario.rut, funcionario.ident);
+                    console.log("getFeriadosByRutAndIdent - response:", response);
                     setData(response);
                 } catch (error) {
                     console.error("Error al obtener funcionario:", error);

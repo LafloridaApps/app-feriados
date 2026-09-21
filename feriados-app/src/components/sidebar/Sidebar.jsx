@@ -185,7 +185,7 @@ const Sidebar = () => {
                 </div>
 
                 <div className="sidebar-footer">
-                    <a className="footer-btn" href="https://intranet.laflorida.cl/intranet/" title="Volver al Menú Principal">
+                    <a className="footer-btn" href="https://intranet.laflorida.cl/home/" title="Volver al Menú Principal">
                         <i className="bi bi-arrow-left-circle"></i>
                         <span>Menú Principal</span>
                     </a>

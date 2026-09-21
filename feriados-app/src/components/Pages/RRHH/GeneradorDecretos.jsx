@@ -92,7 +92,7 @@ const GeneradorDecretos = (props) => {
                             aria-controls="collapseAcciones"
                             disabled={currentAprobaciones.length === 0}
                         >
-                            <span className="step-indicator"></span>  <strong>Acciones Masivas</strong> 
+                            <span className="step-indicator"></span>  <strong>Acciones Masivas</strong>
                         </button>
                     </h2>
                     <div
@@ -120,7 +120,7 @@ const GeneradorDecretos = (props) => {
                             {totalElements} registros encontrados
                         </span>
                     </div>
-                    
+
                     <TablaDecretos
                         data={currentAprobaciones}
                         selectedItems={selectedItems}

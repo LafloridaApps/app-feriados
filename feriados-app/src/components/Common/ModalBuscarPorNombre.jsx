@@ -107,7 +107,7 @@ const ModalBuscarPorNombre = ({ show, onClose, onSelected }) => {
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="Ingrese nombre o apellido..."
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                    autoFocus
+                                    
                                 />
                                 <button
                                     className="btn btn-primary"
@@ -179,6 +179,7 @@ const ModalBuscarPorNombre = ({ show, onClose, onSelected }) => {
                                                         <td>{func.nombreCompleto}</td>
                                                         <td className="text-end">
                                                             <button
+                                                                type="button"
                                                                 className={`btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline-primary'}`}
                                                                 onClick={(e) => { e.stopPropagation(); handleSelectFuncionario(func); }}
                                                             >
@@ -197,29 +198,29 @@ const ModalBuscarPorNombre = ({ show, onClose, onSelected }) => {
                                     <nav className="mt-3 d-flex justify-content-center">
                                         <ul className="pagination pagination-sm mb-0">
                                             <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => handlePageChange(0)} title="Primera página">
+                                                <button type="button" className="page-link" onClick={() => handlePageChange(0)} title="Primera página">
                                                     <i className="bi bi-chevron-double-left"></i>
                                                 </button>
                                             </li>
                                             <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => handlePageChange(currentPage - 1)} title="Página anterior">
+                                                <button type="button" className="page-link" onClick={() => handlePageChange(currentPage - 1)} title="Página anterior">
                                                     <i className="bi bi-chevron-left"></i>
                                                 </button>
                                             </li>
                                             {getVisiblePages().map(i => (
                                                 <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
-                                                    <button className="page-link" onClick={() => handlePageChange(i)}>
+                                                    <button type="button" className="page-link" onClick={() => handlePageChange(i)}>
                                                         {i + 1}
                                                     </button>
                                                 </li>
                                             ))}
                                             <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => handlePageChange(currentPage + 1)} title="Página siguiente">
+                                                <button type="button" className="page-link" onClick={() => handlePageChange(currentPage + 1)} title="Página siguiente">
                                                     <i className="bi bi-chevron-right"></i>
                                                 </button>
                                             </li>
                                             <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => handlePageChange(totalPages - 1)} title="Última página">
+                                                <button type="button" className="page-link" onClick={() => handlePageChange(totalPages - 1)} title="Última página">
                                                     <i className="bi bi-chevron-double-right"></i>
                                                 </button>
                                             </li>
@@ -231,8 +232,9 @@ const ModalBuscarPorNombre = ({ show, onClose, onSelected }) => {
                     </div>
 
                     <div className="modal-footer">
-                        <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
+                        <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
                         <button
+                            type="button"
                             className="btn btn-success"
                             onClick={handleConfirm}
                             disabled={!selectedFuncionario}

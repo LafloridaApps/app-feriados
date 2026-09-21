@@ -11,6 +11,36 @@ import { UsuarioContext } from '../context/UsuarioContext';
 const ITEMS_PER_PAGE = 10;
 const BACKEND_PAGE_SIZE = 20;
 
+/**
+ * @typedef {Object} DecretoSolicitud
+ * @property {number|string} nroDecreto
+ */
+
+/**
+ * @typedef {Object} DecretoResponse
+ * @property {DecretoSolicitud[]} solicitudes - At least one entry with a valid nroDecreto.
+ */
+
+/**
+ * Validates the shape of the decretar response.
+ * @param {any} response
+ * @returns {{ ok: boolean, nroDecreto: (number|string|null), error: string|null }}
+ */
+const validarRespuestaDecreto = (response) => {
+    if (!response || typeof response !== 'object') {
+        return { ok: false, nroDecreto: null, error: 'Respuesta vacía del servidor.' };
+    }
+    const solicitudes = response.solicitudes;
+    if (!Array.isArray(solicitudes) || solicitudes.length === 0) {
+        return { ok: false, nroDecreto: null, error: 'El servidor no devolvió solicitudes para el decreto.' };
+    }
+    const nroDecreto = solicitudes[0]?.nroDecreto;
+    if (nroDecreto === undefined || nroDecreto === null || nroDecreto === '') {
+        return { ok: false, nroDecreto: null, error: 'El servidor no devolvió un número de decreto válido.' };
+    }
+    return { ok: true, nroDecreto, error: null };
+};
+
 export const useGenerarDecretos = () => {
     const [fechaDesde, setFechaDesde] = useState('');
     const [fechaHasta, setFechaHasta] = useState('');
@@ -18,7 +48,7 @@ export const useGenerarDecretos = () => {
     const [loading, setLoading] = useState(false);
     const [aprobacionesSearchPerformed, setAprobacionesSearchPerformed] = useState(false);
 
-    // State for component pagination 
+    // State for component pagination
     const [componentPage, setComponentPage] = useState(1);
 
     // State for filters
@@ -148,52 +178,39 @@ export const useGenerarDecretos = () => {
         }
     };
 
-    const procesarWord = async (nroDecreto) => {
+    const descargarArchivo = async (getFn, filename, tipo) => {
         try {
-            if (!nroDecreto) {
-                throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
-            }
-            console.log('[procesarWord] Descargando Word para nroDecreto:', nroDecreto);
-            const wordResponse = await getDocDecreto(nroDecreto);
-            const url = globalThis.URL.createObjectURL(wordResponse.data);
+            console.log(`[${tipo}] Descargando archivo:`, filename);
+            const response = await getFn();
+            const url = globalThis.URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `decreto_${nroDecreto}.docx`);
+            link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
             link.remove();
             globalThis.URL.revokeObjectURL(url);
-            console.log('[procesarWord] Word descargado exitosamente');
+            console.log(`[${tipo}] Archivo descargado exitosamente`);
             return true;
-        } catch (wordError) {
-            console.error('[procesarWord] Error:', wordError.response?.data || wordError.message);
-            mostrarAlertaError('Error al descargar el documento Word.', wordError.message || 'Ocurrió un error inesperado.');
+        } catch (error) {
+            console.error(`[${tipo}] Error:`, error.response?.data || error.message);
+            mostrarAlertaError(`Error al descargar el ${tipo === 'Word' ? 'documento Word' : 'Excel'}.`, error.message || 'Ocurrió un error inesperado.');
             return false;
         }
     };
 
-    const procesarExcelBackend = async (nroDecreto) => {
-        try {
-            if (!nroDecreto) {
-                throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
-            }
-            console.log('[procesarExcelBackend] Descargando Excel para nroDecreto:', nroDecreto);
-            const excelResponse = await getExcelDecreto(nroDecreto);
-            const url = globalThis.URL.createObjectURL(excelResponse.data);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `solicitudes-${nroDecreto}.xlsx`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            globalThis.URL.revokeObjectURL(url);
-            console.log('[procesarExcelBackend] Excel descargado exitosamente');
-            return true;
-        } catch (excelError) {
-            console.error('[procesarExcelBackend] Error:', excelError.response?.data || excelError.message);
-            mostrarAlertaError('Error al descargar el Excel.', excelError.message || 'Ocurrió un error inesperado.');
-            return false;
+    const procesarWord = async (nroDecreto) => {
+        if (!nroDecreto) {
+            throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
         }
+        return descargarArchivo(() => getDocDecreto(nroDecreto), `decreto_${nroDecreto}.docx`, 'Word');
+    };
+
+    const procesarExcelBackend = async (nroDecreto) => {
+        if (!nroDecreto) {
+            throw new Error("No se encontró el 'nroDecreto' en la respuesta.");
+        }
+        return descargarArchivo(() => getExcelDecreto(nroDecreto), `solicitudes-${nroDecreto}.xlsx`, 'Excel');
     };
 
     const validarGeneracion = (templateName) => {
@@ -205,6 +222,8 @@ export const useGenerarDecretos = () => {
 
     const setupDownloadButtons = (nroDecreto) => {
         document.querySelectorAll('.swal2-download-btn').forEach(btn => {
+            if (btn.dataset.listenerAttached) return;
+            btn.dataset.listenerAttached = 'true';
             btn.addEventListener('click', async (e) => {
                 const tipo = e.target.dataset.tipo;
                 e.target.disabled = true;
@@ -264,12 +283,10 @@ export const useGenerarDecretos = () => {
             console.log('[handleGenerarDecreto] Enviando payload:', JSON.stringify(payload));
             const response = await decretar(payload);
 
-            const solicitudes = response?.solicitudes;
-            const nroDecreto = solicitudes?.[0]?.nroDecreto;
-
-            if (!solicitudes?.length || !nroDecreto) {
+            const { ok, nroDecreto, error } = validarRespuestaDecreto(response);
+            if (!ok) {
                 console.error('[handleGenerarDecreto] Respuesta inesperada:', JSON.stringify(response));
-                mostrarAlertaError('No se recibieron datos válidos del servidor.');
+                mostrarAlertaError(error || 'No se recibieron datos válidos del servidor.');
                 return;
             }
 
@@ -300,6 +317,7 @@ export const useGenerarDecretos = () => {
         selectedTemplate, setSelectedTemplate,
         sortConfig,
         currentAprobaciones, // The items for the current view, filtered and paginated
+        selectedItemsCount: selectedItems.length,
         totalElements: filteredAprobaciones.length, // Total items after filtering for pagination
         componentPage, // Current page for pagination component
         itemsPerPage: ITEMS_PER_PAGE,

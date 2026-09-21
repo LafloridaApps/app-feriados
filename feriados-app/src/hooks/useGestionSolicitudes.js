@@ -44,12 +44,12 @@ export const useGestionSolicitudes = () => {
     }, []);
 
     const handleUpdateSolicitud = async () => {
-        
-     
+        if (!solicitud) return;
+
         setLoading(true);
         try {
             await updateSolicitud(solicitud.idSolicitud, editableData);
-            
+
             Swal.fire('¡Éxito!', 'La solicitud ha sido actualizada.', 'success');
             buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
         } catch (err) {

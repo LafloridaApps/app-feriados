@@ -58,7 +58,6 @@ const RRHHPage = () => {
                 {activeTab === 'generar' && (
                     <div className="tab-pane fade show active">
                         <GeneradorDecretos
-                            // Props del hook directamente
                             fechaDesde={generarDecretos.fechaDesde}
                             setFechaDesde={generarDecretos.setFechaDesde}
                             fechaHasta={generarDecretos.fechaHasta}

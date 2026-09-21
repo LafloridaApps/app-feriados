@@ -6,7 +6,7 @@ export const useFeriadosTabs = (detalle) => {
 
     const { detallePorAnio, years } = useMemo(() => {
         const detallePorAnio = detalle.reduce((acc, d) => {
-            const anio = new Date(d.fechaResolucion).getFullYear();
+            const anio = new Date(d.fechaInicio).getFullYear();
             if (!acc[anio]) acc[anio] = [];
             acc[anio].push(d);
             return acc;

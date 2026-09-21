@@ -63,6 +63,8 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     const depto = funcionario?.codDepto;
     const codDeptoJefe = funcionario?.codDeptoJefe;
 
+    console.log("Resumen Administrativo:", funcionario);
+
 
     const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas);
 
@@ -79,7 +81,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
         const esDiaHabil = (d) => {
             const dia = d.getDay();
-            const fechaStr = d.toISOString().split('T')[0];
+            const fechaStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
             return dia !== 0 && dia !== 6 && !fechasFeriadas.includes(fechaStr);
         };
 
@@ -119,17 +121,18 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         setMinDateInicio(minDate);
     }, []);
 
+    // Sincroniza jornadaFin según el saldo de ADMINISTRATIVO (media jornada = .5)
+    const sincronizarJornada = useCallback((saldoAdm) => {
+        if (saldoAdm === null || saldoAdm === undefined) return;
+        setJornadaFin(saldoAdm % 1 === 0 ? 'PM' : 'AM');
+    }, []);
+
     // Auto-ajustar jornadaFin cuando ADMINISTRATIVO tiene saldo con media jornada (.5)
     useEffect(() => {
-        if (tipo === 'ADMINISTRATIVO' && resumenAdministrativo?.saldo !== null && resumenAdministrativo?.saldo !== undefined) {
-            const saldoAdm = resumenAdministrativo.saldo;
-            if (saldoAdm % 1 === 0) {
-                setJornadaFin('PM');
-            } else {
-                setJornadaFin('AM');
-            }
+        if (tipo === 'ADMINISTRATIVO') {
+            sincronizarJornada(resumenAdministrativo?.saldo);
         }
-    }, [tipo, resumenAdministrativo]);
+    }, [tipo, resumenAdministrativo, sincronizarJornada]);
 
     let diasUsar = null;
     let saldo = null;
@@ -142,75 +145,75 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         saldo = saldoAdministrativo;
     }
 
-    useEffect(() => {
-        const gestionarFechas = () => {
-            if (!tipo) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
+    const gestionarFechas = useCallback(() => {
+        if (!tipo) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
 
-            const diasDisponibles = tipo === "FERIADO" ? resumenFeriados?.dias_pendientes : resumenAdministrativo?.saldo;
-            if (diasDisponibles === null || diasDisponibles === undefined) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
+        const diasDisponibles = tipo === "FERIADO" ? resumenFeriados?.dias_pendientes : resumenAdministrativo?.saldo;
+        if (diasDisponibles === null || diasDisponibles === undefined) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
 
-            // Para ADMINISTRATIVO con media jornada (ej: 1.5), usar Math.ceil para calcular
-            // la fecha fin máxima correctamente. La jornadaFin='AM' cubre la fracción.
-            const diasParaCalculo = (tipo === 'ADMINISTRATIVO' && diasDisponibles % 1 !== 0)
-                ? Math.ceil(diasDisponibles)
-                : diasDisponibles;
-            const fechaFinMaxima = calcularFechaFinPropuesta(fechaInicio, diasParaCalculo);
-            setMaxDateFin(fechaFinMaxima);
+        // Para ADMINISTRATIVO con media jornada (ej: 1.5), usar Math.ceil para calcular
+        // la fecha fin máxima correctamente. La jornadaFin='AM' cubre la fracción.
+        const diasParaCalculo = (tipo === 'ADMINISTRATIVO' && diasDisponibles % 1 !== 0)
+            ? Math.ceil(diasDisponibles)
+            : diasDisponibles;
+        const fechaFinMaxima = calcularFechaFinPropuesta(fechaInicio, diasParaCalculo);
+        setMaxDateFin(fechaFinMaxima);
 
-            let currentFechaFin = fechaFin;
-            
-            if (fechaEditada === 'inicio' || fechaEditada === 'tipo') {
-                if (fechaFinMaxima && currentFechaFin !== fechaFinMaxima) {
-                    setFechaFin(fechaFinMaxima);
-                    currentFechaFin = fechaFinMaxima;
-                }
-            } else {
-                // Garantizar que la fecha fin no sea nula ni quede antes de la fecha de inicio
-                if (!currentFechaFin || new Date(currentFechaFin) < new Date(fechaInicio)) {
-                    setFechaFin(fechaInicio);
-                    currentFechaFin = fechaInicio;
-                }
-                // Si la fecha fin supera el máximo permitido, la limitamos a dicho máximo
-                if (fechaFinMaxima && new Date(currentFechaFin) > new Date(fechaFinMaxima)) {
-                    setFechaFin(fechaFinMaxima);
-                    currentFechaFin = fechaFinMaxima;
-                }
+        let currentFechaFin = fechaFin;
+
+        if (fechaEditada === 'inicio' || fechaEditada === 'tipo') {
+            if (fechaFinMaxima && currentFechaFin !== fechaFinMaxima) {
+                setFechaFin(fechaFinMaxima);
+                currentFechaFin = fechaFinMaxima;
             }
-
-            return { currentFechaFin, fechaFinMaxima };
-        };
-
-        const validarFeriado = (diasSolicitados, currentFechaFin) => {
-            setDiasUsarFeriado(diasSolicitados);
-            const saldoPrevio = resumenFeriados?.dias_pendientes || 0;
-            const nuevoSaldo = saldoPrevio - diasSolicitados;
-            setSaldoFeriado(nuevoSaldo);
-            setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
-
-            const fInicio = new Date(fechaInicio);
-            const fFin = new Date(currentFechaFin);
-            const diasCorridos = Math.round(Math.abs((fFin.getTime() - fInicio.getTime()) / MS_POR_DIA)) + 1;
-
-            // Excepción para casos antiguos: si el saldo previo ya es menor a 10 días,
-            // se le permite usar sus días restantes sin bloquearlo.
-            const excepcionCasosAntiguos = saldoPrevio < 10;
-
-            const cumpleReglaDiezDias = excepcionCasosAntiguos || yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
-            if (cumpleReglaDiezDias) {
-                setErrorBloqueDiezDias("");
-            } else {
-                setErrorBloqueDiezDias(`De acuerdo a la Ley N°18.883, debes tomar al menos un bloque de 10 días corridos. Esta solicitud de ${diasCorridos} días corridos dejaría tu saldo en ${nuevoSaldo} días, impidiendo cumplir con esta normativa.`);
+        } else {
+            // Garantizar que la fecha fin no sea nula ni quede antes de la fecha de inicio
+            if (!currentFechaFin || new Date(currentFechaFin) < new Date(fechaInicio)) {
+                setFechaFin(fechaInicio);
+                currentFechaFin = fechaInicio;
             }
-        };
+            // Si la fecha fin supera el máximo permitido, la limitamos a dicho máximo
+            if (fechaFinMaxima && new Date(currentFechaFin) > new Date(fechaFinMaxima)) {
+                setFechaFin(fechaFinMaxima);
+                currentFechaFin = fechaFinMaxima;
+            }
+        }
 
-        const validarAdministrativo = (diasSolicitados) => {
-            setDiasUsarAdministrativo(diasSolicitados);
-            const nuevoSaldo = (resumenAdministrativo?.saldo || 0) - diasSolicitados;
-            setSaldoAdministrativo(nuevoSaldo);
-            setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
+        return { currentFechaFin, fechaFinMaxima };
+    }, [tipo, fechaFin, fechaInicio, fechaEditada, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta]);
+
+    const validarFeriado = useCallback((diasSolicitados, currentFechaFin) => {
+        setDiasUsarFeriado(diasSolicitados);
+        const saldoPrevio = resumenFeriados?.dias_pendientes || 0;
+        const nuevoSaldo = saldoPrevio - diasSolicitados;
+        setSaldoFeriado(nuevoSaldo);
+        setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
+
+        const fInicio = new Date(fechaInicio);
+        const fFin = new Date(currentFechaFin);
+        const diasCorridos = Math.round(Math.abs((fFin.getTime() - fInicio.getTime()) / MS_POR_DIA)) + 1;
+
+        // Excepción para casos antiguos: si el saldo previo ya es menor a 10 días,
+        // se le permite usar sus días restantes sin bloquearlo.
+        const excepcionCasosAntiguos = saldoPrevio < 10;
+
+        const cumpleReglaDiezDias = excepcionCasosAntiguos || yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
+        if (cumpleReglaDiezDias) {
             setErrorBloqueDiezDias("");
-        };
+        } else {
+            setErrorBloqueDiezDias(`De acuerdo a la Ley N°18.883, debes tomar al menos un bloque de 10 días corridos. Esta solicitud de ${diasCorridos} días corridos dejaría tu saldo en ${nuevoSaldo} días, impidiendo cumplir con esta normativa.`);
+        }
+    }, [resumenFeriados, fechaInicio, yaTieneBloqueDiezDias]);
 
+    const validarAdministrativo = useCallback((diasSolicitados) => {
+        setDiasUsarAdministrativo(diasSolicitados);
+        const nuevoSaldo = (resumenAdministrativo?.saldo || 0) - diasSolicitados;
+        setSaldoAdministrativo(nuevoSaldo);
+        setErrorSaldo(nuevoSaldo < 0 ? "No tienes saldo suficiente." : "");
+        setErrorBloqueDiezDias("");
+    }, [resumenAdministrativo]);
+
+    useEffect(() => {
         const actualizar = () => {
             if (!tipo) {
                 setDiasUsarFeriado(null);
@@ -235,7 +238,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         };
 
         actualizar();
-    }, [fechaInicio, fechaFin, tipo, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta, validarFechas, fechasFeriadas, jornadaInicio, jornadaFin, fechaEditada, yaTieneBloqueDiezDias]);
+    }, [fechaInicio, fechaFin, tipo, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta, validarFechas, fechasFeriadas, jornadaInicio, jornadaFin, fechaEditada, yaTieneBloqueDiezDias, gestionarFechas, validarFeriado, validarAdministrativo]);
 
     const handlerFechaInicio = useCallback((e) => {
         setFechaInicio(e.target.value);
@@ -257,18 +260,14 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
                 setFechaInicio(fechaActual());
             }
             // Sincronizar inmediatamente la jornada para evitar parpadeos y cálculos en negativo
-            if (newTipo === 'ADMINISTRATIVO' && resumenAdministrativo?.saldo !== null && resumenAdministrativo?.saldo !== undefined) {
-                if (resumenAdministrativo.saldo % 1 === 0) {
-                    setJornadaFin('PM');
-                } else {
-                    setJornadaFin('AM');
-                }
+            if (newTipo === 'ADMINISTRATIVO') {
+                sincronizarJornada(resumenAdministrativo?.saldo);
             }
         } else {
             setFechaInicio(fechaActual());
             setFechaFin(fechaActual());
         }
-    }, [fechaInicio, resumenAdministrativo]);
+    }, [fechaInicio, resumenAdministrativo, sincronizarJornada]);
 
     const mostrarAlertaError = useCallback((mensaje) => {
         if (mensaje) Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
@@ -395,9 +394,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         }
     };
 
-    const submitForm = async (e, esJefe, esDirector) => {
-        e.preventDefault();
-
+    const validarPreEnvio = async (esDirector) => {
         const isValid = validarFechas(fechaInicio, fechaFin);
 
         if (errorBloqueDiezDias) {
@@ -407,12 +404,12 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
                 text: errorBloqueDiezDias,
                 confirmButtonText: 'Entendido',
             });
-            return;
+            return false;
         }
 
         if (!isValid || errorSaldo) {
             mostrarAlertaError(errorSaldo || 'Existen errores en las fechas seleccionadas.');
-            return;
+            return false;
         }
 
         // Validacion de subrogancia para directores
@@ -423,26 +420,37 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
                 text: 'Como director, es obligatorio que designe un subrogante.'
             });
             setMostrarModalSubrogante(true);
+            return false;
+        }
+
+        return true;
+    };
+
+    const flujoSubrogante = async (esJefe, esDirector) => {
+        if (await verificarConflictoFechas()) {
+            await Swal.fire({
+                icon: 'error',
+                title: 'Ya existe una solicitud',
+                text: 'Tienes una solicitud en este mismo rango de fechas.',
+            });
             return;
         }
 
+        if (esJefe && !esDirector && !subrogancia) {
+            await procesarSinSubrogante();
+            return;
+        }
+
+        await handleSaveSolicitud();
+    };
+
+    const submitForm = async (e, esJefe, esDirector) => {
+        e.preventDefault();
+
+        if (!await validarPreEnvio(esDirector)) return;
+
         try {
-            if (await verificarConflictoFechas()) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Ya existe una solicitud',
-                    text: 'Tienes una solicitud en este mismo rango de fechas.',
-                });
-                return;
-            }
-
-            if (esJefe && !esDirector && !subrogancia) {
-                await procesarSinSubrogante();
-                return;
-            }
-
-            await handleSaveSolicitud();
-
+            await flujoSubrogante(esJefe, esDirector);
         } catch (error) {
             console.error('Error inesperado al procesar la solicitud:', error);
             await Swal.fire({
