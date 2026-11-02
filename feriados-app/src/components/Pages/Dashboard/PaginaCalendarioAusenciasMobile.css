@@ -22,7 +22,7 @@
     align-items: center;
     padding: 0.5rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     font-size: 0.85rem;
     position: relative;
     border: none;
@@ -81,7 +81,7 @@
 
 .dashboard-mobile-details-section .list-group-item {
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md) !important;
+    border-radius: var(--radius-md) ;
     margin-bottom: 0.5rem;
     background: white;
     box-shadow: var(--shadow-sm);
@@ -92,4 +92,14 @@
     padding: 0.5rem 0.75rem;
     border-radius: 9999px;
     font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-mobile-container {
+        animation: none;
+    }
+
+    .dashboard-mobile-calendar-day {
+        transition: none;
+    }
 }

@@ -43,7 +43,7 @@ const InboxSolicitudes = () => {
             const estado = (solicitud.estadoSolicitud || '').trim().toUpperCase();
             return derivacionActiva?.recepcionada === false && estado !== 'ANULADA' && estado !== 'RECHAZADA';
         });
-    }, [sortedItems, noLeidas]);
+    }, [sortedItems, noLeidas, modoBusqueda]);
 
     const traslapes = useTraslapes(sortedItems);
 

@@ -24,7 +24,7 @@ const AdministrativosPage = () => {
                     console.error("Error al obtener funcionario:", error);
                 }
             };
-            fetchPermisos();
+            void fetchPermisos();
         }
     }, [funcionario]);
 

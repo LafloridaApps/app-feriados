@@ -36,14 +36,14 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
         }
 
         if (rutCompleto.includes('.')) {
-            Swal.fire('Error', 'El RUT debe ser ingresado sin puntos.', 'error');
+            void Swal.fire('Error', 'El RUT debe ser ingresado sin puntos.', 'error');
             setNombreJefe('');
             return;
         }
 
         const partes = rutCompleto.split('-');
         if (partes.length !== 2 || partes[1].length !== 1) {
-            Swal.fire('Error', 'El RUT debe contener un guión antes del dígito verificador.', 'error');
+            void Swal.fire('Error', 'El RUT debe contener un guión antes del dígito verificador.', 'error');
             setNombreJefe('');
             return;
         }
@@ -51,7 +51,7 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
         const rutLimpio = rutCompleto.replaceAll('-', '').toUpperCase();
 
         if (!validarRut(rutLimpio)) {
-            Swal.fire('Error', 'El RUT ingresado no es válido. Verifique el formato y dígito verificador.', 'error');
+            void Swal.fire('Error', 'El RUT ingresado no es válido. Verifique el formato y dígito verificador.', 'error');
             setNombreJefe('');
             return;
         }
@@ -64,14 +64,14 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
             setNombreJefe(nombreEncontrado);
         } catch (error) {
             setNombreJefe('');
-            Swal.fire('Error', error.response?.data?.detalle || 'No se pudo encontrar al funcionario.', 'error');
+            void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo encontrar al funcionario.', 'error');
         }
     };
 
     const handleGuardar = async () => {
         // Validación final de campos antes del confirm
         if (!nombre.trim()) {
-            Swal.fire('Error', 'Debe ingresar un nombre para el departamento.', 'error');
+            void Swal.fire('Error', 'Debe ingresar un nombre para el departamento.', 'error');
             return;
         }
 
@@ -79,7 +79,7 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
         if (rutCompleto) {
             const rutLimpio = rutCompleto.replaceAll('-', '').toUpperCase();
             if (!validarRut(rutLimpio) || !nombreJefe) {
-                Swal.fire('Error', 'El RUT del jefe ingresado no es válido o no ha sido encontrado.', 'error');
+                void Swal.fire('Error', 'El RUT del jefe ingresado no es válido o no ha sido encontrado.', 'error');
                 return;
             }
             rutJefeNumerico = Number(rutCompleto.split('-')[0]);
@@ -90,31 +90,31 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
             ? `Se creará el departamento "${nombre}" con jefatura asignada.`
             : `Está a punto de crear el departamento "${nombre}" SIN jefatura asignada. ¿Desea continuar de todos modos?`;
 
-        Swal.fire({
+        const result = await Swal.fire({
             title: '¿Confirmar creación?',
             text: textoConfirmacion,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, crear',
             cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const deptoData = {
-                    idPadre: parent ? parent.id : null,
-                    nombreDepartamento: nombre,
-                    rutJefe: rutJefeNumerico
-                };
-
-                try {
-                    const response = await agregarDepartamento(deptoData);
-                    Swal.fire('¡Éxito!', response.message || 'Departamento agregado con éxito.', 'success');
-                    fetchDepartamentos();
-                    onHide();
-                } catch (error) {
-                    Swal.fire('Error', error.response?.data?.detalle || 'No se pudo crear el departamento.', 'error');
-                }
-            }
         });
+
+        if (result.isConfirmed) {
+            const deptoData = {
+                idPadre: parent ? parent.id : null,
+                nombreDepartamento: nombre,
+                rutJefe: rutJefeNumerico
+            };
+
+            try {
+                const response = await agregarDepartamento(deptoData);
+                void Swal.fire('¡Éxito!', response.message || 'Departamento agregado con éxito.', 'success');
+                void fetchDepartamentos();
+                onHide();
+            } catch (error) {
+                void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo crear el departamento.', 'error');
+            }
+        }
     };
 
     if (!show) {
@@ -165,7 +165,7 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
                                         onClick={() => setShowBuscarNombre(true)}
                                         title="Buscar por nombre"
                                     >
-                                        <FaSearch className="me-1" /> Buscar Nombre
+                                        <FaSearch className="me-1" />{' '}Buscar Nombre
                                     </button>
                                     <button 
                                         className="btn btn-outline-primary" 

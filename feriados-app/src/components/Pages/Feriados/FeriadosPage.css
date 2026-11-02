@@ -4,7 +4,6 @@
     --primary-gradient: linear-gradient(135deg, #009B4D 0%, #004B8D 100%);
     --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
     --border-radius-lg: 16px;
-    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .feriados-page-container {
@@ -17,22 +16,22 @@
 }
 
 .text-primary {
-    color: #004B8D !important;
+    color: #004B8D ;
 }
 
 .border-primary {
-    border-color: #009B4D !important;
+    border-color: #009B4D ;
 }
 
 .feriados-section-card {
     background: white;
-    border: 1px solid #f1f5f9 !important;
-    border-radius: var(--border-radius-lg) !important;
-    box-shadow: var(--shadow-soft) !important;
+    border: 1px solid #f1f5f9 ;
+    border-radius: var(--border-radius-lg) ;
+    box-shadow: var(--shadow-soft) ;
     overflow: hidden;
     padding: 2rem;
     margin-bottom: 2rem;
-    transition: var(--transition-base);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Redesign for sub-components headers */
@@ -98,10 +97,24 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 0.75rem 1rem;
-    transition: var(--transition-base);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-select-premium:focus {
     border-color: #004B8D;
     box-shadow: 0 0 0 4px rgba(0, 75, 141, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .feriados-page-container {
+        animation: none;
+    }
+
+    .feriados-section-card {
+        transition: none;
+    }
+
+    .form-select-premium {
+        transition: none;
+    }
 }

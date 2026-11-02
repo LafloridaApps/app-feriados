@@ -20,7 +20,7 @@ export const DepartamentoProvider = ({ children }) => {
             }
         };
 
-        fetchDepartamentos();
+        void fetchDepartamentos();
     }, []);
 
     const contextValue = useMemo(() => ({ departamentos, loading }), [departamentos, loading]);

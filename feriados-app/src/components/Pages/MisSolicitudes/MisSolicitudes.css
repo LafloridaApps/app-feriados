@@ -5,7 +5,6 @@
     --glass-bg: rgba(255, 255, 255, 0.95);
     --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
     --border-radius-lg: 16px;
-    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mis-solicitudes-container {
@@ -23,20 +22,20 @@
 }
 
 .mis-solicitudes-card {
-    border: 1px solid #f1f5f9 !important;
-    border-radius: var(--border-radius-lg) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #f1f5f9 ;
+    border-radius: var(--border-radius-lg) ;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) ;
     overflow: hidden;
     background: white;
 }
 
 /* Color overrides to match brand if needed */
 .text-primary {
-    color: #004B8D !important; /* Specific blue from brand */
+    color: #004B8D ; /* Specific blue from brand */
 }
 
 .border-primary {
-    border-color: #009B4D !important; /* Specific green for the left border bar */
+    border-color: #009B4D ; /* Specific green for the left border bar */
 }
 
 
@@ -65,14 +64,14 @@
 .mis-solicitudes-table tbody tr {
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    transition: var(--transition-base);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 8px;
 }
 
 .mis-solicitudes-table tbody tr:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    background-color: #f8fafc !important;
+    background-color: #f8fafc ;
 }
 
 .mis-solicitudes-table td {

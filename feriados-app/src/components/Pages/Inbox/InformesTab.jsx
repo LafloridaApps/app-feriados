@@ -35,7 +35,7 @@ const InformesTab = () => {
             }
         };
 
-        fetchInformes();
+        void fetchInformes();
     }, [codDeptoUsuario, filtroAnio, filtroDepto]);
 
     if (loading) {

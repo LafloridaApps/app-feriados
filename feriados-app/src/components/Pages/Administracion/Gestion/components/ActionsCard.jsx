@@ -50,12 +50,14 @@ const ActionsCard = ({ solicitud, editableData, handleInputChange, handleUpdateS
                 </div>
                 <div className="d-grid gap-2">
                     <button
+                        type="button"
                         className="btn btn-primary"
                         onClick={handleUpdateSolicitud}
                         disabled={!canEdit || loading}>
                         <i className="bi bi-check-circle"></i> {loading ? 'Guardando...' : 'Guardar Cambios'}
                     </button>
                     <button
+                        type="button"
                         className="btn btn-outline-secondary"
                         onClick={handleRepairUrl} disabled={loading}>
                         <i className="bi bi-arrow-repeat"></i> {loading ? 'Procesando...' : 'Reparar URL (Re-firmar)'}

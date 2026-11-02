@@ -11,7 +11,7 @@ const ModalDepartamentosExternos = ({ show, onHide, onSelect }) => {
     useEffect(() => {
         if (show) {
             setSearchTerm('');
-            fetchDepartamentos();
+            void fetchDepartamentos();
         }
     }, [show]);
 
@@ -30,7 +30,7 @@ const ModalDepartamentosExternos = ({ show, onHide, onSelect }) => {
             setDepartamentos(dataArray);
         } catch (error) {
              console.error('Error fetching external departments:', error);
-             Swal.fire('Error', 'No se pudieron cargar los departamentos externos.', 'error');
+             void Swal.fire('Error', 'No se pudieron cargar los departamentos externos.', 'error');
         } finally {
             setLoading(false);
         }
@@ -63,7 +63,6 @@ const ModalDepartamentosExternos = ({ show, onHide, onSelect }) => {
                                         placeholder="Buscar por código o nombre..." 
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        autoFocus
                                     />
                                 </div>
                             </div>

@@ -132,7 +132,7 @@ const PaginaCalendarioAusencias = () => {
                 }
             };
 
-            fetchAndProcessData();
+            void fetchAndProcessData();
         } else {
             setLoading(false);
             setError("No se pudo identificar al usuario o su departamento.");
@@ -298,11 +298,11 @@ const PaginaCalendarioAusencias = () => {
                 <div className="dashboard-legend d-flex flex-wrap align-items-center gap-4 mb-3">
                     <span className="legend-item">
                         <span className="legend-dot legend-dot-feriado"></span>
-                        Feriados
+                        {' '}Feriados
                     </span>
                     <span className="legend-item">
                         <span className="legend-dot legend-dot-licencia"></span>
-                        Licencias
+                        {' '}Licencias
                     </span>
                 </div>
             )}

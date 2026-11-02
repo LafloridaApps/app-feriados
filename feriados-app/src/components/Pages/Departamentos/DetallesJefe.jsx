@@ -30,7 +30,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
             setNombreDepartamento(departamento.nombre || '');
 
             if (departamento.rutJefe) {
-                cargarFoto(departamento.rutJefe);
+                void cargarFoto(departamento.rutJefe);
             } else {
                 setFotoJefe(null);
             }
@@ -92,88 +92,86 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
             }
 
             const mensajeExito = esRemocion ? 'Departamento actualizado sin jefe.' : 'Jefe guardado correctamente.';
-            Swal.fire('¡Éxito!', resultApi.message || mensajeExito, 'success');
+            void Swal.fire('¡Éxito!', resultApi.message || mensajeExito, 'success');
 
-            fetchDepartamentos();
+            void fetchDepartamentos();
             setEnEdicion(false);
         } catch (error) {
             const accionError = esRemocion ? 'quitar al jefe' : 'guardar';
-            Swal.fire('Error', error.response?.data?.detalle || `No se pudo ${accionError}.`, 'error');
+            void Swal.fire('Error', error.response?.data?.detalle || `No se pudo ${accionError}.`, 'error');
         }
     };
 
-    const handleGuardarCodigoExterno = () => {
-        Swal.fire({
+    const handleGuardarCodigoExterno = async () => {
+        const result = await Swal.fire({
             title: '¿Está seguro de guardar el código externo?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, guardar',
             cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await updateCodigoExterno(departamento.id, codigoExterno);
-
-                    if (setDepartamentoSeleccionado) {
-                        setDepartamentoSeleccionado(null);
-                    }
-
-                    Swal.fire('¡Guardado!', result.message, 'success');
-                    fetchDepartamentos();
-                } catch (error) {
-                    console.log(error);
-                    const errorMsg = error.response?.data?.message || error.response?.data?.detalle || 'No se pudo guardar.';
-                    Swal.fire('Error', errorMsg, 'error');
-                }
-            }
         });
+        if (result.isConfirmed) {
+            try {
+                await updateCodigoExterno(departamento.id, codigoExterno);
+
+                if (setDepartamentoSeleccionado) {
+                    setDepartamentoSeleccionado(null);
+                }
+
+                void Swal.fire('¡Guardado!', result.message, 'success');
+                void fetchDepartamentos();
+            } catch (error) {
+                console.log(error);
+                const errorMsg = error.response?.data?.message || error.response?.data?.detalle || 'No se pudo guardar.';
+                void Swal.fire('Error', errorMsg, 'error');
+            }
+        }
     };
 
-    const handleGuardarNombreDepartamento = () => {
-        Swal.fire({
+    const handleGuardarNombreDepartamento = async () => {
+        const result = await Swal.fire({
             title: '¿Está seguro de actualizar el nombre del departamento?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, guardar',
             cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await updateNombreDeptoById(departamento.id, nombreDepartamento);
-
-                    if (setDepartamentoSeleccionado) {
-                        setDepartamentoSeleccionado(null);
-                    }
-
-                    Swal.fire('¡Guardado!', 'El nombre del departamento ha sido actualizado.', 'success');
-                    fetchDepartamentos();
-                } catch (error) {
-                    Swal.fire('Error', error.response?.data?.detalle || 'No se pudo actualizar el nombre del departamento.', 'error');
-                }
-            } else {
-                setNombreDepartamento(departamento.nombre || '');
-            }
         });
+        if (result.isConfirmed) {
+            try {
+                await updateNombreDeptoById(departamento.id, nombreDepartamento);
+
+                if (setDepartamentoSeleccionado) {
+                    setDepartamentoSeleccionado(null);
+                }
+
+                void Swal.fire('¡Guardado!', 'El nombre del departamento ha sido actualizado.', 'success');
+                void fetchDepartamentos();
+            } catch (error) {
+                void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo actualizar el nombre del departamento.', 'error');
+            }
+        } else {
+            setNombreDepartamento(departamento.nombre || '');
+        }
     };
 
     const handleBuscarJefePorRut = async () => {
         if (!rutCompleto) return;
 
         if (rutCompleto.includes('.')) {
-            Swal.fire('Error', 'El RUT debe ser ingresado sin puntos.', 'error');
+            void Swal.fire('Error', 'El RUT debe ser ingresado sin puntos.', 'error');
             return;
         }
 
         const partes = rutCompleto.split('-');
         if (partes.length !== 2 || partes[1].length !== 1) {
-            Swal.fire('Error', 'El RUT debe contener un guión antes del dígito verificador.', 'error');
+            void Swal.fire('Error', 'El RUT debe contener un guión antes del dígito verificador.', 'error');
             return;
         }
 
         const rutLimpio = rutCompleto.replaceAll('-', '').toUpperCase();
 
         if (!validarRut(rutLimpio)) {
-            Swal.fire('Error', 'El RUT ingresado no es válido. Verifique el formato y dígito verificador.', 'error');
+            void Swal.fire('Error', 'El RUT ingresado no es válido. Verifique el formato y dígito verificador.', 'error');
             setNombreJefeEditado('');
             setDisabled(true);
             return;
@@ -188,7 +186,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
             setDisabled(false);
         } catch (error) {
             setDisabled(true);
-            Swal.fire('Error', error.response?.data?.detalle || 'No se pudo obtener el funcionario', 'error');
+            void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo obtener el funcionario', 'error');
         }
     };
 
@@ -202,8 +200,8 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
         }
     };
 
-    const handlerEliminar = () => {
-        Swal.fire({
+    const handlerEliminar = async () => {
+        const result = await Swal.fire({
             title: '¿Está seguro?',
             text: 'Se eliminará el código externo del departamento.',
             icon: 'warning',
@@ -212,20 +210,18 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const result = deleteCodigoExternoByIdDepto(departamento.id)
-                    .then(() => {
-                        Swal.fire('Eliminado', result.message, 'success');
-                        if (setDepartamentoSeleccionado) {
-                            setDepartamentoSeleccionado(null);
-                        }
-                    })
-                    .catch((error) => {
-                        Swal.fire('Error', error.response?.data?.detalle || 'No se pudo eliminar el código externo.', 'error');
-                    });
-            }
         });
+        if (result.isConfirmed) {
+            try {
+                const response = await deleteCodigoExternoByIdDepto(departamento.id);
+                void Swal.fire('Eliminado', response.message, 'success');
+                if (setDepartamentoSeleccionado) {
+                    setDepartamentoSeleccionado(null);
+                }
+            } catch (error) {
+                void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo eliminar el código externo.', 'error');
+            }
+        }
     }
 
     // --- Renderizado de campos --- //
@@ -260,9 +256,9 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                         <div className="col-md-12">
                             <label htmlFor="rutJefeInput" className="form-label text-muted small fw-bold text-uppercase">RUT del Funcionario</label>
                             <div className="input-group">
-                                <input id="rutJefeInput" type="text" className="form-control" placeholder="Ej: 12345678-9" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} autoFocus />
+                                <input id="rutJefeInput" type="text" className="form-control" placeholder="Ej: 12345678-9" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} />
                                 <button className="btn btn-outline-secondary" type="button" onClick={() => setShowBusquedaModal(true)} title="Buscar por nombre">
-                                    <FaSearch className="me-1" /> Buscar Nombre
+                                    <FaSearch className="me-1" />{' '}Buscar Nombre
                                 </button>
                                 <button className="btn btn-primary px-4" type="button" onClick={handleBuscarJefePorRut}>
                                     Buscar RUT
@@ -275,8 +271,8 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                         </div>
                     </div>
                     <div className="d-flex gap-2 mt-4 justify-content-end">
-                        <button className="btn btn-light border" onClick={handleCancelar}>Cancelar</button>
-                        <button className="btn btn-success px-4" onClick={() => handleGuardarJefe()} disabled={disabled || !nombreJefeEditado}>
+                        <button type="button" className="btn btn-light border" onClick={handleCancelar}>Cancelar</button>
+                        <button type="button" className="btn btn-success px-4" onClick={() => handleGuardarJefe()} disabled={disabled || !nombreJefeEditado}>
                             <i className="bi bi-check-circle me-2"></i>Guardar
                         </button>
                     </div>
@@ -292,7 +288,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                             type="button"
                             className="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden border-0 p-0 detalles-jefe-foto-btn"
                             onClick={() => {
-                                Swal.fire({
+                                void Swal.fire({
                                     imageUrl: fotoJefe,
                                     imageAlt: 'Foto Jefatura',
                                     showConfirmButton: false,
@@ -353,11 +349,11 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                     {!enEdicion && (
                         <div className="d-flex gap-2">
                             {departamento.rutJefe && (
-                                <button className="btn btn-outline-danger btn-sm" onClick={() => handleGuardarJefe(true)} title="Quitar jefatura">
+                                <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleGuardarJefe(true)} title="Quitar jefatura">
                                     <i className="bi bi-person-dash me-1"></i>Dejar sin jefe
                                 </button>
                             )}
-                            <button className={`btn ${departamento.rutJefe ? 'btn-outline-primary btn-sm' : 'btn-primary btn-sm'}`} onClick={handleEditar}>
+                            <button type="button" className={`btn ${departamento.rutJefe ? 'btn-outline-primary btn-sm' : 'btn-primary btn-sm'}`} onClick={handleEditar}>
                                 <i className={`bi ${departamento.rutJefe ? 'bi-pencil' : 'bi-plus-circle'} me-1`}></i>{departamento.rutJefe ? 'Editar' : 'Asignar'}
                             </button>
                         </div>
@@ -393,6 +389,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                                     onChange={(e) => setNombreDepartamento(e.target.value)}
                                 />
                                 <button
+                                    type="button"
                                     className="btn btn-outline-success text-nowrap px-4"
                                     onClick={handleGuardarNombreDepartamento}
                                     disabled={!nombreDepartamento || nombreDepartamento === (departamento.nombre || '')}
@@ -420,8 +417,8 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                                         onChange={(e) => setCodigoExterno(e.target.value)}
                                     />
                                     <button
-                                        className="btn btn-outline-danger"
                                         type="button"
+                                        className="btn btn-outline-danger"
                                         onClick={() => handlerEliminar()}
                                         title="Eliminar código externo"
                                     >
@@ -441,6 +438,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
                                     </button>
                                 </div>
                                 <button
+                                    type="button"
                                     className="btn btn-outline-success text-nowrap px-4"
                                     onClick={handleGuardarCodigoExterno}
                                 >

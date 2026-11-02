@@ -17,14 +17,14 @@ const GestionModulosPage = () => {
             const data = await listarModulos();
             setModulos(data);
         }
-        getModulos()
+        void getModulos()
 
     },[])
 
     const handleAddModule = async (e) => {
         e.preventDefault();
         if (!nombreModulo) {
-            Swal.fire('Por favor, ingrese el nombre del módulo', '', 'warning');
+            void Swal.fire('Por favor, ingrese el nombre del módulo', '', 'warning');
             return;
         }
         setLoading(true);
@@ -40,7 +40,7 @@ const GestionModulosPage = () => {
         setModulos([...modulos, newModule]);
         setNombreModulo(''); // Limpiar el input
         setLoading(false);
-        Swal.fire('Módulo Agregado', `El módulo "${nombreModulo}" ha sido agregado.`, 'success');
+        void Swal.fire('Módulo Agregado', `El módulo "${nombreModulo}" ha sido agregado.`, 'success');
     };
 
     return (

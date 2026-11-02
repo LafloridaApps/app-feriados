@@ -1,11 +1,11 @@
 /* WelcomeWidget.css - Rediseño Premium */
 
 .welcome-widget-card {
-    background: var(--primary-gradient) !important;
-    border: none !important;
+    background: var(--primary-gradient) ;
+    border: none ;
     position: relative;
     overflow: hidden;
-    padding: 1.5rem !important;
+    padding: 1.5rem ;
 }
 
 .welcome-widget-card::before {
@@ -39,20 +39,18 @@
 .welcome-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: white !important;
+    color: white ;
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.welcome-subtitle {
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 0.95rem;
+.welcome-subtitle {    font-size: 0.95rem;
     font-weight: 500;
 }
 
 .welcome-text {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(255, 255, 255, 0.8) ;
 }
 
 .welcome-text span {
-    color: white !important;
+    color: white ;
 }

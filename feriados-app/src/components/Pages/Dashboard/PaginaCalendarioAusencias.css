@@ -59,9 +59,9 @@
 }
 
 .dashboard-calendar-header {
-    background: var(--primary-gradient) !important;
-    padding: 1.5rem !important;
-    border-bottom: none !important;
+    background: var(--primary-gradient);
+    padding: 1.5rem ;
+    border-bottom: none ;
 }
 
 .dashboard-calendar-header h4 {
@@ -82,7 +82,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
 .dashboard-calendar-header .btn-light:hover {
@@ -106,9 +106,9 @@
     flex-direction: column;
     padding: 0.75rem;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    border: none !important;
+    border: none ;
 }
 
 .dashboard-calendar-day:hover {
@@ -118,7 +118,7 @@
 
 .dashboard-calendar-day.text-muted {
     background-color: #f1f5f9;
-    color: #475569 !important;
+    color: #475569 ;
 }
 
 .dashboard-calendar-day strong {
@@ -190,7 +190,7 @@
 
 .dashboard-calendar-day.is-selected {
     background: #f0f7ff;
-    outline: 2px solid var(--primary-color) !important;
+    outline: 2px solid var(--primary-color) ;
     outline-offset: -2px;
     z-index: 3;
 }
@@ -218,12 +218,12 @@
 
 /* Modal Enhancements */
 .dashboard-modal-header {
-    background: var(--primary-gradient) !important;
-    padding: 2rem !important;
+    background: var(--primary-gradient) ;
+    padding: 2rem ;
 }
 
 .dashboard-modal-body {
-    padding: 2rem !important;
+    padding: 2rem ;
 }
 
 .info-card {
@@ -231,7 +231,7 @@
     border: 1px solid #e2e8f0;
     border-radius: var(--radius-md);
     padding: 1.25rem;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .info-card:hover {
@@ -276,4 +276,30 @@ button.btn-day-override {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-container {
+        animation: none;
+    }
+
+    .dashboard-card {
+        transition: none;
+    }
+
+    .dashboard-calendar-header .btn-light {
+        transition: none;
+    }
+
+    .dashboard-calendar-day {
+        transition: none;
+    }
+
+    .info-card {
+        transition: none;
+    }
+
+    .spinner-premium {
+        animation: none;
+    }
 }

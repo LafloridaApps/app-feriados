@@ -17,7 +17,7 @@ export const GestionSolicitudes = () => {
     const handleSearch = (e) => {
         e.preventDefault();
         if (solicitudId) {
-            buscarSolicitud(solicitudId);
+            void buscarSolicitud(solicitudId);
         }
     };
 

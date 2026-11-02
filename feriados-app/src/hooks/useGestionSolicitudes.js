@@ -50,10 +50,10 @@ export const useGestionSolicitudes = () => {
         try {
             await updateSolicitud(solicitud.idSolicitud, editableData);
 
-            Swal.fire('¡Éxito!', 'La solicitud ha sido actualizada.', 'success');
-            buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
+            void Swal.fire('¡Éxito!', 'La solicitud ha sido actualizada.', 'success');
+            void buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
         } catch (err) {
-            Swal.fire('Error', 'No se pudo actualizar la solicitud.', err.message || 'error');
+            void Swal.fire('Error', 'No se pudo actualizar la solicitud.', err.message || 'error');
         } finally {
             setLoading(false);
         }
@@ -64,10 +64,10 @@ export const useGestionSolicitudes = () => {
         setLoading(true);
         try {
             await repairUrl(solicitud.idSolicitud);
-            Swal.fire('¡Éxito!', 'Se ha iniciado el proceso para re-firmar el documento.', 'success');
-            buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
+            void Swal.fire('¡Éxito!', 'Se ha iniciado el proceso para re-firmar el documento.', 'success');
+            void buscarSolicitud(solicitud.idSolicitud); // Re-fetch to show updated data
         } catch (err) {
-            Swal.fire('Error', 'No se pudo iniciar el proceso de re-firma.', err.message || 'error');
+            void Swal.fire('Error', 'No se pudo iniciar el proceso de re-firma.', err.message || 'error');
         } finally {
             setLoading(false);
         }
@@ -83,11 +83,11 @@ export const useGestionSolicitudes = () => {
         try {
             const response = await anularSolicitudDirecta(idSolicitud, motivo, rutAprobador);
             const mensaje = response?.message || response?.mensaje || 'La solicitud ha sido anulada exitosamente.';
-            Swal.fire('¡Anulada!', mensaje, 'success');
-            buscarSolicitud(idSolicitud);
+            void Swal.fire('¡Anulada!', mensaje, 'success');
+            void buscarSolicitud(idSolicitud);
         } catch (err) {
             const errMsg = err.response?.data?.message || err.response?.data?.mensaje || err.message || 'No se pudo anular la solicitud.';
-            Swal.fire('Error', errMsg, 'error');
+            void Swal.fire('Error', errMsg, 'error');
         } finally {
             setLoading(false);
         }

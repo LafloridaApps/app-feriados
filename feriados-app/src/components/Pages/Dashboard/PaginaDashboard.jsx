@@ -110,7 +110,7 @@ const PaginaCalendarioAusencias = () => {
                 }
             };
 
-            fetchAndProcessData();
+            void fetchAndProcessData();
         } else {
             setLoading(false);
             setError("No se pudo identificar al usuario o su departamento.");

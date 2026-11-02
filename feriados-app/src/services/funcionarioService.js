@@ -48,7 +48,7 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
         const { data } = await api.get("/director-activo", { params: { id, fechaInicio, fechaFin } });
         return data;
     } catch (error) {
-        Swal.fire({
+        void Swal.fire({
             icon: 'error',
             title: 'Error al obtener funcionario',
             text: error.response.data.mensaje,
@@ -68,7 +68,9 @@ export const getFuncionarioApi = async () => {
             withCredentials: 'include' // Asegura que se envíen las cookies de sesión
             
         });
-        return response.data;
+        const {data} = response;
+        console.log("Datos del funcionario obtenidos:", data);
+        return data;
 
 
     } catch (error) {

@@ -33,7 +33,7 @@ const DepartamentosPage = () => {
     }, []);
 
     useEffect(() => {
-        fetchDepartamentos();
+        void fetchDepartamentos();
     }, [fetchDepartamentos]);
 
     const handleShowCrearModal = (parent) => {
