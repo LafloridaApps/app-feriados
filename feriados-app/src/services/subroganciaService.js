@@ -71,3 +71,13 @@ export const deleteSubrogancia = async (id) => {
     }
 };
 
+
+export const consultarCargosCeroPapel = async (id) => {
+    const { data } = await axios.get(`${BASE_URL}/solicitudes/subrogancia/${id}/perfiles-ceropapel`);
+    return data;
+};
+
+export const confirmarCargoCeroPapel = async (id, perfilId) => {
+    const { data } = await axios.post(`${BASE_URL}/solicitudes/subrogancia/${id}/perfil-ceropapel`, { perfilId });
+    return data;
+};
