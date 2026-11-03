@@ -23,6 +23,10 @@ const MainDetailsCard = ({ solicitud }) => {
                     <p>{solicitud.nombreFuncionario}</p>
                 </div>
                 <div className="main-detail-item">
+                    <h5><i className="bi bi-person-check me-2"></i>Ingresada por (RUT)</h5>
+                    <p>{solicitud.rutIngresadoPor ?? 'No registrado'}</p>
+                </div>
+                <div className="main-detail-item">
                     <h5><i className="bi bi-calendar-plus me-2"></i>Fecha de Solicitud</h5>
                     <p>{new Date(solicitud.fechaCreacion).toLocaleDateString()}</p>
                 </div>

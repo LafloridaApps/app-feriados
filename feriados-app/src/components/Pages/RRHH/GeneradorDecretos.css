@@ -18,13 +18,13 @@
 
 /* Premium Accordion Styling */
 .accordion-premium {
-    border: none !important;
+    border: none ;
 }
 
 .accordion-premium .accordion-item {
-    border: 1px solid #f1f5f9 !important;
-    border-radius: var(--border-radius-lg) !important;
-    box-shadow: var(--shadow-soft) !important;
+    border: 1px solid #f1f5f9 ;
+    border-radius: var(--border-radius-lg) ;
+    box-shadow: var(--shadow-soft) ;
     margin-bottom: 1.5rem;
     overflow: hidden;
     background: white;
@@ -35,7 +35,7 @@
     font-weight: 700;
     color: #1e293b;
     background: white;
-    box-shadow: none !important;
+    box-shadow: none ;
 }
 
 .accordion-premium .accordion-button:not(.collapsed) {
@@ -150,4 +150,18 @@
 .pagination-premium .page-item.disabled .page-link {
     background: transparent;
     opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .generador-decretos-container {
+        animation: none;
+    }
+
+    .accordion-premium .accordion-button::after,
+    .step-indicator,
+    .btn-premium,
+    .form-control-premium,
+    .form-select-premium {
+        transition: none;
+    }
 }

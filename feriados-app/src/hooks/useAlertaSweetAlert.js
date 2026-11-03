@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 
 export const useAlertaSweetAlert = () => {
     const mostrarAlertaError = useCallback((mensaje) => {
-        Swal.fire({
+        void Swal.fire({
             icon: 'error',
             title: 'Oops...',
             text: mensaje,
@@ -11,10 +11,10 @@ export const useAlertaSweetAlert = () => {
     }, []);
 
     const mostrarAlertaExito = useCallback((titulo, html) => {
-        Swal.fire({
+        void Swal.fire({
             icon: 'success',
             title: titulo,
-            html: html,
+            html,
             confirmButtonText: 'OK'
         });
     }, []);

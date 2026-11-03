@@ -112,9 +112,9 @@ export const useInboxSolicitudes = () => {
 
     useEffect(() => {
         if (modoBusqueda) {
-            fetchBusqueda();
+            void fetchBusqueda();
         } else {
-            fetchPermisos();
+            void fetchPermisos();
         }
     }, [fetchBusqueda, fetchPermisos, modoBusqueda]);
 

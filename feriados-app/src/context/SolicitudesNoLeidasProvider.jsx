@@ -27,7 +27,7 @@ export const SolicitudesNoLeidasProvider = ({ children }) => {
     }), [cantidadNoLeidas, fetchSolicitudes]);
 
     useEffect(() => {
-        fetchSolicitudes();
+        void fetchSolicitudes();
     }, [fetchSolicitudes]);
 
     return (

@@ -5,9 +5,11 @@ const api = axios.create({
     baseURL: `${BASE_URL}/solicitudes/solicitudes`,
 });
 
-export const saveSolicitud = async (solicitud) => {
+export const saveSolicitud = async (solicitud, rutGestor = null) => {
     try {
-        const { data } = await api.post('/crear', solicitud);
+        const { data } = await api.post(rutGestor ? '/crear-tercero' : '/crear', solicitud, {
+            params: rutGestor ? { rutGestor } : undefined
+        });
         return data;
     } catch (error) {
         console.error('Error al guardar solicitud:', error);

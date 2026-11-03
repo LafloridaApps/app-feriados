@@ -6,6 +6,8 @@ import { UsuarioContext } from "../context/UsuarioContext";
 import { FeriadosContext } from "../context/FeriadosContext";
 import { useDateValidation } from "./useDateValidation";
 
+import { SolicitudTerceroContext } from "../context/SolicitudTerceroContext";
+
 const initialState = {
     rut: 0,
     fechaSolicitud: "",
@@ -57,13 +59,12 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
 
     const funcionario = useContext(UsuarioContext);
+    const { rutGestor = null, onSolicitudCreada } = useContext(SolicitudTerceroContext) ?? {};
     const feriados = useContext(FeriadosContext);
     const fechasFeriadas = feriados.map(f => f.fecha);
     const rut = funcionario?.rut;
     const depto = funcionario?.codDepto;
     const codDeptoJefe = funcionario?.codDeptoJefe;
-
-    console.log("Resumen Administrativo:", funcionario);
 
 
     const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas);
@@ -270,7 +271,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     }, [fechaInicio, resumenAdministrativo, sincronizarJornada]);
 
     const mostrarAlertaError = useCallback((mensaje) => {
-        if (mensaje) Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
+        if (mensaje) void Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
     }, []);
 
     useEffect(() => {
@@ -328,7 +329,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             setEnviando(true);
 
 
-            const res = await saveSolicitud(nuevaSolicitud);
+            const res = await saveSolicitud(nuevaSolicitud, rutGestor);
             await Swal.fire({
                 icon: 'success',
                 title: 'Solicitud enviada',
@@ -342,12 +343,13 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
             setSubrogancia(null);
             resetErrors();
             setErrorSaldo("");
+            onSolicitudCreada?.();
         } catch (error) {
-            Swal.fire({ icon: 'error', title: 'Error', text: error.response?.data?.message || 'Hubo un problema al enviar la solicitud.' });
+            void Swal.fire({ icon: 'error', title: 'Error', text: error.response?.data?.message || 'Hubo un problema al enviar la solicitud.' });
         } finally {
             setEnviando(false);
         }
-    }, [solicitud, rut, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, diasUsarFeriado, diasUsarAdministrativo, resetErrors]);
+    }, [solicitud, rut, rutGestor, onSolicitudCreada, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, diasUsarFeriado, diasUsarAdministrativo, resetErrors]);
 
     const verificarConflictoFechas = async () => {
         const existe = await getSolicitudByFechaInicioAndTipo(rut, fechaInicio, tipo);
@@ -452,7 +454,6 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         try {
             await flujoSubrogante(esJefe, esDirector);
         } catch (error) {
-            console.error('Error inesperado al procesar la solicitud:', error);
             await Swal.fire({
                 icon: 'error',
                 title: 'Error inesperado',

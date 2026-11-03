@@ -3,7 +3,7 @@ import { getDocDecreto } from '../services/docService.js';
 
 export const useDecretoDocument = () => {
   const handleViewDocument = async (idDecreto, download = false) => {
-    Swal.fire({
+    void Swal.fire({
       title: 'Procesando documento',
       text: 'Por favor, espera un momento...',
       allowOutsideClick: false,
@@ -29,14 +29,13 @@ export const useDecretoDocument = () => {
 
       globalThis.URL.revokeObjectURL(url);
       Swal.close();
-    } catch (error) {
+    } catch {
       Swal.close();
-      Swal.fire(
+      void Swal.fire(
         'Error',
         'No se pudo obtener el documento. Por favor, inténtalo de nuevo.',
         'error'
       );
-      console.error("Error en handleViewDocument:", error);
     }
   };
 

@@ -86,7 +86,7 @@ const MisSolicitudesTable = ({ solicitudes, openDetailId, handleToggleDetail }) 
                 error.response?.data?.error ||
                 error.message ||
                 'No se pudo anular la solicitud. Intenta nuevamente.';
-            Swal.fire({
+            void Swal.fire({
                 icon: 'error',
                 title: 'Error al anular',
                 text: mensajeError,

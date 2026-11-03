@@ -33,7 +33,6 @@ export const useDashboardJefatura = () => {
                         setError(null);
                     } catch (err) {
                         setError(err);
-                        console.error("Error al obtener el resumen del jefe:", err);
                     }
 
                     try {
@@ -49,8 +48,7 @@ export const useDashboardJefatura = () => {
                                 .sort((a, b) => a.fechaInicio.localeCompare(b.fechaInicio))
                                 .slice(0, 5)
                         );
-                    } catch (err) {
-                        console.error("Error al obtener las licencias médicas:", err);
+                    } catch {
                         setLicenciasHoy(0);
                         setProximasLicencias([]);
                     }
@@ -59,7 +57,7 @@ export const useDashboardJefatura = () => {
                 }
             };
 
-            obtenerDatosDashboard();
+            void obtenerDatosDashboard();
         }
     }, [codDepto, rut]);
 

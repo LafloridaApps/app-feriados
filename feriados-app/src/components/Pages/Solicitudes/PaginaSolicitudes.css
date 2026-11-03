@@ -18,18 +18,18 @@
 }
 
 .text-primary {
-    color: #004B8D !important;
+    color: #004B8D ;
 }
 
 .border-primary {
-    border-color: #009B4D !important;
+    border-color: #009B4D ;
 }
 
 .solicitudes-section-card {
     background: white;
-    border: 1px solid #f1f5f9 !important;
-    border-radius: var(--border-radius-lg) !important;
-    box-shadow: var(--shadow-soft) !important;
+    border: 1px solid #f1f5f9 ;
+    border-radius: var(--border-radius-lg) ;
+    box-shadow: var(--shadow-soft) ;
     overflow: hidden;
     padding: 2rem;
     margin-bottom: 2rem;
@@ -37,7 +37,7 @@
 }
 
 .solicitudes-section-card:hover {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) ;
 }
 
 /* Redesign for sub-components headers */
@@ -214,4 +214,17 @@
     background: #f8fafc;
     border-radius: 8px;
     padding: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .solicitudes-page-container {
+        animation: none;
+    }
+
+    .solicitudes-section-card,
+    .form-control-premium,
+    .form-select-premium,
+    .btn-premium {
+        transition: none;
+    }
 }

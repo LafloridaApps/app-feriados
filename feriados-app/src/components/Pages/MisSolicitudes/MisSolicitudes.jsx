@@ -41,7 +41,7 @@ const MisSolicitudes = () => {
         };
 
         if (funcionario?.rut) {
-            fetSolicitudesByRut();
+            void fetSolicitudesByRut();
         }
     }, [funcionario, currentPage, pageSize]);
 

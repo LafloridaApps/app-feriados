@@ -1,69 +1,71 @@
-import { useState } from 'react';
-import Swal from 'sweetalert2';
-import { uploadFileTemplate } from '../services/templateService';
+import { useState } from "react";
+import Swal from "sweetalert2";
+import { uploadFileTemplate } from "../services/templateService";
 
 export const useTemplateUpload = (onUploadSuccess) => {
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [feedbackMessage, setFeedbackMessage] = useState('');
-    const [nombrePlantilla, setNombrePlantilla] = useState('');
-    const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [nombrePlantilla, setNombrePlantilla] = useState("");
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file?.name.endsWith('.docx')) {
-            setSelectedFile(file);
-            setFeedbackMessage('');
-        } else {
-            setSelectedFile(null);
-            setFeedbackMessage('Por favor, selecciona un archivo .docx');
-        }
-    };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file?.name.endsWith(".docx")) {
+      setSelectedFile(file);
+      setFeedbackMessage("");
+    } else {
+      setSelectedFile(null);
+      setFeedbackMessage("Por favor, selecciona un archivo .docx");
+    }
+  };
 
-    const handleUpload = async () => {
-        if (!selectedFile || !nombrePlantilla) {
-            setFeedbackMessage("Por favor, ingresa el nombre de la plantilla y selecciona un archivo.");
-            return;
-        }
+  const handleUpload = async () => {
+    if (!selectedFile || !nombrePlantilla) {
+      setFeedbackMessage(
+        "Por favor, ingresa el nombre de la plantilla y selecciona un archivo.",
+      );
+      return;
+    }
 
-        Swal.fire({
-            title: "Subiendo Plantilla",
-            text: "Por favor, espera...",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading(),
-        });
+    void Swal.fire({
+      title: "Subiendo Plantilla",
+      text: "Por favor, espera...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
-        try {
-            const response = await uploadFileTemplate(selectedFile, nombrePlantilla);
-            Swal.close();
-            Swal.fire({
-                icon: "success",
-                title: "Plantilla subida",
-                text: response.message,
-            });
+    try {
+      const response = await uploadFileTemplate(selectedFile, nombrePlantilla);
+      Swal.close();
+      void Swal.fire({
+        icon: "success",
+        title: "Plantilla subida",
+        text: response.message,
+      });
 
-            setSelectedFile(null);
-            setNombrePlantilla('');
-            setFileInputKey(Date.now());
-            onUploadSuccess?.();
-        } catch (error) {
-            Swal.close();
-            Swal.fire({
-                icon: "error",
-                title: "Error al subir",
-                text: "No se pudo subir la plantilla. Intenta nuevamente.",
-            });
-            console.error("Error al subir plantilla:", error);
-        }
-    };
+      setSelectedFile(null);
+      setNombrePlantilla("");
+      setFileInputKey(Date.now());
+      onUploadSuccess?.();
+    } catch (error) {
+      Swal.close();
+      void Swal.fire({
+        icon: "error",
+        title: "Error al subir",
+        text: "No se pudo subir la plantilla. Intenta nuevamente.",
+      });
+      console.error("Error al subir plantilla:", error);
+    }
+  };
 
-    return {
-        selectedFile,
-        feedbackMessage,
-        nombrePlantilla,
-        fileInputKey,
-        setNombrePlantilla,
-        handleFileChange,
-        handleUpload,
-    };
+  return {
+    selectedFile,
+    feedbackMessage,
+    nombrePlantilla,
+    fileInputKey,
+    setNombrePlantilla,
+    handleFileChange,
+    handleUpload,
+  };
 };

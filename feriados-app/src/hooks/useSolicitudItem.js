@@ -51,7 +51,7 @@ export const useSolicitudItem = (solicitud, rutFuncionario, onActualizarSolicitu
             onActualizarSolicitud?.();
         } catch (error) {
             const mensajeError = error.response?.data?.message || error.response?.data?.mensaje || error.message || 'No se pudo procesar la solicitud de anulación.';
-            Swal.fire({
+            void Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: mensajeError,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { searchDecretos } from '../services/consultaDecretoService';
+import { validarRut } from '../services/utils';
 
 export const useConsultarDecretos = (mostrarAlertaError) => {
     const [filters, setFilters] = useState({ id: '', fechaDesde: '', fechaHasta: '', rut: '', idSolicitud: '', nombreFuncionario: '' });
@@ -23,20 +24,27 @@ export const useConsultarDecretos = (mostrarAlertaError) => {
     const handleSearch = async (pageNumber = 0) => {
         const { fechaDesde, fechaHasta } = filters;
 
-        if (!fechaDesde || !fechaHasta) {
-            mostrarAlertaError('Debe seleccionar ambas fechas (Desde y Hasta) para realizar la búsqueda.');
+        if (fechaDesde && fechaHasta && new Date(fechaDesde) > new Date(fechaHasta)) {
+            mostrarAlertaError('La fecha "Desde" no puede ser mayor a la fecha "Hasta".');
             return;
         }
 
-        if (new Date(fechaDesde) > new Date(fechaHasta)) {
-            mostrarAlertaError('La fecha "Desde" no puede ser mayor a la fecha "Hasta".');
-            return;
+        const rut = filters.rut.trim();
+        let rutParaApi = '';
+        if (rut) {
+            const rutSinPuntos = rut.replaceAll('.', '').toUpperCase();
+            const rutCompleto = rutSinPuntos.replace('-', '');
+            if (!/^\d{1,8}-?[\dK]$/.test(rutSinPuntos) || !validarRut(rutCompleto)) {
+                mostrarAlertaError('Ingrese un RUT válido sin puntos y con guion antes del dígito verificador (ejemplo: 12345678-5).');
+                return;
+            }
+            rutParaApi = rutCompleto.slice(0, -1);
         }
 
         setLoading(true);
         setSearchPerformed(false);
         try {
-            const response = await searchDecretos(filters, pageNumber, itemsPerPage);
+            const response = await searchDecretos({ ...filters, rut: rutParaApi }, pageNumber, itemsPerPage);
 
             setAllResults(response?.content || []);
             setTotalItems(response?.page?.totalElements || 0);
@@ -45,7 +53,6 @@ export const useConsultarDecretos = (mostrarAlertaError) => {
             setSearchPerformed(true);
         } catch (error) {
             mostrarAlertaError('Error al buscar decretos.', error.message || 'Ocurrió un error inesperado.');
-            console.error('Error al buscar decretos:', error);
             setAllResults([]);
             setTotalItems(0);
             setTotalPages(0);
@@ -65,7 +72,7 @@ export const useConsultarDecretos = (mostrarAlertaError) => {
     };
 
     const handlePageChange = (pageNumber) => {
-        handleSearch(pageNumber - 1); // Backend pages are 0-indexed
+        void handleSearch(pageNumber - 1); // Backend pages are 0-indexed
     };
 
     const requestSort = (key) => {

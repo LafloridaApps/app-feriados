@@ -22,7 +22,7 @@ export const useFuncionarioResumen = () => {
                     setCargando(false);
                 }
             };
-            obtenerResumenFuncionario();
+            void obtenerResumenFuncionario();
         }
     }, [funcionario]);
 

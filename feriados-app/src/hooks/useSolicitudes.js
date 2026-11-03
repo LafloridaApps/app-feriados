@@ -79,7 +79,7 @@ export const useSolicitudes = () => {
             setCargando(false);
         };
 
-        cargarTodo();
+        void cargarTodo();
     }, [funcionario, obtenerDatosAdministrativos, obtenerDatosFeriados]);
 
     return {

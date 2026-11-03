@@ -34,12 +34,12 @@ export const useFuncionarioSearch = () => {
         const rutLimpio = rut.replaceAll(/[.-]/g, '');
 
         if (!rutLimpio) {
-            Swal.fire({ icon: 'warning', title: 'Campo Vacío', text: 'Por favor, ingrese un RUT.' });
+            void Swal.fire({ icon: 'warning', title: 'Campo Vacío', text: 'Por favor, ingrese un RUT.' });
             return;
         }
 
         if (!validarRut(rutLimpio)) {
-            Swal.fire({ icon: 'error', title: 'RUT Inválido', text: 'El RUT ingresado no es válido.' });
+            void Swal.fire({ icon: 'error', title: 'RUT Inválido', text: 'El RUT ingresado no es válido.' });
             reset(); // Limpiar en caso de error
             return;
         }
@@ -55,12 +55,12 @@ export const useFuncionarioSearch = () => {
                 setDepartamento(data.departamento || 'Sin departamento');
                 setIdDepto(data.codDepto || null);
             } else {
-                Swal.fire({ icon: 'error', title: 'No Encontrado', text: 'Funcionario no encontrado con el RUT proporcionado.' });
+                void Swal.fire({ icon: 'error', title: 'No Encontrado', text: 'Funcionario no encontrado con el RUT proporcionado.' });
                 reset();
             }
         } catch (err) {
             console.error("Error al buscar funcionario:", err);
-            Swal.fire({ icon: 'error', title: 'Error de Red', text: 'No se pudo realizar la búsqueda.' });
+            void Swal.fire({ icon: 'error', title: 'Error de Red', text: 'No se pudo realizar la búsqueda.' });
             reset();
         }
     };

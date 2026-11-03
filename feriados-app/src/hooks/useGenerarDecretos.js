@@ -245,7 +245,7 @@ export const useGenerarDecretos = () => {
         const btnWord = wordSuccess ? '' : `<button class="swal2-download-btn" data-tipo="word" style="background:#0d6efd;color:white;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px">Descargar</button>`;
         const btnExcel = excelSuccess ? '' : `<button class="swal2-download-btn" data-tipo="excel" style="background:#198754;color:white;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px">Descargar</button>`;
 
-        Swal.fire({
+       void  Swal.fire({
             icon: wordSuccess && excelSuccess ? 'success' : 'warning',
             title: 'Decreto Generado',
             html: `

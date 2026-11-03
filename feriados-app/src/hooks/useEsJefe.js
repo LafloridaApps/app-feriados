@@ -25,13 +25,12 @@ export const useEsJefe = (codDepto, rut) => {
                 setError(err);
                 setEsJefe(false);
                 setEsDirector(false);
-                console.error('Error al verificar si es jefe/director:', err);
             } finally {
                 setCargando(false);
             }
         };
 
-        verificarJefatura();
+        void verificarJefatura();
     }, [debeConsultar, codDepto, rut]);
 
     return { esJefe, esDirector, cargando, error };

@@ -100,7 +100,7 @@ const ConsultaDecretosFilters = ({
               name="rut"
               value={filters.rut}
               onChange={onInputChange}
-              placeholder="RUT..."
+              placeholder="12345678-9"
             />
           </div>
           <div className="col-12 d-flex justify-content-end gap-2 mt-4">

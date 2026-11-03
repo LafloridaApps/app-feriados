@@ -1,0 +1,246 @@
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import { getFuncionarioLocalByRut } from '../../../../services/funcionarioService';
+import { updateJefeDeptoById, updateNombreDeptoById, updateCodigoExterno, deleteCodigoExternoByIdDepto } from '../../../../services/departamentosService';
+import { validarRut } from '../../../../services/utils';
+import { getFotoFuncionario } from '../../../../services/fotoService';
+
+export const useDetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSeleccionado }) => {
+    const [enEdicion, setEnEdicion] = useState(false);
+    const [nombreJefeEditado, setNombreJefeEditado] = useState('');
+    const [rutCompleto, setRutCompleto] = useState('');
+    const [codigoExterno, setCodigoExterno] = useState('');
+    const [nombreDepartamento, setNombreDepartamento] = useState('');
+    const [disabled, setDisabled] = useState(false);
+    const [showModalExterno, setShowModalExterno] = useState(false);
+    const [fotoJefe, setFotoJefe] = useState(null);
+    const [showBusquedaModal, setShowBusquedaModal] = useState(false);
+
+    useEffect(() => {
+        if (departamento) {
+            setNombreJefeEditado(departamento.nombreJefe || '');
+            setRutCompleto((departamento.rutJefe && departamento.vrutJefe) ? `${departamento.rutJefe}-${departamento.vrutJefe}` : '');
+            setCodigoExterno(departamento.codigoExterno || '');
+            setNombreDepartamento(departamento.nombre || '');
+
+            if (departamento.rutJefe) {
+                void cargarFoto(departamento.rutJefe);
+            } else {
+                setFotoJefe(null);
+            }
+        } else {
+            setNombreJefeEditado('');
+            setRutCompleto('');
+            setCodigoExterno('');
+            setNombreDepartamento('');
+            setFotoJefe(null);
+        }
+    }, [departamento]);
+
+    const cargarFoto = async (rut) => {
+        try {
+            const base64Str = await getFotoFuncionario(rut);
+            if (base64Str) {
+                setFotoJefe(base64Str.startsWith('data:image') ? base64Str : `data:image/jpeg;base64,${base64Str}`);
+            } else {
+                setFotoJefe(null);
+            }
+        } catch (error) {
+            console.error('Error al cargar la foto:', error);
+            setFotoJefe(null);
+        }
+    };
+
+    const handleEditar = () => {
+        setEnEdicion(true);
+    };
+
+    const handleGuardarJefe = async (esRemocion = false) => {
+        const accion = esRemocion ? 'dejar este departamento sin jefe' : 'guardar el jefe';
+        const txtBoton = esRemocion ? 'quitar jefe' : 'guardar';
+        const colorBoton = esRemocion ? '#d33' : '#3085d6';
+
+        const result = await Swal.fire({
+            title: `¿Está seguro de ${accion}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: `Sí, ${txtBoton}`,
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: colorBoton,
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            let rutNumericoFinal = null;
+
+            if (!esRemocion) {
+                const partesRut = rutCompleto.split('-');
+                rutNumericoFinal = partesRut[0].replaceAll('.', '');
+            }
+
+            const resultApi = await updateJefeDeptoById(departamento.id, esRemocion ? 0 : rutNumericoFinal);
+
+            if (setDepartamentoSeleccionado) {
+                setDepartamentoSeleccionado(null);
+            }
+
+            const mensajeExito = esRemocion ? 'Departamento actualizado sin jefe.' : 'Jefe guardado correctamente.';
+            void Swal.fire('¡Éxito!', resultApi.message || mensajeExito, 'success');
+
+            void fetchDepartamentos();
+            setEnEdicion(false);
+        } catch (error) {
+            const accionError = esRemocion ? 'quitar al jefe' : 'guardar';
+            void Swal.fire('Error', error.response?.data?.detalle || `No se pudo ${accionError}.`, 'error');
+        }
+    };
+
+    const handleGuardarCodigoExterno = async () => {
+        const result = await Swal.fire({
+            title: '¿Está seguro de guardar el código externo?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        });
+        if (result.isConfirmed) {
+            try {
+                await updateCodigoExterno(departamento.id, codigoExterno);
+
+                if (setDepartamentoSeleccionado) {
+                    setDepartamentoSeleccionado(null);
+                }
+
+                void Swal.fire('¡Guardado!', result.message, 'success');
+                void fetchDepartamentos();
+            } catch (error) {
+                console.log(error);
+                const errorMsg = error.response?.data?.message || error.response?.data?.detalle || 'No se pudo guardar.';
+                void Swal.fire('Error', errorMsg, 'error');
+            }
+        }
+    };
+
+    const handleGuardarNombreDepartamento = async () => {
+        const result = await Swal.fire({
+            title: '¿Está seguro de actualizar el nombre del departamento?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        });
+        if (result.isConfirmed) {
+            try {
+                await updateNombreDeptoById(departamento.id, nombreDepartamento);
+
+                if (setDepartamentoSeleccionado) {
+                    setDepartamentoSeleccionado(null);
+                }
+
+                void Swal.fire('¡Guardado!', 'El nombre del departamento ha sido actualizado.', 'success');
+                void fetchDepartamentos();
+            } catch (error) {
+                void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo actualizar el nombre del departamento.', 'error');
+            }
+        } else {
+            setNombreDepartamento(departamento.nombre || '');
+        }
+    };
+
+    const handleBuscarJefePorRut = async () => {
+        if (!rutCompleto) return;
+
+        if (rutCompleto.includes('.')) {
+            void Swal.fire('Error', 'El RUT debe ser ingresado sin puntos.', 'error');
+            return;
+        }
+
+        const partes = rutCompleto.split('-');
+        if (partes.length !== 2 || partes[1].length !== 1) {
+            void Swal.fire('Error', 'El RUT debe contener un guión antes del dígito verificador.', 'error');
+            return;
+        }
+
+        const rutLimpio = rutCompleto.replaceAll('-', '').toUpperCase();
+
+        if (!validarRut(rutLimpio)) {
+            void Swal.fire('Error', 'El RUT ingresado no es válido. Verifique el formato y dígito verificador.', 'error');
+            setNombreJefeEditado('');
+            setDisabled(true);
+            return;
+        }
+
+        const cuerpo = partes[0];
+
+        try {
+            const { data } = await getFuncionarioLocalByRut(cuerpo);
+            const nombreCompleto = [data.nombre, data.apellidoPaterno, data.apellidoMaterno].filter(Boolean).join(' ');
+            setNombreJefeEditado(nombreCompleto);
+            setDisabled(false);
+        } catch (error) {
+            setDisabled(true);
+            void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo obtener el funcionario', 'error');
+        }
+    };
+
+    const handleCancelar = () => {
+        setEnEdicion(false);
+        setDisabled(false);
+        // Re-inicializar con los datos originales
+        if (departamento) {
+            setNombreJefeEditado(departamento.nombreJefe || '');
+            setRutCompleto((departamento.rutJefe && departamento.vrutJefe) ? `${departamento.rutJefe}-${departamento.vrutJefe}` : '');
+        }
+    };
+
+    const handlerEliminar = async () => {
+        const result = await Swal.fire({
+            title: '¿Está seguro?',
+            text: 'Se eliminará el código externo del departamento.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+        if (result.isConfirmed) {
+            try {
+                const response = await deleteCodigoExternoByIdDepto(departamento.id);
+                void Swal.fire('Eliminado', response.message, 'success');
+                if (setDepartamentoSeleccionado) {
+                    setDepartamentoSeleccionado(null);
+                }
+            } catch (error) {
+                void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo eliminar el código externo.', 'error');
+            }
+        }
+    }
+
+    return {
+        enEdicion,
+        nombreJefeEditado,
+        setNombreJefeEditado,
+        rutCompleto,
+        setRutCompleto,
+        codigoExterno,
+        setCodigoExterno,
+        nombreDepartamento,
+        setNombreDepartamento,
+        disabled,
+        setDisabled,
+        showModalExterno,
+        setShowModalExterno,
+        fotoJefe,
+        showBusquedaModal,
+        setShowBusquedaModal,
+        handleEditar,
+        handleGuardarJefe,
+        handleGuardarCodigoExterno,
+        handleGuardarNombreDepartamento,
+        handleBuscarJefePorRut,
+        handleCancelar,
+        handlerEliminar
+    };
+};

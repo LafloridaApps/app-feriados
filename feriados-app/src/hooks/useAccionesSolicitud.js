@@ -23,12 +23,11 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
         if (result.isConfirmed) {
             try {
                 await saveEntrada(entrada);
-                Swal.fire('¡Recibida!', 'La solicitud ha sido recibida.', 'success');
+                void Swal.fire('¡Recibida!', 'La solicitud ha sido recibida.', 'success');
                 onActualizarSolicitud();
                 refetch();
             } catch (error) {
-                console.log(error);
-                Swal.fire('¡Error!', 'Error al recibir: ' + error?.data || error, 'error');
+                void Swal.fire('¡Error!', 'Error al recibir: ' + error?.data || error, 'error');
             }
         }
     };
@@ -44,10 +43,10 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
         if (result.isConfirmed) {
             try {
                 await saveDerivacion(idDerivacion, rutFuncionario);
-                Swal.fire('¡Visado!', 'La solicitud ha sido visada.', 'success');
+                void Swal.fire('¡Visado!', 'La solicitud ha sido visada.', 'success');
                 onActualizarSolicitud();
             } catch (error) {
-                Swal.fire('¡Error!', 'Error al visar: ' + error?.response?.data.message || error, 'error');
+                void Swal.fire('¡Error!', 'Error al visar: ' + error?.response?.data.message || error, 'error');
             }
         }
     };
@@ -62,7 +61,7 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
         });
 
         if (result.isConfirmed) {
-            Swal.fire({
+            void Swal.fire({
                 title: 'Firmando tu documento digitalmente',
                 text: 'Esto puede tardar unos minutos...',
                 allowOutsideClick: false,
@@ -73,14 +72,14 @@ export const useAccionesSolicitud = (rutFuncionario, onActualizarSolicitud, refe
 
             try {
                 const aprobacion = {
-                    idDerivacion: idDerivacion,
+                    idDerivacion,
                     aprobadoPor: rutFuncionario,
                 };
                 await saveAprobacion(aprobacion);
-                Swal.fire('¡Firmado!', 'La solicitud ha sido firmada digitalmente.', 'success');
+                void Swal.fire('¡Firmado!', 'La solicitud ha sido firmada digitalmente.', 'success');
                 onActualizarSolicitud();
             } catch (error) {
-                Swal.fire('¡Error!', 'Error al firmar: ' + (error?.response?.data?.message || error.message || 'Error desconocido'), 'error');
+                void Swal.fire('¡Error!', 'Error al firmar: ' + (error?.response?.data?.message || error.message || 'Error desconocido'), 'error');
             }
         }
     };

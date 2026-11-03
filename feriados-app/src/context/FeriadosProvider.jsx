@@ -19,7 +19,7 @@ export const FeriadosProvider = ({ children }) => {
 			}
 		};
 
-		fetchFeriados();
+		void fetchFeriados();
 	}, []);
 
 	return (

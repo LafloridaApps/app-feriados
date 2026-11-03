@@ -15,7 +15,7 @@ const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect, subrogante 
 
     const handleBuscar = (e) => {
         e.preventDefault();
-        buscarSubrogante();
+        void buscarSubrogante();
     };
 
     return (

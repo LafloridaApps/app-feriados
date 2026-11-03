@@ -1,57 +1,57 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 export const useGestionAcciones = (derivacion) => {
-    const acciones = useMemo(() => {
-        const initialState = {
-            puedeRecibir: false,
-            puedePostergar: false,
-            puedeVisar: false,
-            puedeFirmar: false,
-            esDerivada: false,
-            esFinalizada: false,
-            esPostergada: false,
-            idDerivacion: null,
-        };
+  const acciones = useMemo(() => {
+    const initialState = {
+      puedeRecibir: false,
+      puedePostergar: false,
+      puedeVisar: false,
+      puedeFirmar: false,
+      esDerivada: false,
+      esFinalizada: false,
+      esPostergada: false,
+      idDerivacion: null,
+    };
 
-        if (!derivacion) {
-            return initialState;
-        }
+    if (!derivacion) {
+      return initialState;
+    }
 
-        const { recepcionada, estadoDerivacion, tipoMovimiento, id } = derivacion;
+    const { recepcionada, estadoDerivacion, tipoMovimiento, id } = derivacion;
 
-        const puedeRecibir = !recepcionada && estadoDerivacion !== 'ANULADA';
+    const puedeRecibir = !recepcionada && estadoDerivacion !== "ANULADA";
 
-        const puedePostergar =
-            recepcionada &&
-            estadoDerivacion !== 'DERIVADA' &&
-            estadoDerivacion !== 'FINALIZADA' &&
-            estadoDerivacion !== 'POSTERGADA';
+    const puedePostergar =
+      recepcionada &&
+      estadoDerivacion !== "DERIVADA" &&
+      estadoDerivacion !== "FINALIZADA" &&
+      estadoDerivacion !== "POSTERGADA";
 
-        const puedeVisar =
-            recepcionada &&
-            tipoMovimiento === 'VISACION' &&
-            estadoDerivacion === 'PENDIENTE';
+    const puedeVisar =
+      recepcionada &&
+      tipoMovimiento === "VISACION" &&
+      estadoDerivacion === "PENDIENTE";
 
-        const puedeFirmar =
-            recepcionada &&
-            tipoMovimiento === 'FIRMA' &&
-            estadoDerivacion === 'PENDIENTE';
-        
-        const esDerivada = recepcionada && estadoDerivacion === 'DERIVADA';
-        const esFinalizada = recepcionada && estadoDerivacion === 'FINALIZADA';
-        const esPostergada = recepcionada && estadoDerivacion === 'POSTERGADA';
+    const puedeFirmar =
+      recepcionada &&
+      tipoMovimiento === "FIRMA" &&
+      estadoDerivacion === "PENDIENTE";
 
-        return {
-            puedeRecibir,
-            puedePostergar,
-            puedeVisar,
-            puedeFirmar,
-            esDerivada,
-            esFinalizada,
-            esPostergada,
-            idDerivacion: id,
-        };
-    }, [derivacion]);
+    const esDerivada = recepcionada && estadoDerivacion === "DERIVADA";
+    const esFinalizada = recepcionada && estadoDerivacion === "FINALIZADA";
+    const esPostergada = recepcionada && estadoDerivacion === "POSTERGADA";
 
-    return acciones;
+    return {
+      puedeRecibir,
+      puedePostergar,
+      puedeVisar,
+      puedeFirmar,
+      esDerivada,
+      esFinalizada,
+      esPostergada,
+      idDerivacion: id,
+    };
+  }, [derivacion]);
+
+  return acciones;
 };

@@ -23,7 +23,7 @@
     border: none;
     padding: 15px 20px;
     position: relative;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease;
     cursor: pointer;
 }
 
@@ -223,4 +223,18 @@
 
 .suggestion-item strong {
     color: #212529;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .subrogancia-tabs .nav-link,
+    .input-custom,
+    .btn-custom-primary,
+    .results-table tbody tr,
+    .suggestion-item {
+        transition: none;
+    }
+
+    .fade-in {
+        animation: none;
+    }
 }

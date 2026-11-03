@@ -17,6 +17,8 @@ import GestionModulosPage from "./components/Pages/Administracion/Modulos/Gestio
 import Footer from "./components/footer/Footer";
 import { GestionSolicitudes } from "./components/Pages/Administracion/Gestion/GestionSolicitudes";
 
+import SolicitudTerceros from "./components/Pages/Solicitudes/SolicitudTerceros";
+
 function App() {
     return (
         <AppContextProvider>
@@ -29,6 +31,7 @@ function App() {
                             <Route path="/home" element={<Inicio />} />
                             <Route path="/administrativos" element={<AdministrativosPage />} />
                             <Route path="/feriados" element={<FeriadosPage />} />
+                            <Route path="/solicitudes-terceros" element={<SolicitudTerceros />} />
                             <Route path="/solicitudes" element={<PaginaSolicitudes />} />
                             <Route path="/inbox" element={<InboxSolicitudes />} />
                             <Route path="/deptos" element={<DepartamentosPage />} />
