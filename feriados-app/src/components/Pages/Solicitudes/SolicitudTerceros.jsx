@@ -14,7 +14,7 @@ export default function SolicitudTerceros() {
         cambiarRut, buscar, buscarPorNombreEnDireccion, seleccionarSolicitante,
     } = useSolicitudTerceros();
 
-    if (acceso === null) return <output>Cargando permisos...</output>;
+    if (!gestor?.rut || acceso === null) return <output>Cargando permisos...</output>;
     if (!acceso) return <p role="alert" className="alert alert-warning">No tienes permiso para realizar solicitudes por terceros.</p>;
 
     return (

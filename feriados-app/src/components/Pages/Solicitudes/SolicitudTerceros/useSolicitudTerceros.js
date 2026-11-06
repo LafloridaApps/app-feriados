@@ -7,6 +7,7 @@ import { validarRut, mensajeErrorConsulta } from './solicitudTercerosUtils';
 
 export function useSolicitudTerceros() {
     const gestor = useContext(UsuarioContext);
+    const rutGestor = gestor?.rut;
     const [acceso, setAcceso] = useState(null);
     const [rut, setRut] = useState('');
     const [solicitante, setSolicitante] = useState(null);
@@ -22,8 +23,8 @@ export function useSolicitudTerceros() {
         setMostrarBusquedaNombre(false);
     }, []);
     const valorSolicitudTercero = useMemo(
-        () => ({ rutGestor: gestor.rut, onSolicitudCreada: limpiarPantalla }),
-        [gestor?.rut, limpiarPantalla]
+        () => ({ rutGestor, onSolicitudCreada: limpiarPantalla }),
+        [rutGestor, limpiarPantalla]
     );
     const rutSolicitante = solicitante?.rut;
     const fotoVisible = foto && foto.rut === rutSolicitante ? foto.src : null;
