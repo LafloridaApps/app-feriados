@@ -1,93 +1,48 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { getAdministrativoByRutAnIdent } from "../services/adminsitrativoService";
 import { getFeriadosByRutAndIdent } from "../services/feriadosService";
+import { cargarSaldosSolicitud } from "../services/saldosSolicitud";
 import { UsuarioContext } from '../context/UsuarioContext';
 import useTamanoVentana from './useTamanoVentana';
 
-/**
- * Hook personalizado para gestionar la lógica de la página de solicitudes.
- * Se encarga de obtener los saldos de días administrativos y feriados,
- * y de manejar el estado responsivo.
- */
+// La solicitud normal y la de terceros comparten las consultas y los saldos de su funcionario.
 export const useSolicitudes = () => {
     const { width: ancho } = useTamanoVentana();
-    const esMovil = ancho < 768;
-
     const funcionario = useContext(UsuarioContext);
-    const [datosAdministrativos, setDatosAdministrativos] = useState(null);
-    const [datosFeriados, setDatosFeriados] = useState(null);
-    const [cargando, setCargando] = useState(true);
-
-    const obtenerDatosAdministrativos = useCallback(async (rut, ident, anioActual) => {
-        try {
-            const respuesta = await getAdministrativoByRutAnIdent(rut, ident);
-            
-            const resumenFiltrado = {
-                maximo: respuesta?.maximo || 0,
-                usados: respuesta?.usados || 0,
-                saldo: respuesta?.saldo || 0,
-                anio: respuesta?.anio || anioActual
-            };
-
-            const detalleFiltrado = respuesta.detalle?.filter(item => {
-                const fecha = new Date(item.fechaInicio);
-                return !Number.isNaN(fecha.getTime()) && fecha.getFullYear() === anioActual;
-            }) || [];
-
-            setDatosAdministrativos({ ...respuesta, resumen: resumenFiltrado, detalle: detalleFiltrado });
-        } catch (error) {
-            console.error('Error al obtener datos administrativos:', error);
-        }
-    }, []);
-
-    const obtenerDatosFeriados = useCallback(async (rut, ident, anioActual) => {
-        try {
-            const respuesta = await getFeriadosByRutAndIdent(rut, ident);
-            
-            const resumenFiltrado = {
-                anio: respuesta?.anio || anioActual,
-                dias_corresponden: respuesta?.diasCorresponden || 0,
-                dias_acumulados: respuesta?.diasAcumulados || 0,
-                dias_tomados: respuesta?.diasTomados || 0,
-                dias_pendientes: respuesta?.diasPendientes || 0,
-                total: respuesta?.total || 0,
-                dias_perdidos: respuesta?.diasPerdidos || 0
-            };
-
-            const detalleFiltrado = respuesta.detalle?.filter(item => {
-                const fecha = new Date(item.fechaInicio);
-                return !Number.isNaN(fecha.getTime()) && fecha.getFullYear() === anioActual;
-            }) || [];
-
-            setDatosFeriados({ ...respuesta, resumen: resumenFiltrado, detalle: detalleFiltrado });
-        } catch (error) {
-            console.error('Error al obtener datos feriados:', error);
-        }
-    }, []);
+    const rut = funcionario?.rut;
+    const ident = funcionario?.ident;
+    const [version, setVersion] = useState(0);
+    const [resultado, setResultado] = useState(null);
+    const clave = rut ? `${rut}:${ident}:${version}` : null;
+    const recargarSaldos = useCallback(() => setVersion(anterior => anterior + 1), []);
 
     useEffect(() => {
-        if (!funcionario) return;
+        let vigente = true;
+        if (clave) {
+            cargarSaldosSolicitud({ rut, ident }, {
+                consultarAdministrativos: getAdministrativoByRutAnIdent,
+                consultarFeriados: getFeriadosByRutAndIdent
+            }, new Date().getFullYear()).then(datos => {
+                if (vigente) setResultado({ clave, ...datos });
+            }).catch(() => {
+                if (vigente) setResultado({ clave, datosAdministrativos: null, datosFeriados: null,
+                    errores: ['No fue posible cargar los saldos del funcionario seleccionado.'] });
+            });
+        }
+        return () => { vigente = false; };
+    }, [clave, rut, ident]);
 
-        const anioActual = new Date().getFullYear();
-        setCargando(true);
-
-        const cargarTodo = async () => {
-            await Promise.all([
-                obtenerDatosAdministrativos(funcionario.rut, funcionario.ident, anioActual),
-                obtenerDatosFeriados(funcionario.rut, funcionario.ident, anioActual)
-            ]);
-            setCargando(false);
-        };
-
-        void cargarTodo();
-    }, [funcionario, obtenerDatosAdministrativos, obtenerDatosFeriados]);
-
+    // Nunca presentar saldos de otra persona mientras se consulta un nuevo RUT.
+    const datos = clave && resultado?.clave === clave ? resultado : null;
+    const datosAdministrativos = datos?.datosAdministrativos;
+    const datosFeriados = datos?.datosFeriados;
     return {
-        funcionario,
-        datosAdministrativos,
-        datosFeriados,
-        esMovil,
-        cargando,
+        funcionario, datosAdministrativos, datosFeriados,
+        esMovil: ancho < 768,
+        cargando: Boolean(clave) && !datos,
+        erroresSaldos: datos?.errores ?? [],
+        saldosCargados: Boolean(datosAdministrativos && datosFeriados),
+        recargarSaldos,
         resumenAdministrativo: datosAdministrativos?.resumen,
         resumenFeriados: datosFeriados?.resumen,
         detalleAdministrativo: datosAdministrativos?.detalle,

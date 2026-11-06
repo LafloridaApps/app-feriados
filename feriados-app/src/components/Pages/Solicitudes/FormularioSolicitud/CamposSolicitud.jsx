@@ -20,12 +20,13 @@ const CamposSolicitud = ({
     jornadaFin,
     setJornadaFin,
     minDateInicio,
-    maxDateFin
+    maxDateFin,
+    jornadasBloqueadas
 }) => {
-    const renderSelect = (id, label, value, onChange, options) => (
+    const renderSelect = (id, label, value, onChange, options, disabled = false) => (
         <div className="mb-4">
             <label htmlFor={id} className="form-label-premium">{label}</label>
-            <select id={id} className="form-select form-select-premium" value={value} onChange={onChange}>
+            <select id={id} className="form-select form-select-premium" value={value} onChange={onChange} disabled={disabled}>
                 {options.map(opt => (
                     <option key={opt.value || opt} value={opt.value || opt}>
                         {opt.label || opt}
@@ -85,7 +86,8 @@ const CamposSolicitud = ({
                             <><i className="bi bi-clock"></i> Jornada Inicio</>,
                             jornadaInicio,
                             e => setJornadaInicio(e.target.value),
-                            jornadas
+                            jornadas,
+                            jornadasBloqueadas
                         )}
                     </div>
                     <div className="col-md-6">
@@ -94,7 +96,8 @@ const CamposSolicitud = ({
                             <><i className="bi bi-clock-history"></i> Jornada Final</>,
                             jornadaFin,
                             e => setJornadaFin(e.target.value),
-                            jornadas
+                            jornadas,
+                            jornadasBloqueadas
                         )}
                     </div>
                 </div>

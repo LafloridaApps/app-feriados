@@ -9,10 +9,19 @@ const ManageUserModulesModal = ({ show, user, onClose, onSave }) => {
     const [selectedModules, setSelectedModules] = useState([]);
 
     useEffect(() => {
-        if (show) {
-            listarModulos().then(setAvailableModules);
-            setSelectedModules(user.modulos.map(m => m.id) || []);
-        }
+        if (!show) return;
+
+        const fetchModulos = async () => {
+            try {
+                const modulos = await listarModulos();
+                setAvailableModules(modulos);
+            } catch (error) {
+                console.error('Error al obtener los módulos:', error);
+            }
+        };
+
+        void fetchModulos();
+        setSelectedModules(user.modulos.map(m => m.id) || []);
     }, [show, user]);
 
     const handleCheckboxChange = (moduleId) => {
@@ -30,10 +39,10 @@ const ManageUserModulesModal = ({ show, user, onClose, onSave }) => {
         try {
             await guardarUsuario(dataToSend);
             onSave({ ...user, modulos: selectedModules.map(id => ({ id })) });
-            Swal.fire('Guardado', 'Los módulos del usuario han sido actualizados.', 'success');
+            void Swal.fire('Guardado', 'Los módulos del usuario han sido actualizados.', 'success');
             onClose();
         } catch (error) {
-            Swal.fire('Error', 'No se pudo guardar los cambios.', error.data);
+            void Swal.fire('Error', 'No se pudo guardar los cambios.', error.data);
         }
     };
 

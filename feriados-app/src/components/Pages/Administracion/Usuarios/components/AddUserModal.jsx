@@ -12,12 +12,12 @@ const AddUserModal = ({ show, onClose, onUserAdded }) => {
         e.preventDefault();
 
         if (!rutBusqueda.trim()) {
-            Swal.fire('Error', 'Por favor, ingrese un RUT.', 'error');
+            void Swal.fire('Error', 'Por favor, ingrese un RUT.', 'error');
             return;
         }
 
         if (rutBusqueda.includes('-')) {
-            Swal.fire('Error', 'Por favor, ingrese el RUT sin dígito verificador.', 'error');
+            void Swal.fire('Error', 'Por favor, ingrese el RUT sin dígito verificador.', 'error');
             return;
         }
 
@@ -27,7 +27,7 @@ const AddUserModal = ({ show, onClose, onUserAdded }) => {
             setSearchResult(response);
         } catch (error) {
             console.error("Error al buscar funcionario:", error);
-            Swal.fire('Error', 'No se pudo encontrar el funcionario.', 'error');
+            void Swal.fire('Error', 'No se pudo encontrar el funcionario.', 'error');
             setSearchResult(null);
         }
         setLoading(false);
@@ -57,7 +57,7 @@ const AddUserModal = ({ show, onClose, onUserAdded }) => {
                                     value={rutBusqueda}
                                     onChange={(e) => setRutBusqueda(e.target.value)}
                                     placeholder="Ingrese RUT sin dígito verificador"
-                                    autoFocus
+                                    
                                 />
                             </div>
                             <button type="submit" className="btn btn-primary w-100" disabled={loading}>

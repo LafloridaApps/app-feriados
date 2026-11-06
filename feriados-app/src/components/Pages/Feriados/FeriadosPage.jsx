@@ -1,81 +1,18 @@
-import PropTypes from 'prop-types';
-import { useState, useEffect, useContext } from "react";
-import { getFeriadosByRutAndIdent } from "../../../services/feriadosService";
-import TabsFeriados from "./TabsFeriados";
-import { UsuarioContext } from '../../../context/UsuarioContext';
-import useTamanoVentana from '../../../hooks/useTamanoVentana'; // Importar el hook de tamaño de ventana
-import FeriadosPageMobile from './FeriadosPageMobile'; // Importar el componente móvil
-import './FeriadosPage.css'; // Importar el archivo CSS personalizado
+import FeriadosPageMobile from './FeriadosPageMobile';
+import VistaFeriados from './FeriadosPage/VistaFeriados';
+import { useFeriadosPage } from './FeriadosPage/useFeriadosPage';
+import './FeriadosPage.css';
 
 const FeriadosPage = () => {
-
-    const { width } = useTamanoVentana(); // Obtener el ancho de la ventana
-    const isMobile = width < 768; // Definir el breakpoint para móvil
-
-    const funcionario = useContext(UsuarioContext);
-
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        if (funcionario) {
-            const fetchPermisos = async () => {
-                try {
-                    const response = await getFeriadosByRutAndIdent(funcionario.rut, funcionario.ident);
-                    console.log("getFeriadosByRutAndIdent - response:", response);
-                    setData(response);
-                } catch (error) {
-                    console.error("Error al obtener funcionario:", error);
-                }
-            };
-            void fetchPermisos();
-        }
-    }, [funcionario]);
-
-    const resumen = {
-        anio: data.anio || new Date().getFullYear(),
-        total: data.total || 0,
-        diasCorresponden: data.diasCorresponden || 0,
-        diasPendientes: data.diasPendientes || 0,
-        diasAcumulados: data.diasAcumulados || 0,
-        diasTomados: data.diasTomados || 0,
-    }
-    const detalle = data.detalle || [];
-
+    const { funcionario, isMobile, resumen, detalle } = useFeriadosPage();
 
     if (!funcionario) return <output className="alert alert-info text-center mt-5 d-block">Cargando Información...</output>;
 
-    return (
-        isMobile ? (
-            <FeriadosPageMobile resumen={resumen} detalle={detalle} />
-        ) : (
-            <div className="container-fluid py-4 feriados-page-container">
-                {/* Standardized Page Header - Premium Style */}
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 bg-white p-4 rounded shadow-sm border-start border-4 border-primary">
-                    <div className="mb-3 mb-md-0">
-                        <h2 className="mb-1 text-primary fw-bold">
-                            <i className="bi bi-calendar-check me-2"></i>{' '}
-                            Feriados Legales
-                        </h2>
-                        {funcionario?.nombre && (
-                            <p className="text-muted mb-0">
-                                Consulta el estado de tus vacaciones y días acumulados
-                            </p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="feriados-section-card">
-                    <TabsFeriados resumen={resumen} detalle={detalle} />
-                </div>
-            </div>
-        )
+    return isMobile ? (
+        <FeriadosPageMobile resumen={resumen} detalle={detalle} />
+    ) : (
+        <VistaFeriados funcionario={funcionario} resumen={resumen} detalle={detalle} />
     );
 };
 
 export default FeriadosPage;
-
-FeriadosPage.propTypes = {
-    funcionario: PropTypes.shape({
-        rut: PropTypes.number.isRequired,
-    }).isRequired,
-};

@@ -151,7 +151,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    transition: var(--transition-base);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid #e2e8f0;
     background: white;
     color: #64748b;
@@ -183,7 +183,7 @@
     border: 1px solid #fb923c;
     background: #fff1e6;
     color: #c2410c;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
     cursor: pointer;
 }
@@ -276,5 +276,25 @@
     
     .mis-solicitudes-header {
         font-size: 1.25rem;
+    }
+}
+
+/* Accessibility: honor reduced-motion preferences (must come after the rules it overrides) */
+@media (prefers-reduced-motion: reduce) {
+    .mis-solicitudes-container {
+        animation: none;
+    }
+
+    .mis-solicitudes-table tbody tr,
+    .btn-action,
+    .btn-action-anular {
+        transition: none;
+    }
+
+    .mis-solicitudes-table tbody tr:hover,
+    .btn-action:hover,
+    .btn-action-anular:hover,
+    .btn-action-anular:active {
+        transform: none;
     }
 }
