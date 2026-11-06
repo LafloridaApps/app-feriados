@@ -65,12 +65,11 @@ export const getFuncionarioApi = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            withCredentials: 'include' // Asegura que se envíen las cookies de sesión
+            withCredentials: true // Asegura que se envíen las cookies de sesión
             
         });
-        const {data} = response;
-        console.log("Datos del funcionario obtenidos:", data);
-        return data;
+        // La API de autenticación envuelve al funcionario en { data, mensaje, success }.
+        return response.data.data;
 
 
     } catch (error) {
