@@ -21,8 +21,18 @@ export default function SolicitudTerceros() {
     return (
         <div className="container-fluid py-4 solicitudes-page-container">
             <div className="bg-white p-4 rounded shadow-sm border-start border-4 border-primary mb-4">
-                <h2 className="mb-1 text-primary fw-bold"><i className="bi bi-person-plus me-2" />Solicitud por terceros</h2>
-                <p className="text-muted mb-0">Ingresa el RUT o busca por nombre. Solo puedes seleccionar funcionarios de tu dirección.</p>
+                <div className="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h2 className="mb-1 text-primary fw-bold"><i className="bi bi-person-plus me-2" />Solicitud por terceros</h2>
+                        <p className="text-muted mb-0">Ingresa el RUT o busca por nombre. Solo puedes seleccionar funcionarios de tu dirección.</p>
+                    </div>
+                    <a className="btn btn-outline-primary"
+                        href={`${import.meta.env.BASE_URL}ayuda/manual-solicitud-por-terceros.pdf`}
+                        download="Manual_solicitud_por_terceros.pdf">
+                        <i className="bi bi-file-earmark-pdf me-2" aria-hidden="true" />
+                        Descargar manual de ayuda (PDF)
+                    </a>
+                </div>
             </div>
             <p className="text-muted">Ingresada por: <strong>{gestor.nombreCompleto || gestor.nombre}</strong> · RUT: {gestor.rut}{gestor.vrut ? `-${gestor.vrut}` : ''}</p>
             <section className="solicitudes-section-card mb-4" aria-labelledby="datos-solicitante">
