@@ -12,3 +12,10 @@ export const buscarSolicitantesDireccion = async (rutGestor, pattern, pageNumber
     const { data } = await api.get('/buscar-nombre', { params: { rutGestor, pattern, pageNumber } });
     return data;
 };
+
+export const obtenerHistorialSolicitante = async (rutGestor, rut, page = 0) => {
+    const { data } = await axios.get(`${BASE_URL}/solicitudes/solicitudes/rut-tercero`, {
+        params: { rutGestor, rut, page, size: 10 },
+    });
+    return data;
+};

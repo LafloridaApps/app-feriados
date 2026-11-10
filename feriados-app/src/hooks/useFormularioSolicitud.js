@@ -36,7 +36,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     const { rutGestor = null, onSolicitudCreada } = useContext(SolicitudTerceroContext) ?? {};
     const feriados = useContext(FeriadosContext);
     const fechasFeriadas = feriados.map(f => f.fecha);
-    const permiteMedioDia = ['PLANTA', 'CONTRATA', 'SUPLENCIA'].includes(
+    const permiteMedioDia = ['PLANTA', 'CONTRATA', 'SUPLENCIA', 'SUPLENTE EXTERNO'].includes(
         String(funcionario?.tipoContrato ?? '').trim().toUpperCase()
     );
     const jornadasBloqueadas = tipo === 'ADMINISTRATIVO' && !permiteMedioDia;

@@ -8,7 +8,7 @@ export const useVisorSolicitudes = () => {
     const [solicitudId, setSolicitudId] = useState('');
     const {
         solicitud, loading, error,
-        buscarSolicitud, handleAnularDirecto
+        buscarSolicitud, limpiarSolicitud, handleAnularDirecto
     } = useGestionSolicitudes();
 
     const handleSearch = (e) => {
@@ -45,6 +45,6 @@ export const useVisorSolicitudes = () => {
 
     return {
         solicitudId, setSolicitudId, solicitud, loading, error,
-        handleSearch, handleAnular,
+        handleSearch, handleAnular, buscarSolicitud, limpiarSolicitud,
     };
 };

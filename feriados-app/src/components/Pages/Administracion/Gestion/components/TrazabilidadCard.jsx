@@ -1,9 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const TrazabilidadCard = ({ derivaciones }) => (
+const TrazabilidadCard = ({ derivaciones, cantidadDias }) => (
     <div className="card-content h-100">
         <h4><i className="bi bi-diagram-3"></i> Trazabilidad</h4>
+        <div className="d-flex align-items-center justify-content-between gap-3 bg-primary bg-opacity-10 rounded-3 p-3 mt-3">
+            <span className="small fw-semibold text-primary"><i className="bi bi-calendar-range me-2" aria-hidden="true" />Días solicitados</span>
+            <strong className="text-primary">{cantidadDias == null ? 'Sin información' : `${new Intl.NumberFormat('es-CL', { maximumFractionDigits: 2 }).format(cantidadDias)} ${cantidadDias === 1 ? 'día' : 'días'}`}</strong>
+        </div>
         <div className="table-responsive mt-4">
             <table className="table">
                 <thead>
@@ -35,6 +39,7 @@ const TrazabilidadCard = ({ derivaciones }) => (
 
 TrazabilidadCard.propTypes = {
     derivaciones: PropTypes.array,
+    cantidadDias: PropTypes.number,
 };
 
 

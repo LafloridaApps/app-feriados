@@ -1,0 +1,24 @@
+.admin-page { color: #243449; max-width: 1200px; }
+.admin-page-header { margin-bottom: 1.5rem; }
+.admin-eyebrow { color: #52657c; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.admin-page-header h1 { font-size: clamp(1.65rem, 3vw, 2.1rem); font-weight: 700; margin: .35rem 0; }
+.admin-page-header p { color: #52657c; margin: 0; }
+.admin-page .admin-panel { background: #fff; border: 1px solid #dde4ec; border-radius: 14px; padding: 1.4rem; box-shadow: 0 4px 20px #24344908; }
+.admin-toolbar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; justify-content: space-between; margin-bottom: 1.25rem; }
+.admin-search { flex: 1; max-width: 460px; }
+.admin-page .table { vertical-align: middle; margin-bottom: 0; }
+.admin-page .table th { color: #52657c; font-size: .8rem; background: #f4f7fa; padding: .9rem; }
+.admin-page .table td { padding: 1rem .9rem; }
+.admin-empty { text-align: center; padding: 2.5rem 1rem; color: #52657c; }
+.admin-module-badge { display: inline-block; background: #edf4fb; color: #24527c; border-radius: 6px; padding: .25rem .5rem; margin: .15rem; font-size: .8rem; }
+.admin-page .modal-content { border: 0; border-radius: 14px; }
+.admin-page .modal-header, .admin-page .modal-footer { padding: 1.2rem; }
+.admin-module-option { padding: .8rem .8rem .8rem 2.5rem; border: 1px solid #dde4ec; border-radius: 8px; margin-bottom: .6rem; }
+@media (max-width: 575px) { .admin-page .admin-panel { padding: 1rem; } .admin-toolbar > .btn, .admin-search { width: 100%; max-width: none; } }
+
+.admin-dialog { width: min(560px, calc(100% - 2rem)); max-height: 85dvh; padding: 0; border: 1px solid #dde4ec; border-radius: 14px; color: #243449; box-shadow: 0 20px 80px #162b4666; }
+.admin-dialog::backdrop { background: #142b4680; }
+.admin-dialog .modal-header, .admin-dialog .modal-footer { padding: 1.2rem; }
+.admin-dialog .modal-body { padding: 1.2rem; }
+.admin-dialog .modal-header { border-bottom: 1px solid #dde4ec; }
+.admin-dialog .modal-footer { border-top: 1px solid #dde4ec; display: flex; gap: .6rem; justify-content: end; }

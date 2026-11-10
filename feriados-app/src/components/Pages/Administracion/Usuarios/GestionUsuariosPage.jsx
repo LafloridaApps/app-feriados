@@ -1,39 +1,25 @@
+import PaginacionAdministracion from '../components/PaginacionAdministracion';
 import UserTable from './components/UserTable';
 import AddUserModal from './components/AddUserModal';
 import ManageUserModulesModal from './components/ManageUserModulesModal';
 import ControlesUsuarios from './components/ControlesUsuarios';
+import AdministracionLayout from '../components/AdministracionLayout';
+import EstadoListado from '../components/EstadoListado';
 import { useGestionUsuarios } from './useGestionUsuarios';
 import './GestionUsuariosPage.css';
 
-const GestionUsuariosPage = () => {
-    const {
-        searchTerm, setSearchTerm, filteredUsuarios,
-        showAddModal, setShowAddModal, showManageModal, selectedUser,
-        handleAddUser, handleSaveModules, abrirGestionModulos, cerrarGestionModulos,
-    } = useGestionUsuarios();
-
-    return (
-        <div className="container py-5 gestion-usuarios-container">
-            <ControlesUsuarios searchTerm={searchTerm} setSearchTerm={setSearchTerm}
-                onAgregarUsuario={() => setShowAddModal(true)} />
-            <UserTable usuarios={filteredUsuarios} onManageClick={abrirGestionModulos} />
-
-            <AddUserModal
-                show={showAddModal}
-                onClose={() => setShowAddModal(false)}
-                onUserAdded={handleAddUser}
-            />
-
-            {selectedUser && (
-                <ManageUserModulesModal
-                    show={showManageModal}
-                    user={selectedUser}
-                    onClose={cerrarGestionModulos}
-                    onSave={handleSaveModules}
-                />
+export default function GestionUsuariosPage() {
+    const gestion = useGestionUsuarios();
+    return <AdministracionLayout titulo="Usuarios" descripcion="Administre los usuarios y los módulos a los que pueden acceder.">
+        <div className="admin-panel">
+            <ControlesUsuarios searchTerm={gestion.searchTerm} setSearchTerm={gestion.setSearchTerm} onAgregarUsuario={() => gestion.setShowAddModal(true)} disabled={gestion.loading || Boolean(gestion.error)} />
+            <EstadoListado loading={gestion.loading} error={gestion.error} onRetry={gestion.recargar} />
+            {!gestion.loading && !gestion.error && (
+                <UserTable usuarios={gestion.filteredUsuarios} onManageClick={gestion.abrirGestionModulos} />
             )}
+            <PaginacionAdministracion {...gestion} />
         </div>
-    );
-};
-
-export default GestionUsuariosPage;
+        {gestion.showAddModal && <AddUserModal onClose={() => gestion.setShowAddModal(false)} onUserAdded={gestion.handleAddUser} />}
+        {gestion.selectedUser && <ManageUserModulesModal key={gestion.selectedUser.rut} user={gestion.selectedUser} onClose={gestion.cerrarGestionModulos} onSave={gestion.handleSaveModules} />}
+    </AdministracionLayout>;
+}

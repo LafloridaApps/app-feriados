@@ -90,3 +90,41 @@
     color: #dc3545;
     font-weight: bold;
 }
+
+.visor-solicitudes { max-width: 1500px; }
+.visor-solicitudes .visor-search { background: #fff; border: 1px solid #dce4ef; border-radius: 18px; padding: clamp(18px, 3vw, 30px); margin-bottom: 28px; box-shadow: 0 6px 24px #243b5310; }
+.visor-search-heading { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.visor-search h3 { font-size: 1.25rem; font-weight: 700; color: #203958; }
+.visor-search-heading p { color: #62748a; margin-bottom: 0; }
+.visor-scope { align-self: start; background: #edf5ff; color: #24558b; border-radius: 20px; padding: 8px 14px; font-size: .8rem; }
+.visor-modes { display: flex; flex-wrap: wrap; gap: 6px; background: #f0f4f8; padding: 5px; border-radius: 12px; width: fit-content; margin-bottom: 22px; }
+.visor-modes button { border: 0; border-radius: 9px; padding: 10px 18px; color: #52647a; background: transparent; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.visor-modes button.active { background: white; color: #1759a4; box-shadow: 0 2px 6px #20395818; }
+.visor-search-form { display: flex; gap: 12px; align-items: end; max-width: 800px; }
+.visor-search-form > div { flex: 1; }
+.visor-search-form label { font-size: .85rem; font-weight: 600; margin-bottom: 8px; color: #40536b; }
+.visor-search-form input, .visor-search-form > button { min-height: 46px; border-radius: 9px; }
+.visor-results { border-top: 1px solid #e4eaf2; margin-top: 26px; padding-top: 22px; }
+.visor-results h4 { font-size: 1rem; font-weight: 700; margin: 0; }
+.visor-results th { background: #f6f8fb; color: #53657b; font-size: .8rem; padding: 12px; }
+.visor-results td { padding: 14px 12px; font-size: .9rem; }
+.visor-empty { padding: 24px; text-align: center; background: #f6f8fb; border-radius: 12px; color: #62748a; }
+@media (max-width: 576px) { .visor-search-form { align-items: stretch; flex-direction: column; } .visor-modes { width: 100%; } .visor-modes button { flex: 1; justify-content: center; padding: 10px 6px; font-size: .8rem; } }
+
+.visor-detail-dialog { width: min(1200px, calc(100vw - 32px)); max-width: 1200px; max-height: calc(100dvh - 48px); padding: 0; border: 1px solid #dce4ef; border-radius: 20px; color: #203958; box-shadow: 0 24px 80px #102a4350; overflow: hidden; }
+.visor-detail-dialog[open] { display: flex; flex-direction: column; }
+.visor-detail-dialog::backdrop { background: #102a4399; backdrop-filter: blur(3px); }
+.visor-detail-header { display: flex; align-items: start; justify-content: space-between; gap: 20px; padding: 24px 28px; background: #fff; border-bottom: 1px solid #e4eaf2; flex-shrink: 0; }
+.visor-detail-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #eaf2ff; color: #1759a4; font-size: 1.5rem; flex-shrink: 0; }
+.visor-detail-eyebrow { margin: 0 0 4px; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #62748a; }
+.visor-detail-header h3 { margin: 0; font-size: 1.4rem; font-weight: 750; }
+.visor-detail-subtitle { margin: 6px 0 0; font-size: .9rem; color: #62748a; }
+.visor-detail-body { overflow-y: auto; overscroll-behavior: contain; padding: 24px; background: #f3f6fa; }
+.visor-detail-body .card-content { padding: 22px; border-radius: 14px; box-shadow: none; }
+.visor-detail-body .card-content h4 { font-size: 1.1rem; font-weight: 700; }
+.visor-detail-body .table th { background: #f3f6fa; color: #52647a; font-size: .78rem; padding: 12px 10px; }
+.visor-detail-body .table td { padding: 14px 10px; font-size: .85rem; vertical-align: middle; }
+.visor-detail-body .badge { white-space: normal; line-height: 1.4; }
+.visor-detail-body .row > div > .bg-white { border-radius: 14px !important; padding: 22px !important; box-shadow: none !important; }
+.visor-detail-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px 28px; border-top: 1px solid #e4eaf2; background: white; flex-shrink: 0; }
+@media (max-width: 576px) { .visor-detail-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); border-radius: 14px; } .visor-detail-header { padding: 18px; } .visor-detail-body { padding: 12px; } .visor-detail-footer { padding: 12px 18px; } .visor-detail-footer .btn { width: 100%; } }

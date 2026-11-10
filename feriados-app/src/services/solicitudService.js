@@ -72,3 +72,9 @@ export const anularSolicitudDirecta = async (idSolicitud, motivo, rutAprobador) 
         throw error;
     }
 };
+
+// Consulta institucional del visor, sin restricciones de jerarquía de terceros.
+export const getSolicitudesVisorPorRut = async (rut, page = 0) => {
+    const { data } = await api.get('/rut', { params: { rut, page, size: 10 } });
+    return data;
+};

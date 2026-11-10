@@ -50,6 +50,7 @@ const ResultadosFuncionarios = ({
                             <tr>
                                 <th style={{ width: 130 }}>RUT</th>
                                 <th>Nombre Completo</th>
+                                <th>Departamento</th>
                                 <th style={{ width: 110 }}></th>
                             </tr>
                         </thead>
@@ -67,6 +68,7 @@ const ResultadosFuncionarios = ({
                                             <code className="small">{func.rut}-{func.vrut}</code>
                                         </td>
                                         <td>{func.nombreCompleto}</td>
+                                        <td className="small">{func.departamento || 'Sin departamento informado'}</td>
                                         <td className="text-end">
                                             <button
                                                 type="button"

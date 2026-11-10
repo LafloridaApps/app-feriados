@@ -1,98 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { listarModulos } from '../../../../../services/moduloService';
 import { guardarUsuario } from '../../../../../services/usuarioService';
-import PropTypes from 'prop-types';
+import { useListadoAdministracion } from '../../hooks/useListadoAdministracion';
+import AdministracionModal from '../../components/AdministracionModal';
+import EstadoListado from '../../components/EstadoListado';
 
-const ManageUserModulesModal = ({ show, user, onClose, onSave }) => {
-    const [availableModules, setAvailableModules] = useState([]);
-    const [selectedModules, setSelectedModules] = useState([]);
-
-    useEffect(() => {
-        if (!show) return;
-
-        const fetchModulos = async () => {
-            try {
-                const modulos = await listarModulos();
-                setAvailableModules(modulos);
-            } catch (error) {
-                console.error('Error al obtener los módulos:', error);
-            }
-        };
-
-        void fetchModulos();
-        setSelectedModules(user.modulos.map(m => m.id) || []);
-    }, [show, user]);
-
-    const handleCheckboxChange = (moduleId) => {
-        setSelectedModules(prev =>
-            prev.includes(moduleId) ? prev.filter(id => id !== moduleId) : [...prev, moduleId]
-        );
-    };
-
-    const handleSave = async () => {
-        const dataToSend = {
-            rut: user.rut,
-            modulos: selectedModules.toSorted((a, b) => a - b)
-        };
-
+export default function ManageUserModulesModal({ user, onClose, onSave }) {
+    const listado = useListadoAdministracion(listarModulos, 'No se pudieron cargar los módulos.');
+    const [seleccionados, setSeleccionados] = useState(() => (user.modulos ?? []).map(modulo => modulo.id));
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+    const cambiar = id => setSeleccionados(prev => prev.includes(id) ? prev.filter(value => value !== id) : [...prev, id]);
+    const guardar = async () => {
+        if (saving || listado.loading || listado.error) return;
+        setSaving(true);
+        setError('');
         try {
-            await guardarUsuario(dataToSend);
-            onSave({ ...user, modulos: selectedModules.map(id => ({ id })) });
-            void Swal.fire('Guardado', 'Los módulos del usuario han sido actualizados.', 'success');
+            await guardarUsuario({ rut: String(user.rut), modulos: [...seleccionados].sort((a, b) => a - b) });
+            onSave();
             onClose();
-        } catch (error) {
-            void Swal.fire('Error', 'No se pudo guardar los cambios.', error.data);
-        }
+        } catch { setError('No se pudieron guardar los permisos. Intente nuevamente.'); }
+        finally { setSaving(false); }
     };
-
-    return (
-        <div className={`modal fade ${show ? 'show' : ''}`} style={{ display: show ? 'block': 'none' }} tabIndex="-1">
-            <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Gestionar Módulos de {user.nombre}</h5>
-                        <button type="button" className="btn-close" onClick={onClose}></button>
-                    </div>
-                    <div className="modal-body">
-                        <h6>Seleccione los módulos a los que tendrá acceso:</h6>
-                        {availableModules.map(module => (
-                            <div className="form-check" key={module.id}>
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    value={module.id}
-                                    id={`module-${module.id}`}
-                                    checked={selectedModules.includes(module.id)}
-                                    onChange={() => handleCheckboxChange(module.id)}
-                                />
-                                <label className="form-check-label" htmlFor={`module-${module.id}`}>
-                                    {module.nombre}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-                        <button type="button" className="btn btn-primary" onClick={handleSave}>Guardar Cambios</button>
-                    </div>
-                </div>
-            </div>
+    return <AdministracionModal titulo="Gestionar módulos" onClose={onClose} busy={saving}>
+        <div className="modal-body"><p className="fw-semibold mb-1">{user.nombre || user.rut}</p><p className="small text-secondary">Seleccione los módulos a los que tendrá acceso. Sin selección, el usuario quedará sin módulos asignados.</p>
+            <EstadoListado loading={listado.loading} error={listado.error} onRetry={listado.recargar} />
+            {!listado.loading && !listado.error && <fieldset disabled={saving}><legend className="visually-hidden">Módulos disponibles</legend>
+                {listado.items.map(modulo => <div className="form-check admin-module-option" key={modulo.id}><input className="form-check-input" type="checkbox" id={`permiso-${modulo.id}`} checked={seleccionados.includes(modulo.id)} onChange={() => cambiar(modulo.id)} /><label className="form-check-label" htmlFor={`permiso-${modulo.id}`}>{modulo.nombre}</label></div>)}
+                {listado.items.length === 0 && <p className="text-secondary">No hay módulos disponibles.</p>}
+            </fieldset>}
+            {error && <p className="alert alert-danger mt-3 mb-0" role="alert">{error}</p>}
         </div>
-    );
-};
-
-
-
-ManageUserModulesModal.propTypes = {
-    show: PropTypes.bool.isRequired,
-    user: PropTypes.shape({
-        rut: PropTypes.string.isRequired,
-        nombre: PropTypes.string.isRequired,
-        modulos: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number }))
-    }).isRequired,
-    onClose: PropTypes.func.isRequired,
-    onSave: PropTypes.func.isRequired
-};
-
-export default ManageUserModulesModal;
+        <div className="modal-footer"><button type="button" className="btn btn-light" disabled={saving} onClick={onClose}>Cancelar</button><button type="button" className="btn btn-primary" disabled={saving || listado.loading || Boolean(listado.error)} onClick={guardar}>{saving ? 'Guardando…' : 'Guardar permisos'}</button></div>
+    </AdministracionModal>;
+}
+ManageUserModulesModal.propTypes = { user: PropTypes.shape({ rut: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired, nombre: PropTypes.string, modulos: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number.isRequired })) }).isRequired, onClose: PropTypes.func.isRequired, onSave: PropTypes.func.isRequired };

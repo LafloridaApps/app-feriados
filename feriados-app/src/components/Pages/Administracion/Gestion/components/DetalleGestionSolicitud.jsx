@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import BotonAnularSolicitud from './BotonAnularSolicitud';
+import DocumentoSolicitud from './DocumentoSolicitud';
 
 const DetalleGestionSolicitud = ({ solicitud, loading, handleAnular }) => (
     <div className="bg-white p-3 rounded shadow-sm border h-100 d-flex flex-column">
@@ -42,6 +43,7 @@ const DetalleGestionSolicitud = ({ solicitud, loading, handleAnular }) => (
             </div>
         </div>
 
+        <DocumentoSolicitud key={solicitud.id || solicitud.idSolicitud} solicitud={solicitud} />
         <BotonAnularSolicitud solicitud={solicitud} loading={loading} handleAnular={handleAnular} />
     </div>
 );

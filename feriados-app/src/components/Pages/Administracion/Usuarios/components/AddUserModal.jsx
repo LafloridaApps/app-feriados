@@ -1,113 +1,50 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Swal from 'sweetalert2';
 import { getFuncionarioByRutAndVrut } from '../../../../../services/funcionarioService';
+import { validarRut } from '../../../../../services/utils';
+import AdministracionModal from '../../components/AdministracionModal';
 
-const AddUserModal = ({ show, onClose, onUserAdded }) => {
-    const [rutBusqueda, setRutBusqueda] = useState('');
+export default function AddUserModal({ onClose, onUserAdded }) {
+    const [rut, setRut] = useState('');
     const [loading, setLoading] = useState(false);
-    const [searchResult, setSearchResult] = useState(null);
-
-    const handleSearch = async (e) => {
-        e.preventDefault();
-
-        if (!rutBusqueda.trim()) {
-            void Swal.fire('Error', 'Por favor, ingrese un RUT.', 'error');
-            return;
-        }
-
-        if (rutBusqueda.includes('-')) {
-            void Swal.fire('Error', 'Por favor, ingrese el RUT sin dígito verificador.', 'error');
-            return;
-        }
-
+    const [saving, setSaving] = useState(false);
+    const [resultado, setResultado] = useState(null);
+    const [error, setError] = useState('');
+    const buscar = async event => {
+        event.preventDefault();
+        if (loading || saving) return;
+        setResultado(null);
+        setError('');
+        const limpio = rut.trim().toUpperCase();
+        if (!/^\d{7,8}[\dK]$/.test(limpio)) { setError('Ingrese el RUT con dígito verificador, sin puntos ni guion. Ejemplo: 123456785.'); return; }
+        if (!validarRut(limpio)) { setError('El dígito verificador del RUT es incorrecto.'); return; }
         setLoading(true);
         try {
-            const response = await getFuncionarioByRutAndVrut(rutBusqueda);
-            setSearchResult(response);
-        } catch (error) {
-            console.error("Error al buscar funcionario:", error);
-            void Swal.fire('Error', 'No se pudo encontrar el funcionario.', 'error');
-            setSearchResult(null);
-        }
-        setLoading(false);
+            const funcionario = await getFuncionarioByRutAndVrut(limpio.slice(0, -1));
+            if (!funcionario?.rut || String(funcionario.vrut).trim().toUpperCase() !== limpio.slice(-1)) throw new Error('No encontrado');
+            setResultado(funcionario);
+        } catch { setError('No se encontró el funcionario. Revise el RUT e intente nuevamente.'); }
+        finally { setLoading(false); }
     };
-
-    const handleSelectUser = (user) => {
-        onUserAdded(user);
-        onClose();
+    const agregar = async () => {
+        if (!resultado || saving) return;
+        setSaving(true);
+        setError('');
+        try { await onUserAdded(resultado); onClose(); }
+        catch (error_) { setError(error_.response ? 'No se pudo guardar el usuario. Intente nuevamente.' : error_.message); }
+        finally { setSaving(false); }
     };
-
-    return (
-        <div className={`modal fade ${show ? 'show' : ''}`} style={{ display: show ? 'block' : 'none' }} tabIndex="-1">
-            <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Agregar Nuevo Usuario</h5>
-                        <button type="button" className="btn-close" onClick={onClose}></button>
-                    </div>
-                    <div className="modal-body">
-                        <form onSubmit={handleSearch}>
-                            <div className="mb-3">
-                                <label htmlFor="rutInput" className="form-label">RUT del Funcionario</label>
-                                <input
-                                    id="rutInput"
-                                    type="text"
-                                    className="form-control"
-                                    value={rutBusqueda}
-                                    onChange={(e) => setRutBusqueda(e.target.value)}
-                                    placeholder="Ingrese RUT sin dígito verificador"
-                                    
-                                />
-                            </div>
-                            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                                {loading ? 'Buscando...' : 'Buscar'}
-                            </button>
-                        </form>
-
-                        {searchResult && (
-                            <div className="mt-4">
-                                <h6>Resultado de la Búsqueda</h6>
-                                <table className="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre</th>
-                                            <th>RUT</th>
-                                            <th>Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{searchResult.nombre} {searchResult.apellidoPaterno} </td>
-                                            <td>{searchResult.rut}-{searchResult.vrut}</td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    onClick={() => handleSelectUser(searchResult)}
-                                                >
-                                                    Agregar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-                    </div>
-                </div>
-            </div>
+    return <AdministracionModal titulo="Agregar usuario" onClose={onClose} busy={loading || saving}>
+        <div className="modal-body"><p className="text-secondary small">Busque un funcionario para registrarlo. Después podrá asignarle módulos.</p>
+            <form onSubmit={buscar}><label htmlFor="rut-usuario" className="form-label">RUT con dígito verificador</label>
+                <input id="rut-usuario" className="form-control mb-2" type="text" maxLength={9} aria-describedby="ayuda-rut-usuario" placeholder="Ejemplo: 123456785" value={rut} disabled={loading || saving} onChange={event => { setRut(event.target.value); setResultado(null); setError(''); }} required />
+                <p id="ayuda-rut-usuario" className="small text-secondary">Sin puntos ni guion. Incluya el dígito verificador; también puede ser K.</p>
+                <button className="btn btn-outline-primary" type="submit" disabled={loading || saving}>{loading ? 'Buscando…' : 'Buscar funcionario'}</button>
+            </form>
+            {error && <p className="alert alert-danger mt-3 mb-0" role="alert">{error}</p>}
+            {resultado && <output className="border rounded p-3 mt-3 d-block"><strong>{resultado.nombreCompleto || [resultado.nombre, resultado.apellidoPaterno, resultado.apellidoMaterno].filter(Boolean).join(' ')}</strong><span className="text-secondary d-block">{resultado.rut}-{resultado.vrut}</span></output>}
         </div>
-    );
-};
-
-AddUserModal.propTypes = {
-    show: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    onUserAdded: PropTypes.func.isRequired,
-};
-
-
-export default AddUserModal;
+        <div className="modal-footer"><button type="button" className="btn btn-light" onClick={onClose} disabled={loading || saving}>Cancelar</button><button type="button" className="btn btn-primary" disabled={!resultado || loading || saving} onClick={agregar}>{saving ? 'Guardando…' : 'Agregar usuario'}</button></div>
+    </AdministracionModal>;
+}
+AddUserModal.propTypes = { onClose: PropTypes.func.isRequired, onUserAdded: PropTypes.func.isRequired };

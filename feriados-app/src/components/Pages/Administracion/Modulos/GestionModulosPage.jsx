@@ -1,112 +1,27 @@
+import PaginacionAdministracion from '../components/PaginacionAdministracion';
+import AdministracionLayout from '../components/AdministracionLayout';
+import EstadoListado from '../components/EstadoListado';
+import FormularioModulo from './components/FormularioModulo';
+import { useGestionModulos } from './useGestionModulos';
+import './GestionModulosPage.css';
 
-import { useEffect, useState } from 'react';
-import Swal from 'sweetalert2';
-import { listarModulos } from '../../../../services/moduloService';
-import './GestionModulosPage.css'; // Importar el archivo CSS personalizado
-
-const GestionModulosPage = () => {
-    const [modulos, setModulos] = useState([]);
-    const [nombreModulo, setNombreModulo] = useState('');
-    const [loading, setLoading] = useState(false);
-
-
-    useEffect(()=>{
-
-        const getModulos = async () => {
-
-            const data = await listarModulos();
-            setModulos(data);
-        }
-        void getModulos()
-
-    },[])
-
-    const handleAddModule = async (e) => {
-        e.preventDefault();
-        if (!nombreModulo) {
-            void Swal.fire('Por favor, ingrese el nombre del módulo', '', 'warning');
-            return;
-        }
-        setLoading(true);
-
-   
-
-        const newModule = {
-           
-            nombre: nombreModulo,
-        };
-
-
-        setModulos([...modulos, newModule]);
-        setNombreModulo(''); // Limpiar el input
-        setLoading(false);
-        void Swal.fire('Módulo Agregado', `El módulo "${nombreModulo}" ha sido agregado.`, 'success');
-    };
-
-    return (
-        <div className="container py-5 gestion-modulos-container">
-            <h2 className="text-center mb-4 gestion-modulos-header">Gestión de Módulos</h2>
-            <div className="row justify-content-center">
-                <div className="col-md-8">
-                    <div className="card mb-4 gestion-modulos-add-form-card">
-                        <div className="card-header">
-                            Agregar Nuevo Módulo
-                        </div>
-                        <div className="card-body">
-                            <form onSubmit={handleAddModule}>
-                                <div className="row">
-                                    <div className="col-md-9">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="nombreModulo"
-                                            placeholder="Nombre del nuevo módulo"
-                                            value={nombreModulo}
-                                            onChange={(e) => setNombreModulo(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-3">
-                                        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                                            {loading ? (
-                                                <>
-                                                    <output className="spinner-border spinner-border-sm" aria-hidden="true" />
-                                                    {' ...'}
-                                                </>
-                                            ) : 'Agregar'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div className="card gestion-modulos-existing-card">
-                        <div className="card-header">
-                            Módulos Existentes
-                        </div>
-                        <div className="card-body">
-                            <table className="table table-striped gestion-modulos-table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nombre del Módulo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {modulos.map(modulo => (
-                                        <tr key={modulo.id}>
-                                            <th scope="row">{modulo.id}</th>
-                                            <td>{modulo.nombre}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+export default function GestionModulosPage() {
+    const gestion = useGestionModulos();
+    return <AdministracionLayout titulo="Módulos" descripcion="Organice los módulos disponibles para los permisos de acceso.">
+        <div className="row g-4">
+            <div className="col-lg-4"><FormularioModulo nombre={gestion.nombre} setNombre={gestion.setNombre} saving={gestion.saving} disabled={gestion.loading || Boolean(gestion.error)} onSubmit={gestion.agregar} error={gestion.errorGuardar} mensaje={gestion.mensaje} /></div>
+            <div className="col-lg-8"><div className="admin-panel">
+                <div className="admin-toolbar"><h2 className="h5 mb-0">Catálogo de módulos <span className="badge text-bg-light">{gestion.totalElements}</span></h2></div>
+                <label htmlFor="buscar-modulo" className="form-label">Buscar módulo</label>
+                <input id="buscar-modulo" type="search" className="form-control mb-3" value={gestion.busqueda} onChange={event => gestion.setBusqueda(event.target.value)} />
+                <EstadoListado loading={gestion.loading} error={gestion.error} onRetry={gestion.recargar} />
+                {!gestion.loading && !gestion.error && <div className="table-responsive"><table className="table table-hover">
+                    <caption className="visually-hidden">Módulos disponibles</caption>
+                    <thead><tr><th scope="col">ID</th><th scope="col">Nombre</th></tr></thead>
+                    <tbody>{gestion.filtrados.map(modulo => <tr key={modulo.id}><td>{modulo.id}</td><td className="fw-semibold">{modulo.nombre}</td></tr>)}</tbody>
+                </table>{gestion.filtrados.length === 0 && <p className="admin-empty mb-0">No hay módulos para mostrar.</p>}</div>}
+                <PaginacionAdministracion {...gestion} />
+            </div></div>
         </div>
-    );
-};
-
-export default GestionModulosPage;
+    </AdministracionLayout>;
+}

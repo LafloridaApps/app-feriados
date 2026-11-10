@@ -30,7 +30,7 @@ export default function FichaSolicitante({ solicitante, fotoVisible, ocultarFoto
                         <div className="col-md-6" key={id}>
                             <label htmlFor={id} className="form-label">{label}</label>
                             <input id={id} className="form-control" readOnly disabled={!solicitante}
-                                value={value || ''} placeholder="Pendiente de consultar RUT" />
+                                value={value || ''} placeholder={solicitante ? 'Sin información' : 'Pendiente de consultar RUT'} />
                         </div>
                     ))}
                     </div>

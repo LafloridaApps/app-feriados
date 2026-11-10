@@ -1,18 +1,7 @@
-
 import axios from 'axios';
 import { BASE_URL } from './url.js';
+const api = axios.create({ baseURL: `${BASE_URL}/solicitudes/modulos` });
+export const listarModulos = async () => (await api.get('/listar')).data;
+export const crearModulo = async modulo => (await api.post('/crear', modulo)).data;
 
-const api = axios.create({
-    baseURL: `${BASE_URL}/solicitudes/modulos`
-
-});
-
-export const listarModulos = async () => {
-    try {
-        const { data } = await api.get('listar')
-        return data;
-    } catch (error) {
-        console.log(error)
-        throw error
-    }
-}
+export const listarModulosPagina = async params => (await api.get('/pagina', { params })).data;

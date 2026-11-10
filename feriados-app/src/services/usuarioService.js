@@ -40,3 +40,4 @@ export const getPermisosByUsuario = async (rut) => {
         throw error
     }
 }
+export const listarUsuariosPagina = async params => (await api.get('/pagina', { params })).data;

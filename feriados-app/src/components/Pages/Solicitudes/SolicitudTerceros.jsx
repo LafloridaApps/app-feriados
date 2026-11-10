@@ -4,6 +4,7 @@ import ModalBuscarPorNombre from '../../Common/ModalBuscarPorNombre';
 import BusquedaSolicitante from './SolicitudTerceros/BusquedaSolicitante';
 import FichaSolicitante from './SolicitudTerceros/FichaSolicitante';
 import DatosSolicitudTercero from './SolicitudTerceros/DatosSolicitudTercero';
+import HistorialSolicitante from './SolicitudTerceros/HistorialSolicitante';
 import { useSolicitudTerceros } from './SolicitudTerceros/useSolicitudTerceros';
 import './PaginaSolicitudes.css';
 
@@ -31,6 +32,8 @@ export default function SolicitudTerceros() {
                     abrirBusquedaNombre={() => setMostrarBusquedaNombre(true)} />
                 <FichaSolicitante solicitante={solicitante} fotoVisible={fotoVisible} ocultarFoto={ocultarFoto} />
             </section>
+            {solicitante && <HistorialSolicitante key={`${gestor.rut}-${solicitante.rut}`}
+                rutGestor={gestor.rut} solicitante={solicitante} />}
             {!solicitante && !error && <output className="text-muted small d-block">Los saldos y el formulario se habilitarán al encontrar al solicitante.</output>}
             {mostrarBusquedaNombre && (
                 <ModalBuscarPorNombre show={mostrarBusquedaNombre}

@@ -15,8 +15,8 @@ export const useGestionSolicitudes = () => {
     useEffect(() => {
         if (solicitud) {
             setEditableData({
-                fechaInicio: solicitud.fechaInicio.split('T')[0],
-                fechaTermino: solicitud.fechaTermino.split('T')[0],
+                fechaInicio: (solicitud.fechaInicio || '').split('T')[0],
+                fechaTermino: (solicitud.fechaTermino || solicitud.fechaFin || '').split('T')[0],
                 estadoSolicitud: solicitud.estadoSolicitud,
             });
         }
@@ -95,6 +95,7 @@ export const useGestionSolicitudes = () => {
 
     return {
         solicitud,
+        limpiarSolicitud: () => { setSolicitud(null); setError(null); },
         loading,
         error,
         editableData,
