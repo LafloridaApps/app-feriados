@@ -32,7 +32,7 @@ export const GestionSolicitudes = () => {
             </div>
 
             <SearchSolicitud onSelect={buscarSolicitud} onReset={limpiarSolicitud} detailLoading={loading} />
-            {loading && <p role="status" className="text-primary my-3">Cargando detalle de la solicitud…</p>}
+            {loading && <output className="d-block text-primary my-3">Cargando detalle de la solicitud…</output>}
 
             {error && (
                 <div className="alert alert-danger shadow-sm border-0 rounded-3 mb-4">
@@ -54,7 +54,7 @@ export const GestionSolicitudes = () => {
                         onClick={() => detalle.current.close()} />
                 </header>
                 <div className="visor-detail-body" aria-busy={loading}>
-                    {loading && <p role="status" className="alert alert-info">Cargando detalle de la solicitud…</p>}
+                    {loading && <output className="d-block alert alert-info">Cargando detalle de la solicitud…</output>}
                     {error && <p role="alert" className="alert alert-danger">{error}</p>}
                     {solicitud && <div className="row g-4">
                         <div className="col-lg-5"><DetalleGestionSolicitud solicitud={solicitud} loading={loading} handleAnular={handleAnular} /></div>

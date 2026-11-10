@@ -125,6 +125,6 @@
 .visor-detail-body .table th { background: #f3f6fa; color: #52647a; font-size: .78rem; padding: 12px 10px; }
 .visor-detail-body .table td { padding: 14px 10px; font-size: .85rem; vertical-align: middle; }
 .visor-detail-body .badge { white-space: normal; line-height: 1.4; }
-.visor-detail-body .row > div > .bg-white { border-radius: 14px !important; padding: 22px !important; box-shadow: none !important; }
+.visor-detail-body .row > div > .bg-white { border-radius: 14px ; padding: 22px; box-shadow: none ; }
 .visor-detail-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px 28px; border-top: 1px solid #e4eaf2; background: white; flex-shrink: 0; }
 @media (max-width: 576px) { .visor-detail-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); border-radius: 14px; } .visor-detail-header { padding: 18px; } .visor-detail-body { padding: 12px; } .visor-detail-footer { padding: 12px 18px; } .visor-detail-footer .btn { width: 100%; } }

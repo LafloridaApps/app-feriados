@@ -3,6 +3,12 @@ import { buscarFuncionariosPorNombre } from '../../../../../services/funcionario
 import { getSolicitudesVisorPorRut } from '../../../../../services/solicitudService';
 import { formatFecha } from '../../../../../services/utils';
 
+const CAMPOS_BUSQUEDA = {
+    id: { label: 'Número de solicitud', placeholder: 'Ej.: 1234' },
+    rut: { label: 'RUT del funcionario', placeholder: 'Ej.: 12345678-9' },
+    nombre: { label: 'Nombre o apellido', placeholder: 'Ej.: María González' },
+};
+
 const SearchSolicitud = ({ onSelect, onReset, detailLoading }) => {
     const [modo, setModo] = useState('id');
     const [texto, setTexto] = useState('');
@@ -54,26 +60,28 @@ const SearchSolicitud = ({ onSelect, onReset, detailLoading }) => {
         consulta.current = valor;
         void consultar();
     };
+    const tituloSolicitudes = persona ? `Solicitudes de ${persona.nombreCompleto}` : 'Solicitudes';
     const personas = resultado?.tipo === 'personas';
     const filas = personas ? resultado.funcionarios || [] : resultado?.solicitudes || [];
     return <section className="visor-search" aria-label="Búsqueda de solicitudes">
         <div className="visor-search-heading"><div><h3>Encuentra una solicitud</h3><p>Busca directamente por número o consulta las solicitudes de un funcionario.</p></div><span className="visor-scope"><i className="bi bi-buildings" aria-hidden="true" /> Todos los departamentos</span></div>
-        <div className="visor-modes" role="group" aria-label="Buscar por">
+        <fieldset className="visor-modes">
+            <legend className="visually-hidden">Buscar por</legend>
             {[['id', 'hash', 'N° de solicitud'], ['rut', 'person-vcard', 'RUT'], ['nombre', 'people', 'Nombre']].map(([valor, icono, etiqueta]) => <button type="button" key={valor} disabled={detailLoading} aria-pressed={modo === valor} className={modo === valor ? 'active' : ''} onClick={() => cambiarModo(valor)}><i className={`bi bi-${icono}`} aria-hidden="true" />{etiqueta}</button>)}
-        </div>
+        </fieldset>
         <form onSubmit={buscar} className="visor-search-form">
-            <div><label htmlFor="visor-consulta">{modo === 'id' ? 'Número de solicitud' : modo === 'rut' ? 'RUT del funcionario' : 'Nombre o apellido'}</label>
-                <input id="visor-consulta" className="form-control" value={texto} onChange={e => setTexto(e.target.value)} placeholder={modo === 'id' ? 'Ej.: 1234' : modo === 'rut' ? 'Ej.: 12345678-9' : 'Ej.: María González'} required disabled={loading || detailLoading} />
-            </div><button className="btn btn-primary" disabled={loading || detailLoading}><i className="bi bi-search me-2" aria-hidden="true" />{loading || detailLoading ? 'Buscando…' : 'Buscar'}</button>
+            <div><label htmlFor="visor-consulta">{CAMPOS_BUSQUEDA[modo].label}</label>
+                <input id="visor-consulta" className="form-control" value={texto} onChange={e => setTexto(e.target.value)} placeholder={CAMPOS_BUSQUEDA[modo].placeholder} required disabled={loading || detailLoading} />
+            </div><button type="submit" className="btn btn-primary" disabled={loading || detailLoading}><i className="bi bi-search me-2" aria-hidden="true" />{loading || detailLoading ? 'Buscando…' : 'Buscar'}</button>
         </form>
         {modo !== 'id' && <p className="small text-muted mt-2 mb-0">La búsqueda incluye funcionarios de toda la institución, sin filtro de jerarquía.</p>}
         {error && <p className="alert alert-danger mt-3 mb-0" role="alert">{error}</p>}
-        {loading && <p role="status" className="mt-3">Consultando resultados…</p>}
+        {loading && <output className="d-block mt-3 mb-3">Consultando resultados…</output>}
         {resultado && <div className="visor-results" aria-live="polite">
-            <div className="d-flex flex-wrap justify-content-between gap-2 mb-3"><h4>{personas ? 'Funcionarios encontrados' : `Solicitudes${persona ? ` de ${persona.nombreCompleto}` : ''}`}</h4><span className="text-muted small">{resultado.totalItems ?? resultado.totalElements ?? filas.length} resultados</span></div>
-            {!personas && modo === 'nombre' && <button className="btn btn-link px-0 mb-2" disabled={loading || detailLoading} onClick={() => consultar(0)}>Volver a funcionarios</button>}
-            {filas.length === 0 ? <p className="visor-empty">{personas ? 'No se encontraron funcionarios. Prueba con otro nombre o apellido.' : 'No hay solicitudes registradas para este RUT.'}</p> : <div className="table-responsive"><table className="table align-middle table-hover"><thead><tr>{(personas ? ['RUT', 'Funcionario', 'Departamento', 'Acción'] : ['Solicitud', 'Tipo', 'Período', 'Estado', 'Acción']).map(t => <th key={t}>{t}</th>)}</tr></thead><tbody>{filas.map(f => personas ? <tr key={f.rut}><td className="text-nowrap">{f.rut}{f.vrut ? `-${f.vrut}` : ''}</td><td>{f.nombreCompleto}</td><td>{f.departamento || 'Sin información'}</td><td><button className="btn btn-outline-primary btn-sm text-nowrap" disabled={detailLoading} onClick={() => consultar(0, f)}>Ver solicitudes</button></td></tr> : <tr key={f.id}><td className="fw-semibold">#{f.id}</td><td>{f.tipoSolicitud}</td><td className="text-nowrap">{formatFecha(f.fechaInicio)} — {formatFecha(f.fechaFin)}</td><td><span className="badge bg-primary-subtle text-primary">{f.estadoSolicitud}</span></td><td><button className="btn btn-outline-primary btn-sm text-nowrap" disabled={detailLoading} onClick={() => onSelect(f.id)}>Ver detalle</button></td></tr>)}</tbody></table></div>}
-            {resultado.totalPages > 1 && <nav className="d-flex justify-content-between align-items-center gap-2" aria-label="Páginas de resultados"><button className="btn btn-outline-secondary btn-sm" disabled={pagina === 0 || detailLoading} onClick={() => consultar(pagina - 1, persona)}>Anterior</button><span className="small">Página {pagina + 1} de {resultado.totalPages}</span><button className="btn btn-outline-secondary btn-sm" disabled={pagina + 1 >= resultado.totalPages || detailLoading} onClick={() => consultar(pagina + 1, persona)}>Siguiente</button></nav>}
+            <div className="d-flex flex-wrap justify-content-between gap-2 mb-3"><h4>{personas ? 'Funcionarios encontrados' : tituloSolicitudes}</h4><span className="text-muted small">{resultado.totalItems ?? resultado.totalElements ?? filas.length} resultados</span></div>
+            {!personas && modo === 'nombre' && <button type="button" className="btn btn-link px-0 mb-2" disabled={loading || detailLoading} onClick={() => consultar(0)}>Volver a funcionarios</button>}
+            {filas.length === 0 ? <p className="visor-empty">{personas ? 'No se encontraron funcionarios. Prueba con otro nombre o apellido.' : 'No hay solicitudes registradas para este RUT.'}</p> : <div className="table-responsive"><table className="table align-middle table-hover"><thead><tr>{(personas ? ['RUT', 'Funcionario', 'Departamento', 'Acción'] : ['Solicitud', 'Tipo', 'Período', 'Estado', 'Acción']).map(t => <th key={t}>{t}</th>)}</tr></thead><tbody>{filas.map(f => personas ? <tr key={f.rut}><td className="text-nowrap">{f.rut}{f.vrut ? `-${f.vrut}` : ''}</td><td>{f.nombreCompleto}</td><td>{f.departamento || 'Sin información'}</td><td><button type="button" className="btn btn-outline-primary btn-sm text-nowrap" disabled={detailLoading} onClick={() => consultar(0, f)}>Ver solicitudes</button></td></tr> : <tr key={f.id}><td className="fw-semibold">#{f.id}</td><td>{f.tipoSolicitud}</td><td className="text-nowrap">{formatFecha(f.fechaInicio)} — {formatFecha(f.fechaFin)}</td><td><span className="badge bg-primary-subtle text-primary">{f.estadoSolicitud}</span></td><td><button type="button" className="btn btn-outline-primary btn-sm text-nowrap" disabled={detailLoading} onClick={() => onSelect(f.id)}>Ver detalle</button></td></tr>)}</tbody></table></div>}
+            {resultado.totalPages > 1 && <nav className="d-flex justify-content-between align-items-center gap-2" aria-label="Páginas de resultados"><button type="button" className="btn btn-outline-secondary btn-sm" disabled={pagina === 0 || detailLoading} onClick={() => consultar(pagina - 1, persona)}>Anterior</button><span className="small">Página {pagina + 1} de {resultado.totalPages}</span><button type="button" className="btn btn-outline-secondary btn-sm" disabled={pagina + 1 >= resultado.totalPages || detailLoading} onClick={() => consultar(pagina + 1, persona)}>Siguiente</button></nav>}
         </div>}
     </section>;
 };
