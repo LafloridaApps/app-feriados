@@ -29,7 +29,7 @@ export default function SolicitudTerceros() {
                     <a className="btn btn-outline-primary"
                         href={`${import.meta.env.BASE_URL}ayuda/manual-solicitud-por-terceros.pdf`}
                         download="Manual_solicitud_por_terceros.pdf">
-                        <i className="bi bi-file-earmark-pdf me-2" aria-hidden="true" />
+                        <i className="bi bi-file-earmark-pdf me-2" aria-hidden="true" />{' '}
                         Descargar manual de ayuda (PDF)
                     </a>
                 </div>
