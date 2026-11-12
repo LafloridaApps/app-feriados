@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useFuncionarioSearch } from '../../../../hooks/useFuncionarioSearch';
-import { saveSubrogancia, updateSubrogancia, deleteSubrogancia } from '../../../../services/subroganciaService';
+import { saveSubrogancia, updateSubrogancia, deleteSubrogancia, consultarCargosCeroPapel, confirmarCargoCeroPapel } from '../../../../services/subroganciaService';
 
 export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => {
     // Form Create State
@@ -67,6 +67,46 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
         setActiveTab('buscar');
     };
 
+    const resolverCargoCeroPapel = async (id) => {
+        try {
+            const opciones = await consultarCargosCeroPapel(id);
+            if (!opciones.perfiles?.length) {
+                await Swal.fire({ icon: 'warning', title: 'Sin cargos disponibles', text: 'El jefe no tiene cargos activos en CeroPapel. La subrogancia permanece guardada localmente.' });
+                return;
+            }
+            const decision = await Swal.fire({
+                icon: 'question',
+                title: 'Confirmar cargo de CeroPapel',
+                text: `Departamento local: ${opciones.departamento}. Seleccione el cargo que será subrogado. Se guardará la relación para próximos envíos de este departamento.`,
+                input: 'select',
+                inputOptions: Object.fromEntries(opciones.perfiles.map(p => [String(p.id), `${p.cargo} — ${p.unidad || 'Unidad no informada'}`])),
+                inputPlaceholder: 'Seleccione un cargo',
+                inputValue: opciones.perfilSugerido ? String(opciones.perfilSugerido) : '',
+                inputValidator: value => !value ? 'Debe seleccionar un cargo.' : undefined,
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar, guardar y enviar',
+                cancelButtonText: 'Dejar pendiente',
+            });
+            if (!decision.isConfirmed) {
+                await Swal.fire({ icon: 'info', title: 'Selección pendiente', text: 'La subrogancia sigue guardada localmente. Puede retomarla con “Elegir cargo” en los resultados.' });
+                return;
+            }
+            const registro = await confirmarCargoCeroPapel(id, Number(decision.value));
+            setSearchResults(prev => prev.map(r => r.idSubrogancia === id
+                ? { ...r, ceroPapelEstado: registro.ceroPapelEstado, ceroPapelDetalle: registro.ceroPapelDetalle, puedeResolverCeroPapel: registro.ceroPapelEstado === 'PENDIENTE_PERFIL' }
+                : r));
+            await Swal.fire({
+                icon: registro.ceroPapelEstado === 'ENVIADA' ? 'success' : 'warning',
+                title: registro.ceroPapelEstado === 'ENVIADA' ? 'Programada en CeroPapel' : 'Envío sin confirmar',
+                text: registro.ceroPapelEstado === 'ENVIADA'
+                    ? 'El cargo fue confirmado y la subrogancia quedó programada.'
+                    : `La subrogancia está guardada localmente. ${registro.ceroPapelDetalle || 'Revise el resultado en la consola del servidor.'}`,
+            });
+        } catch (error) {
+            await Swal.fire({ icon: 'error', title: 'No se pudo confirmar el cargo', text: error.response?.data?.message || 'No se pudo consultar o confirmar en CeroPapel. El registro local se conserva.' });
+        }
+    };
+
     // Handlers Create
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -103,6 +143,20 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
             };
 
         try {
+            if (!editingSubroganciaId) {
+                const decision = await Swal.fire({
+                    icon: 'question',
+                    title: '¿Registrar también en CeroPapel?',
+                    text: 'Puede guardar solo en este sistema o solicitar también el registro en CeroPapel (ambiente de prueba).',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, también en CeroPapel',
+                    denyButtonText: 'Solo en este sistema',
+                    cancelButtonText: 'Volver',
+                });
+                if (!decision.isConfirmed && !decision.isDenied) return;
+                subroganciaData.grabarCeroPapel = decision.isConfirmed;
+            }
             let response;
             if (editingSubroganciaId) {
                 response = await updateSubrogancia(editingSubroganciaId, subroganciaData);
@@ -110,7 +164,19 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
                 response = await saveSubrogancia(subroganciaData);
             }
             if (response && response.status >= 200 && response.status < 300) {
-                void Swal.fire({ icon: 'success', title: editingSubroganciaId ? 'Cambios Guardados' : 'Subrogancia Guardada', text: 'Registrada correctamente.' });
+                if (response.data?.ceroPapelEstado === 'PENDIENTE_PERFIL') {
+                    await resolverCargoCeroPapel(response.data.id);
+                } else {
+                    const enviada = response.data?.ceroPapelEstado === 'ENVIADA';
+                    const errorEnvio = subroganciaData.grabarCeroPapel && !enviada;
+                    await Swal.fire({
+                        icon: errorEnvio ? 'warning' : 'success',
+                        title: editingSubroganciaId ? 'Cambios Guardados' : 'Subrogancia Guardada',
+                        text: enviada ? 'Guardada y programada en CeroPapel.' : errorEnvio
+                            ? `Guardada localmente. ${response.data?.ceroPapelDetalle || 'El envío a CeroPapel no fue confirmado; revise la consola del servidor.'}`
+                            : 'Registrada correctamente.',
+                    });
+                }
                 jefe.reset(); subrogante.reset(); setFechaInicio(''); setFechaFin('');
                 setEditingSubroganciaId(null);
                 setEditingSubroganciaData(null);
@@ -136,7 +202,7 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
     return {
         jefe, subrogante,
         fechaInicio, setFechaInicio, fechaFin, setFechaFin,
-        isSaving, editingSubroganciaId, editingSubroganciaData,
+        isSaving, setIsSaving, resolverCargoCeroPapel, editingSubroganciaId, editingSubroganciaData,
         handleEditClick, handleDelete, cancelEdit, handleSubmit, getSubmitButtonText,
     };
 };

@@ -58,6 +58,9 @@ const IngresoSubrogancia = () => {
                             <ResultadosSubrogancia
                                 searchResults={gestion.searchResults}
                                 handleEditClick={gestion.handleEditClick}
+                                isSaving={gestion.isSaving}
+                                resolverCargoCeroPapel={gestion.resolverCargoCeroPapel}
+                                setIsSaving={gestion.setIsSaving}
                             />
                         </div>
                     )}
