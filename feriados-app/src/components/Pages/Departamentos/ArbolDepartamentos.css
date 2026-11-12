@@ -5,3 +5,36 @@
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
 }
+
+.departamentos-page { max-width: 1600px; padding: 0 24px; color: #25364b; }
+.departamentos-page .card { border-radius: 16px; overflow: hidden; }
+.departamentos-page .scrollable-tree { border: 0; border-top: 1px solid #edf0f5; min-height: 320px; background: #fafbfd; }
+.departamentos-page .tree-node-mejorado-content { min-height: 46px; border-radius: 10px; font-size: .88rem; }
+.departamentos-page .tree-node-mejorado-content:focus-within { outline: 2px solid #0d6efd; outline-offset: 2px; }
+@media (max-width: 767px) { .departamentos-page .scrollable-tree { height: 48vh; } }
+
+.departamentos-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 0 8px; }
+.departamentos-header h2 { font-size: 1.85rem; letter-spacing: -.04em; }
+.departamentos-header-icon { display: grid; place-items: center; width: 60px; height: 60px; flex-shrink: 0; border-radius: 18px; background: #eaf1ff; color: #225fc4; font-size: 1.8rem; }
+.departamentos-eyebrow { color: #64758a; font-size: .68rem; letter-spacing: .12em; font-weight: 700; }
+.departamentos-page .card-header { padding-left: 24px; padding-right: 24px; }
+.departamentos-detail-heading { flex: 1; min-width: 180px; overflow-wrap: anywhere; }
+.departamentos-empty { max-width: 410px; margin: 48px auto; }
+.departamentos-empty p { font-size: .95rem; line-height: 1.7; }
+.departamentos-page .tree-node-mejorado.active > .tree-node-mejorado-content { background: #eaf1ff; border-color: #b5ccf2; box-shadow: inset 3px 0 #2968ce; }
+.departamentos-page .tree-toggler-mejorado { flex-shrink: 0; border-color: #e1e7ef; background: #fff; }
+@media (max-width: 991px) {
+    .departamentos-header { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 575px) {
+    .departamentos-page { padding: 0 12px; }
+    .departamentos-header-icon { width: 46px; height: 46px; border-radius: 14px; font-size: 1.4rem; }
+    .departamentos-header h2 { font-size: 1.5rem; }
+    .departamentos-header > button { width: 100%; }
+    .departamentos-empty { margin: 0 auto; }
+}
+
+.departamentos-context-menu { position: fixed; z-index: 1050; width: 248px; max-width: calc(100vw - 16px); background: #fff; border: 1px solid #e4eaf2; border-radius: 12px; padding: 6px; box-shadow: 0 8px 28px #25364b26; }
+.departamentos-context-title { display: block; padding: 6px 10px; font-size: .75rem; color: #64758a; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.departamentos-context-menu button { width: 100%; text-align: left; border: 0; border-radius: 7px; background: #fff; padding: 10px; color: #225fc4; font-size: .85rem; }
+.departamentos-context-menu button:hover, .departamentos-context-menu button:focus-visible { background: #eaf1ff; outline: 2px solid #b5ccf2; }

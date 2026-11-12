@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Swal from 'sweetalert2';
 import { getFuncionarioLocalByRut } from '../../../../services/funcionarioService';
 import { agregarDepartamento } from '../../../../services/departamentosService';
 import { validarRut } from '../../../../services/utils';
 
 export const useCrearDepartamento = ({ show, onHide, parent, fetchDepartamentos }) => {
+    const guardando = useRef(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [nombre, setNombre] = useState('');
     const [rutCompleto, setRutCompleto] = useState('');
     const [nombreJefe, setNombreJefe] = useState('');
@@ -65,52 +67,67 @@ export const useCrearDepartamento = ({ show, onHide, parent, fetchDepartamentos 
         }
     };
 
-    const handleGuardar = async () => {
-        // Validación final de campos antes del confirm
+    const validarFormulario = () => {
         if (!nombre.trim()) {
             void Swal.fire('Error', 'Debe ingresar un nombre para el departamento.', 'error');
-            return;
+            return false;
         }
-
-        let rutJefeNumerico = null;
         if (rutCompleto) {
             const rutLimpio = rutCompleto.replaceAll('-', '').toUpperCase();
             if (!validarRut(rutLimpio) || !nombreJefe) {
                 void Swal.fire('Error', 'El RUT del jefe ingresado no es válido o no ha sido encontrado.', 'error');
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const guardarDepartamento = async (deptoData) => {
+        try {
+            const response = await agregarDepartamento(deptoData);
+            const actualizado = await fetchDepartamentos(deptoData);
+            onHide();
+            if (!actualizado) {
+                void Swal.fire('Departamento creado',
+                    'Se guardó el departamento, pero no se pudo actualizar el árbol. Use Reintentar; no vuelva a crearlo.', 'warning');
                 return;
             }
-            rutJefeNumerico = Number(rutCompleto.split('-')[0]);
+            void Swal.fire('¡Éxito!', response.message || 'Departamento agregado con éxito.', 'success');
+        } catch (error) {
+            void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo crear el departamento.', 'error');
         }
+    };
 
-        // Mensaje de confirmación dinámico
-        const textoConfirmacion = rutJefeNumerico 
+    const handleGuardar = async () => {
+        if (guardando.current || !validarFormulario()) return;
+
+        const rutJefeNumerico = rutCompleto ? Number(rutCompleto.split('-')[0]) : null;
+        const textoConfirmacion = rutJefeNumerico
             ? `Se creará el departamento "${nombre}" con jefatura asignada.`
             : `Está a punto de crear el departamento "${nombre}" SIN jefatura asignada. ¿Desea continuar de todos modos?`;
 
-        const result = await Swal.fire({
-            title: '¿Confirmar creación?',
-            text: textoConfirmacion,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, crear',
-            cancelButtonText: 'Cancelar'
-        });
+        guardando.current = true;
+        setIsSaving(true);
+        try {
+            const result = await Swal.fire({
+                title: '¿Confirmar creación?',
+                text: textoConfirmacion,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, crear',
+                cancelButtonText: 'Cancelar'
+            });
 
-        if (result.isConfirmed) {
-            const deptoData = {
-                idPadre: parent ? parent.id : null,
-                nombreDepartamento: nombre,
+            if (!result.isConfirmed) return;
+
+            await guardarDepartamento({
+                idPadre: parent?.id ?? null,
+                nombreDepartamento: nombre.trim(),
                 rutJefe: rutJefeNumerico
-            };
-
-            try {
-                const response = await agregarDepartamento(deptoData);
-                void Swal.fire('¡Éxito!', response.message || 'Departamento agregado con éxito.', 'success');
-                void fetchDepartamentos();
-                onHide();
-            } catch (error) {
-                void Swal.fire('Error', error.response?.data?.detalle || 'No se pudo crear el departamento.', 'error');
-            }
+            });
+        } finally {
+            guardando.current = false;
+            setIsSaving(false);
         }
     };
 
@@ -121,7 +138,8 @@ export const useCrearDepartamento = ({ show, onHide, parent, fetchDepartamentos 
         setRutCompleto,
         nombreJefe,
         setNombreJefe,
-        isSaveDisabled,
+        isSaveDisabled: isSaveDisabled || isSaving,
+        isSaving,
         showBuscarNombre,
         setShowBuscarNombre,
         handlerOnBlurRut,

@@ -5,7 +5,7 @@ import { updateJefeDeptoById } from '../../../../services/departamentosService';
 import { validarRut } from '../../../../services/utils';
 import { getFotoFuncionario } from '../../../../services/fotoService';
 
-export const useEdicionJefe = ({ departamento, fetchDepartamentos, setDepartamentoSeleccionado }) => {
+export const useEdicionJefe = ({ departamento, fetchDepartamentos }) => {
     const [enEdicion, setEnEdicion] = useState(false);
     const [nombreJefeEditado, setNombreJefeEditado] = useState('');
     const [rutCompleto, setRutCompleto] = useState('');
@@ -73,15 +73,14 @@ export const useEdicionJefe = ({ departamento, fetchDepartamentos, setDepartamen
 
             const resultApi = await updateJefeDeptoById(departamento.id, esRemocion ? 0 : rutNumericoFinal);
 
-            if (setDepartamentoSeleccionado) {
-                setDepartamentoSeleccionado(null);
+            const actualizado = await fetchDepartamentos();
+            setEnEdicion(false);
+            if (!actualizado) {
+                void Swal.fire('Jefatura guardada', 'Se guardó la jefatura, pero no se pudieron actualizar los datos. Use Reintentar para refrescar el departamento.', 'warning');
+                return;
             }
-
             const mensajeExito = esRemocion ? 'Departamento actualizado sin jefe.' : 'Jefe guardado correctamente.';
             void Swal.fire('¡Éxito!', resultApi.message || mensajeExito, 'success');
-
-            void fetchDepartamentos();
-            setEnEdicion(false);
         } catch (error) {
             const accionError = esRemocion ? 'quitar al jefe' : 'guardar';
             void Swal.fire('Error', error.response?.data?.detalle || `No se pudo ${accionError}.`, 'error');

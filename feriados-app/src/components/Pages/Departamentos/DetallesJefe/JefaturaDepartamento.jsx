@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2';
-import { FaSearch } from 'react-icons/fa';
 
 const JefaturaDepartamento = ({
     departamento,
@@ -15,55 +14,53 @@ const JefaturaDepartamento = ({
     handleBuscarJefePorRut,
     handleCancelar
 }) => {
-    // --- Renderizado de campos --- //
-    const renderNombre = () => {
-        return <>{departamento.nombreJefe || 'No disponible'}</>;
-    };
-
-    const renderRut = () => {
-        if (departamento.rutJefe && departamento.vrutJefe) return <>{`${departamento.rutJefe}-${departamento.vrutJefe}`}</>;
-        return <>{'No disponible'}</>;
-    };
-
-    const renderEmail = () => {
-        return <>{departamento.email || 'No disponible'}</>;
-    };
-
-    const renderJefaturaContent = () => {
-        if (enEdicion) {
-            return (
-                <div className="bg-light p-4 rounded border">
-                    <div className="row g-3">
-                        <div className="col-md-12">
-                            <label htmlFor="rutJefeInput" className="form-label text-muted small fw-bold text-uppercase">RUT del Funcionario</label>
-                            <div className="input-group">
-                                <input id="rutJefeInput" type="text" className="form-control" placeholder="Ej: 12345678-9" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} />
-                                <button className="btn btn-outline-secondary" type="button" onClick={() => setShowBusquedaModal(true)} title="Buscar por nombre">
-                                    <FaSearch className="me-1" />{' '}Buscar Nombre
-                                </button>
-                                <button className="btn btn-primary px-4" type="button" onClick={handleBuscarJefePorRut}>
-                                    Buscar RUT
-                                </button>
-                            </div>
-                        </div>
-                        <div className="col-md-12">
-                            <label htmlFor="nombreJefe" className="form-label text-muted small fw-bold text-uppercase">Nombre Encontrado</label>
-                            <input id="nombreJefe" type="text" className="form-control bg-white" readOnly value={nombreJefeEditado} placeholder="El nombre aparecerá aquí..." />
+    const renderFormularioJefatura = () => (
+                <div className="jefatura-editor">
+                    <div className="jefatura-editor-intro">
+                        <span className="jefatura-editor-symbol"><i className="bi bi-person-plus" aria-hidden="true"></i></span>
+                        <div>
+                            <h6>{departamento.rutJefe ? 'Seleccione la nueva jefatura' : 'Asigne una jefatura'}</h6>
+                            <p>Busque al funcionario y revise su nombre antes de guardar la asignación.</p>
                         </div>
                     </div>
-                    <div className="d-flex gap-2 mt-4 justify-content-end">
+                    <label htmlFor="rutJefeInput" className="form-label fw-semibold small">Buscar por RUT</label>
+                    <div className="jefatura-search">
+                        <input id="rutJefeInput" type="text" className="form-control" placeholder="Ej: 12345678-9"
+                            aria-describedby="rutJefeAyuda" onChange={(e) => setRutCompleto(e.target.value)} value={rutCompleto} />
+                        <button className="btn btn-outline-primary" type="button" onClick={handleBuscarJefePorRut}>
+                            <i className="bi bi-search me-2" aria-hidden="true"></i>Buscar
+                        </button>
+                    </div>
+                    <p id="rutJefeAyuda" className="jefatura-editor-help">Ingrese el RUT sin puntos y con guion.</p>
+                    <div className="jefatura-search-alternative">
+                        <span>¿No conoce el RUT?</span>
+                        <button className="btn btn-link btn-sm" type="button" onClick={() => setShowBusquedaModal(true)}>
+                            Buscar por nombre<i className="bi bi-arrow-right ms-2" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div className={`jefatura-candidate ${nombreJefeEditado ? 'jefatura-candidate-found' : ''}`}>
+                        <span className="jefatura-candidate-icon"><i className={`bi ${nombreJefeEditado ? 'bi-person-check' : 'bi-person'}`} aria-hidden="true"></i></span>
+                        <div>
+                            <label htmlFor="nombreJefe" className="jefatura-label">FUNCIONARIO SELECCIONADO</label>
+                            <input id="nombreJefe" className="jefatura-candidate-name" readOnly value={nombreJefeEditado}
+                                placeholder="Busque un funcionario para continuar" />
+                        </div>
+                    </div>
+                    <div className="jefatura-editor-footer">
                         <button type="button" className="btn btn-light border" onClick={handleCancelar}>Cancelar</button>
-                        <button type="button" className="btn btn-success px-4" onClick={() => handleGuardarJefe()} disabled={disabled || !nombreJefeEditado}>
-                            <i className="bi bi-check-circle me-2"></i>Guardar
+                        <button type="button" className="btn btn-primary" onClick={() => handleGuardarJefe()} disabled={disabled || !nombreJefeEditado}>
+                            <i className="bi bi-check2 me-2" aria-hidden="true"></i>Guardar asignación
                         </button>
                     </div>
                 </div>
-            );
-        }
+    );
+
+    const renderJefaturaContent = () => {
+        if (enEdicion) return renderFormularioJefatura();
 
         if (departamento.rutJefe) {
             return (
-                <div className="d-flex align-items-center gap-4 mt-2 p-3 bg-light rounded border border-light">
+                <div className="jefatura-profile">
                     {fotoJefe ? (
                         <button
                             type="button"
@@ -88,52 +85,58 @@ const JefaturaDepartamento = ({
                             <i className="bi bi-person-fill detalles-jefe-icon-large"></i>
                         </div>
                     )}
-                    <div className="flex-grow-1">
-                        <h5 className="mb-2 text-dark fw-semibold">{renderNombre()}</h5>
-                        <div className="d-flex flex-column flex-md-row gap-2 gap-md-4 text-muted small">
-                            <span className="d-flex align-items-center gap-2">
-                                <i className="bi bi-upc-scan text-primary"></i>
-                                {renderRut()}
-                            </span>
-                            <span className="d-flex align-items-center gap-2">
-                                <i className="bi bi-envelope text-primary"></i>
-                                {renderEmail()}
-                            </span>
-                        </div>
+                    <div className="jefatura-identity">
+                        <span className="jefatura-label">RESPONSABLE DEL DEPARTAMENTO</span>
+                        <h5 className="jefatura-name">{departamento.nombreJefe || 'Nombre no disponible'}</h5>
+                        <span className={`jefatura-status ${departamento.vigente === false ? 'jefatura-status-warning' : ''}`}>
+                            <i className={`bi ${departamento.vigente === false ? 'bi-exclamation-circle' : 'bi-person-check'}`} aria-hidden="true"></i>
+                            {departamento.vigente === false ? 'Contrato vencido' : 'Jefatura asignada'}
+                        </span>
+
                     </div>
+                    <dl className="jefatura-contact mb-0">
+                        <div>
+                            <dt><i className="bi bi-person-vcard me-2" aria-hidden="true"></i>RUT</dt>
+                            <dd>{departamento.rutJefe && departamento.vrutJefe ? `${departamento.rutJefe}-${departamento.vrutJefe}` : 'No disponible'}</dd>
+                        </div>
+                        <div>
+                            <dt><i className="bi bi-envelope me-2" aria-hidden="true"></i>Correo electrónico</dt>
+                            <dd>{departamento.email || 'No disponible'}</dd>
+                        </div>
+                    </dl>
                 </div>
             );
         }
 
         return (
-            <div className="text-center p-5 bg-light rounded border">
+            <div className="jefatura-unassigned text-center">
                 <div className="bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3 detalles-jefe-avatar-placeholder">
                     <i className="bi bi-person-x fs-2"></i>
                 </div>
-                <h6 className="text-muted mb-1">Sin Jefatura Asignada</h6>
-                <p className="text-muted small mb-0">Haga clic en <strong>Asignar</strong> para buscar y establecer un responsable para este departamento.</p>
+                <h6 className="text-muted mb-1">Este departamento aún no tiene jefatura</h6>
+                <p className="text-muted small mb-0">Busque un funcionario por nombre o RUT para asignarlo como responsable.</p>
             </div>
         );
     };
 
     return (
-        <div className="bg-white p-4 rounded shadow-sm border">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="mb-0 text-primary fw-bold d-flex align-items-center gap-3">
+        <div className="jefatura-card">
+            <div className="jefatura-heading">
+                <h5 className="mb-0 fw-semibold d-flex align-items-center gap-3">
                     <div className="bg-primary bg-opacity-10 text-primary rounded d-flex align-items-center justify-content-center detalles-jefe-icon-container">
                         <i className="bi bi-person-badge fs-5"></i>
                     </div>
-                    Director / Jefatura
+                    Jefatura
                 </h5>
                 {!enEdicion && (
-                    <div className="d-flex gap-2">
+                    <div className="jefatura-actions">
                         {departamento.rutJefe && (
                             <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleGuardarJefe(true)} title="Quitar jefatura">
-                                <i className="bi bi-person-dash me-1"></i>Dejar sin jefe
+                                <i className="bi bi-person-dash me-1"></i>Quitar asignación
                             </button>
                         )}
                         <button type="button" className={`btn ${departamento.rutJefe ? 'btn-outline-primary btn-sm' : 'btn-primary btn-sm'}`} onClick={handleEditar}>
-                            <i className={`bi ${departamento.rutJefe ? 'bi-pencil' : 'bi-plus-circle'} me-1`}></i>{departamento.rutJefe ? 'Editar' : 'Asignar'}
+                            <i className={`bi ${departamento.rutJefe ? 'bi-pencil' : 'bi-plus-circle'} me-1`}></i>{departamento.rutJefe ? 'Cambiar jefatura' : 'Asignar jefatura'}
                         </button>
                     </div>
                 )}

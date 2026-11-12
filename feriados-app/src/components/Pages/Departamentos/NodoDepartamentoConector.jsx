@@ -4,6 +4,7 @@ const NodoDepartamentoConector = ({
     departamento,
     nodosExpandidos,
     onToggleNodo,
+    onContextMenu,
     onSeleccionarDepartamento,
     departamentoSeleccionado,
     depth,
@@ -41,6 +42,7 @@ const NodoDepartamentoConector = ({
                         key={dep.id}
                         departamento={dep}
                         nodosExpandidos={nodosExpandidos}
+                        onContextMenu={onContextMenu}
                         onToggleNodo={onToggleNodo}
                         onSeleccionarDepartamento={onSeleccionarDepartamento}
                         departamentoSeleccionado={departamentoSeleccionado}
@@ -58,6 +60,14 @@ const NodoDepartamentoConector = ({
                     type="button"
                     className="position-absolute top-0 start-0 w-100 h-100 border-0 bg-transparent text-start"
                     onClick={handleSeleccion}
+                    onContextMenu={(event) => onContextMenu(event, departamento)}
+                    onKeyDown={(event) => {
+                        if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
+                            onContextMenu(event, departamento);
+                        }
+                    }}
+                    aria-haspopup="menu"
+                    aria-pressed={esDepartamentoSeleccionado}
                     aria-label={`Seleccionar departamento ${departamento.nombre}`}
                     style={{ zIndex: 1 }}
                 />
@@ -71,6 +81,7 @@ const NodoDepartamentoConector = ({
                         if (tieneDependencias) handleToggle(e);
                     }}
                     style={{ visibility: tieneDependencias ? 'visible' : 'hidden', position: 'relative', zIndex: 2 }}
+                    aria-expanded={tieneDependencias ? estaExpandido : undefined}
                     aria-label={estaExpandido ? "Colapsar nodo" : "Expandir nodo"}
                 >
                     {tieneDependencias && (estaExpandido ? <i className="bi bi-dash"></i> : <i className="bi bi-plus"></i>)}
@@ -106,6 +117,7 @@ NodoDepartamentoConector.propTypes = {
     departamento: PropTypes.object.isRequired,
     nodosExpandidos: PropTypes.object.isRequired,
     onToggleNodo: PropTypes.func.isRequired,
+    onContextMenu: PropTypes.func.isRequired,
     onSeleccionarDepartamento: PropTypes.func.isRequired,
     departamentoSeleccionado: PropTypes.object,
     depth: PropTypes.number.isRequired,

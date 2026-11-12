@@ -32,7 +32,7 @@ const DetallesJefe = ({ departamento, fetchDepartamentos, setDepartamentoSelecci
     return (
         <div className="d-flex flex-column gap-4">
             <JefaturaDepartamento departamento={departamento} {...gestion} />
-            <ConfiguracionDepartamento departamento={departamento} {...gestion} />
+            <ConfiguracionDepartamento key={departamento.id} departamento={departamento} {...gestion} />
 
             <ModalDepartamentosExternos
                 show={showModalExterno}

@@ -29,3 +29,70 @@
     width: 40px;
     height: 40px;
 }
+
+.jefatura-card { background: #fff; border: 1px solid #e4eaf2; border-radius: 14px; overflow: hidden; }
+.jefatura-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 20px 24px; border-bottom: 1px solid #edf0f5; }
+.jefatura-heading h5 { color: #25364b; font-size: 1.05rem; }
+.jefatura-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.jefatura-actions .btn { border-radius: 8px; }
+.jefatura-actions .btn-outline-danger { border-color: transparent; }
+.jefatura-profile { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; padding: 28px 24px 0; background: linear-gradient(180deg, #f8faff, #fff 70%); }
+.jefatura-identity { flex: 1; min-width: 160px; }
+.jefatura-label { color: #6b7b91; font-size: .63rem; font-weight: 700; letter-spacing: .09em; }
+.jefatura-name { color: #25364b; font-size: 1.2rem; line-height: 1.5; margin: 5px 0 10px; overflow-wrap: anywhere; }
+.jefatura-status { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 4px 10px; color: #27634c; background: #edf7f1; font-size: .75rem; }
+.jefatura-status-warning { color: #8b570b; background: #fff3d9; }
+.jefatura-contact { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 16px; border-top: 1px solid #edf0f5; padding: 20px 0 24px; margin-top: 4px; }
+.jefatura-contact dt { color: #6b7b91; font-size: .75rem; font-weight: 500; margin-bottom: 7px; }
+.jefatura-contact dd { color: #25364b; font-size: .9rem; margin: 0; overflow-wrap: anywhere; }
+.jefatura-editor { padding: 24px; }
+.jefatura-search { display: flex; flex-wrap: wrap; gap: 8px; }
+.jefatura-search input { flex: 1; min-width: 160px; }
+.jefatura-unassigned { padding: 36px 24px; }
+.jefatura-unassigned p { max-width: 340px; margin: 12px auto 0; line-height: 1.6; }
+.jefatura-profile .detalles-jefe-foto-btn, .jefatura-profile .detalles-jefe-foto-default { width: 80px; height: 80px; border: 4px solid #fff ; box-shadow: 0 2px 12px #25364b12; }
+@media (max-width: 575px) {
+    .jefatura-heading, .jefatura-editor { padding: 18px; }
+    .jefatura-profile { padding: 22px 18px 0; }
+    .jefatura-contact { grid-template-columns: minmax(0, 1fr); }
+    .jefatura-actions { width: 100%; }
+}
+
+.configuracion-departamento { background: #fff; border: 1px solid #e4eaf2; border-radius: 14px; overflow: hidden; }
+.configuracion-heading { display: flex; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid #edf0f5; }
+.configuracion-heading h5 { font-size: 1.05rem; color: #25364b; }
+.configuracion-fields { padding: 0 24px; }
+.configuracion-field { padding: 24px 0; }
+.configuracion-fields > div + div { border-top: 1px solid #edf0f5; }
+.configuracion-field .form-label { color: #25364b; font-size: .9rem; }
+.configuracion-field .form-label i { color: #6b7b91; }
+.configuracion-help { color: #6b7b91; font-size: .8rem; line-height: 1.6; margin: 0 0 14px; }
+.configuracion-controls { display: flex; align-items: flex-start; gap: 10px; }
+.configuracion-controls > .form-control, .configuracion-controls > .input-group { flex: 1; min-width: 0; }
+.configuracion-controls > .btn { border-radius: 8px; }
+.configuracion-controls .form-control { background: #fafbfd; }
+.configuracion-controls .form-control:focus { background: #fff; }
+@media (max-width: 575px) {
+    .configuracion-heading { padding: 18px; }
+    .configuracion-fields { padding: 0 18px; }
+    .configuracion-controls { flex-wrap: wrap; }
+    .configuracion-controls > .form-control, .configuracion-controls > .input-group { flex-basis: 100%; }
+    .configuracion-controls > .btn { width: 100%; }
+    .configuracion-controls .input-group { flex-wrap: wrap; row-gap: 8px; }
+    .configuracion-controls .input-group > .form-control { flex-basis: 100%; border-radius: 6px ; }
+}
+
+.jefatura-editor-intro { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+.jefatura-editor-symbol, .jefatura-candidate-icon { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px; background: #eaf1ff; color: #225fc4; font-size: 1.3rem; }
+.jefatura-editor-intro h6 { color: #25364b; font-weight: 600; margin: 0 0 6px; }
+.jefatura-editor-intro p, .jefatura-editor-help { color: #6b7b91; font-size: .8rem; line-height: 1.6; margin: 0; }
+.jefatura-editor-help { margin-top: 8px; }
+.jefatura-search-alternative { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 12px 0 20px; color: #6b7b91; font-size: .8rem; }
+.jefatura-search-alternative .btn { text-decoration: none; }
+.jefatura-candidate { display: flex; align-items: center; gap: 12px; border: 1px dashed #d7e0ec; border-radius: 12px; background: #fafbfd; padding: 16px; }
+.jefatura-candidate > div { min-width: 0; flex: 1; }
+.jefatura-candidate-found { border-style: solid; border-color: #b5ccf2; background: #f5f8ff; }
+.jefatura-candidate-name { display: block; width: 100%; border: 0; background: transparent; color: #25364b; font-weight: 500; font-size: .9rem; padding: 4px 0; }
+.jefatura-candidate-name::placeholder { color: #6b7b91; font-weight: 400; font-size: .8rem; }
+.jefatura-editor-footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #edf0f5; }
+@media (max-width: 575px) { .jefatura-editor-footer .btn { flex: 1; } }

@@ -7,7 +7,7 @@ import { useCrearDepartamento } from './CrearDepartamentoModal/useCrearDepartame
 const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) => {
     const formulario = useCrearDepartamento({ show, onHide, parent, fetchDepartamentos });
     const {
-        isSaveDisabled, showBuscarNombre, setShowBuscarNombre,
+        isSaveDisabled, isSaving, showBuscarNombre, setShowBuscarNombre,
         setRutCompleto, setNombreJefe, handleGuardar
     } = formulario;
 
@@ -22,15 +22,15 @@ const CrearDepartamentoModal = ({ show, onHide, parent, fetchDepartamentos }) =>
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">Crear Nuevo Departamento</h5>
-                            <button type="button" className="btn-close" onClick={onHide}></button>
+                            <button type="button" className="btn-close" onClick={onHide} disabled={isSaving}></button>
                         </div>
                         <div className="modal-body">
                             <DatosDepartamento parent={parent} {...formulario} />
                             <AsignacionJefe {...formulario} />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onHide}>Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleGuardar} disabled={isSaveDisabled}>Guardar</button>
+                            <button type="button" className="btn btn-secondary" onClick={onHide} disabled={isSaving}>Cancelar</button>
+                            <button type="button" className="btn btn-primary" onClick={handleGuardar} disabled={isSaveDisabled}>{isSaving ? "Guardando…" : "Guardar"}</button>
                         </div>
                     </div>
                 </div>
