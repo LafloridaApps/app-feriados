@@ -3,13 +3,15 @@ import CamposSolicitud from './FormularioSolicitud/CamposSolicitud';
 import AccionesFormularioSolicitud from './FormularioSolicitud/AccionesFormularioSolicitud';
 import DetalleSolicitud from './DetalleSolicitud';
 import ModalSubrogante from './Subrogancias/ModalSubrogante';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UsuarioContext } from '../../../context/UsuarioContext';
 import { useEsJefe } from '../../../hooks/useEsJefe';
 import { useFormularioSolicitud } from '../../../hooks/useFormularioSolicitud';
 import ModalVerSubrogante from './Subrogancias/ModalVerSubrogante';
 
 const FormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleAdministrativo, detalleFeriados }) => {
 
+    const funcionario = useContext(UsuarioContext);
     const [mostrarInfoSubrogante, setMostrarInfoSubrogante] = useState(false);
 
     const formulario = useFormularioSolicitud({
@@ -28,6 +30,10 @@ const FormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleAd
     const { esJefe, esDirector } = useEsJefe(depto, rut);
 
     const handleSubmit = (e) => submitForm(e, esJefe, esDirector);
+
+    if (funcionario?.configuracionDepartamento?.estado !== 'VALIDADO' || !funcionario?.codDepto) {
+        return <div className="alert alert-warning" role="alert">No puedes crear solicitudes hasta validar la asociación de tu departamento. Reintenta la validación o contacta a un administrador.</div>;
+    }
 
     return (
         <div className='row g-4'>

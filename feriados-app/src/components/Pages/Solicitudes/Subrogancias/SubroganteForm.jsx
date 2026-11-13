@@ -42,7 +42,7 @@ const SubroganteForm = ({ fechaInicio, fechaFin, onSubroganteSelect, subrogante 
                     <h5>Subrogante Encontrado</h5>
                     <p> <strong>Nombre :</strong> {subrogante.nombre}</p>
                     <p> <strong>Apellidos : </strong> {subrogante.apellidoPaterno} {subrogante.apellidoMaterno} </p>
-                    <p> <strong>Departamento : </strong> {subrogante.departamento}</p>
+                    <p> <strong>Departamento : </strong> {subrogante.departamento || 'Sin departamento informado'}</p>
                     <button className="btn btn-danger" onClick={() => onSubroganteSelect(null)}>Quitar</button>
                 </div>
             )}

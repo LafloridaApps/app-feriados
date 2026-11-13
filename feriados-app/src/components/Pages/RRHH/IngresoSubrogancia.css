@@ -238,3 +238,55 @@
         animation: none;
     }
 }
+
+/* El dialog nativo no hereda las variables de padding del modal de Bootstrap. */
+.ceropapel-config-dialog {
+    width: min(680px, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100dvh - 2rem);
+    overflow: hidden;
+}
+
+.ceropapel-config-dialog .modal-content {
+    width: 100%;
+    max-height: calc(100dvh - 2rem);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ceropapel-config-dialog .modal-header,
+.ceropapel-config-dialog .modal-footer {
+    flex-shrink: 0;
+    padding: 1rem 1.25rem;
+}
+
+.ceropapel-config-dialog .modal-body {
+    padding: 1.25rem;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+}
+
+.ceropapel-config-dialog .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.ceropapel-config-dialog .modal-footer > * {
+    margin: 0;
+}
+
+.ceropapel-config-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 575px) {
+    .ceropapel-config-dialog .modal-header,
+    .ceropapel-config-dialog .modal-body,
+    .ceropapel-config-dialog .modal-footer {
+        padding: 1rem;
+    }
+}

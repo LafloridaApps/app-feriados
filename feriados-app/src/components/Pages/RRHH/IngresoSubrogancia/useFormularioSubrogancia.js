@@ -3,8 +3,33 @@ import Swal from 'sweetalert2';
 import { useFuncionarioSearch } from '../../../../hooks/useFuncionarioSearch';
 import { saveSubrogancia, updateSubrogancia, deleteSubrogancia, consultarCargosCeroPapel, confirmarCargoCeroPapel } from '../../../../services/subroganciaService';
 
+const validarFormulario = ({ editingSubroganciaId, jefe, subrogante, fechaInicio, fechaFin }) => {
+    if (!editingSubroganciaId && (!jefe.nombre || !subrogante.nombre)) {
+        return { icon: 'warning', title: 'Datos Incompletos', text: 'Debe buscar tanto al jefe como al subrogante.' };
+    }
+    if (!fechaInicio || !fechaFin) {
+        return { icon: 'warning', title: 'Fechas Incompletas', text: 'Seleccione las fechas.' };
+    }
+    if (new Date(fechaInicio) > new Date(fechaFin)) {
+        return { icon: 'error', title: 'Fechas Inválidas', text: 'La fecha de inicio no puede ser posterior a la fecha de fin.' };
+    }
+    return null;
+};
+
+const mensajeGuardado = (registro, esEdicion) => {
+    if (registro?.ceroPapelEstado === 'ENVIADA') {
+        return 'Guardada y programada en CeroPapel.';
+    }
+    if (registro?.ceroPapelEstado === 'DESACTIVADA') {
+        return 'Guardada localmente. La integración con Cero Papel está desactivada.';
+    }
+    if (!esEdicion) {
+        return `Guardada localmente. ${registro?.ceroPapelDetalle || 'El envío a CeroPapel no fue confirmado; revise la consola del servidor.'}`;
+    }
+    return 'Registrada correctamente.';
+};
+
 export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => {
-    // Form Create State
     const jefe = useFuncionarioSearch();
     const subrogante = useFuncionarioSearch();
     const [fechaInicio, setFechaInicio] = useState('');
@@ -15,7 +40,6 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
 
 
     const handleEditClick = (sub) => {
-        // Usar idSubrogancia como identificador
         setEditingSubroganciaId(sub.idSubrogancia);
         setEditingSubroganciaData({
             idSubrogancia:  sub.idSubrogancia,
@@ -38,7 +62,7 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
         const result = await Swal.fire({
             icon: 'warning',
             title: '¿Eliminar subrogancia?',
-            html: `<b>${sub.nombreJefe}</b> → ${sub.subrogante}<br/><small>${sub.fechaInicio} al ${sub.fechaFin}</small>`,
+            text: `${sub.nombreJefe} → ${sub.subrogante}. ${sub.fechaInicio} al ${sub.fechaFin}`,
             showCancelButton: true,
             confirmButtonText: 'Sí, eliminar',
             confirmButtonColor: '#dc3545',
@@ -46,14 +70,13 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
         });
         if (!result.isConfirmed) return;
         try {
-            // Usar idSubrogancia como identificador
-            await deleteSubrogancia(sub.idSubrogancia);
-            void Swal.fire({ icon: 'success', title: 'Eliminada', text: 'La subrogancia fue eliminada correctamente.' });
+                await deleteSubrogancia(sub.idSubrogancia);
+            await Swal.fire({ icon: 'success', title: 'Eliminada', text: 'La subrogancia fue eliminada correctamente.' });
             setSearchResults(prev => prev.filter(r => r.idSubrogancia !== sub.idSubrogancia));
             if (editingSubroganciaId) cancelEdit();
         } catch (error) {
             console.error(error);
-            void Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar la subrogancia.' });
+            await Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar la subrogancia.' });
         }
     };
 
@@ -95,10 +118,11 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
             setSearchResults(prev => prev.map(r => r.idSubrogancia === id
                 ? { ...r, ceroPapelEstado: registro.ceroPapelEstado, ceroPapelDetalle: registro.ceroPapelDetalle, puedeResolverCeroPapel: registro.ceroPapelEstado === 'PENDIENTE_PERFIL' }
                 : r));
+            const enviada = registro.ceroPapelEstado === 'ENVIADA';
             await Swal.fire({
-                icon: registro.ceroPapelEstado === 'ENVIADA' ? 'success' : 'warning',
-                title: registro.ceroPapelEstado === 'ENVIADA' ? 'Programada en CeroPapel' : 'Envío sin confirmar',
-                text: registro.ceroPapelEstado === 'ENVIADA'
+                icon: enviada ? 'success' : 'warning',
+                title: enviada ? 'Programada en CeroPapel' : 'Envío sin confirmar',
+                text: enviada
                     ? 'El cargo fue confirmado y la subrogancia quedó programada.'
                     : `La subrogancia está guardada localmente. ${registro.ceroPapelDetalle || 'Revise el resultado en la consola del servidor.'}`,
             });
@@ -107,87 +131,67 @@ export const useFormularioSubrogancia = ({ setActiveTab, setSearchResults }) => 
         }
     };
 
-    // Handlers Create
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSaving(true);
-
-        // En edici\u00f3n los datos vienen de editingSubroganciaData, no de los hooks de b\u00fasqueda
-        if (!editingSubroganciaId && (!jefe.nombre || !subrogante.nombre)) {
-            void Swal.fire({ icon: 'warning', title: 'Datos Incompletos', text: 'Debe buscar tanto al jefe como al subrogante.' });
-            setIsSaving(false); return;
-        }
-        if (!fechaInicio || !fechaFin) {
-            void Swal.fire({ icon: 'warning', title: 'Fechas Incompletas', text: 'Seleccione las fechas.' });
-            setIsSaving(false); return;
-        }
-        if (new Date(fechaInicio) > new Date(fechaFin)) {
-            void Swal.fire({ icon: 'error', title: 'Fechas Inválidas', text: 'La fecha de inicio no puede ser posterior a la fecha de fin.' });
-            setIsSaving(false); return;
-        }
-
-        // En modo edición: enviar rutJefe, rutSubrogante y las nuevas fechas
-        const subroganciaData = editingSubroganciaId
-            ? {
-                rutJefe:       editingSubroganciaData.rutJefe,
+    const crearDatosSubrogancia = () => {
+        if (editingSubroganciaId) {
+            return {
+                rutJefe: editingSubroganciaData.rutJefe,
                 rutSubrogante: editingSubroganciaData.rutSubrogante,
                 fechaInicio,
                 fechaFin,
-            }
-            : {
-                rutJefe: jefe.rutSinDV,
-                rutSubrogante: subrogante.rutSinDV,
-                fechaInicio,
-                fechaFin,
-                idDepto: jefe.idDepto
             };
+        }
+        return {
+            rutJefe: jefe.rutSinDV,
+            rutSubrogante: subrogante.rutSinDV,
+            fechaInicio,
+            fechaFin,
+            idDepto: jefe.idDepto,
+        };
+    };
 
+    const informarResultado = async (registro) => {
+        if (registro?.ceroPapelEstado === 'PENDIENTE_PERFIL') {
+            await resolverCargoCeroPapel(registro.id);
+            return;
+        }
+        const desactivada = registro?.ceroPapelEstado === 'DESACTIVADA';
+        const errorEnvio = !editingSubroganciaId && !desactivada && registro?.ceroPapelEstado !== 'ENVIADA';
+        await Swal.fire({
+            icon: errorEnvio ? 'warning' : 'success',
+            title: editingSubroganciaId ? 'Cambios Guardados' : 'Subrogancia Guardada',
+            text: mensajeGuardado(registro, Boolean(editingSubroganciaId)),
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const errorValidacion = validarFormulario({
+            editingSubroganciaId, jefe, subrogante, fechaInicio, fechaFin,
+        });
+        if (errorValidacion) {
+            await Swal.fire(errorValidacion);
+            return;
+        }
+
+        setIsSaving(true);
         try {
-            if (!editingSubroganciaId) {
-                const decision = await Swal.fire({
-                    icon: 'question',
-                    title: '¿Registrar también en CeroPapel?',
-                    text: 'Puede guardar solo en este sistema o solicitar también el registro en CeroPapel (ambiente de prueba).',
-                    showDenyButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, también en CeroPapel',
-                    denyButtonText: 'Solo en este sistema',
-                    cancelButtonText: 'Volver',
-                });
-                if (!decision.isConfirmed && !decision.isDenied) return;
-                subroganciaData.grabarCeroPapel = decision.isConfirmed;
-            }
-            let response;
-            if (editingSubroganciaId) {
-                response = await updateSubrogancia(editingSubroganciaId, subroganciaData);
-            } else {
-                response = await saveSubrogancia(subroganciaData);
-            }
-            if (response && response.status >= 200 && response.status < 300) {
-                if (response.data?.ceroPapelEstado === 'PENDIENTE_PERFIL') {
-                    await resolverCargoCeroPapel(response.data.id);
-                } else {
-                    const enviada = response.data?.ceroPapelEstado === 'ENVIADA';
-                    const errorEnvio = subroganciaData.grabarCeroPapel && !enviada;
-                    await Swal.fire({
-                        icon: errorEnvio ? 'warning' : 'success',
-                        title: editingSubroganciaId ? 'Cambios Guardados' : 'Subrogancia Guardada',
-                        text: enviada ? 'Guardada y programada en CeroPapel.' : errorEnvio
-                            ? `Guardada localmente. ${response.data?.ceroPapelDetalle || 'El envío a CeroPapel no fue confirmado; revise la consola del servidor.'}`
-                            : 'Registrada correctamente.',
-                    });
-                }
-                jefe.reset(); subrogante.reset(); setFechaInicio(''); setFechaFin('');
-                setEditingSubroganciaId(null);
-                setEditingSubroganciaData(null);
-                setActiveTab('buscar');
-            } else {
+            const datos = crearDatosSubrogancia();
+            const response = editingSubroganciaId
+                ? await updateSubrogancia(editingSubroganciaId, datos)
+                : await saveSubrogancia(datos);
+            if (!response || response.status < 200 || response.status >= 300) {
                 throw new Error(response?.data?.message || 'Error en validación.');
             }
+            await informarResultado(response.data);
+            cancelEdit();
         } catch (error) {
             console.error(error);
             const apiMessage = error.response?.data?.message;
-            void Swal.fire({ icon: 'error', title: 'Error al Guardar', text: apiMessage || error.message || 'No se pudo guardar la subrogancia.' });
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error al Guardar',
+                text: apiMessage || error.message || 'No se pudo guardar la subrogancia.',
+            });
         } finally {
             setIsSaving(false);
         }

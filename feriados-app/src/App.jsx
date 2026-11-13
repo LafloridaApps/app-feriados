@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import AvisoDepartamento from "./components/AvisoDepartamento";
 import Sidebar from "./components/sidebar/Sidebar";
 import AdministrativosPage from "./components/Pages/Administrativos/AdministrativosPage";
 import FeriadosPage from "./components/Pages/Feriados/FeriadosPage";
@@ -26,6 +27,7 @@ function App() {
                 <Sidebar />
                 <div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0 }}>
                     <main className="container-fluid px-4 py-4 flex-grow-1">
+                        <AvisoDepartamento />
                         <Routes>
                             <Route path="/" element={<Navigate to="/home" />} />
                             <Route path="/home" element={<Inicio />} />

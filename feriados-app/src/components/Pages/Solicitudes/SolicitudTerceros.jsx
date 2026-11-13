@@ -1,6 +1,6 @@
 import { UsuarioContext } from '../../../context/UsuarioContext';
 import { SolicitudTerceroContext } from '../../../context/SolicitudTerceroContext';
-import ModalBuscarPorNombre from '../../Common/ModalBuscarPorNombre';
+import ModalSolicitantes from './SolicitudTerceros/ModalSolicitantes';
 import BusquedaSolicitante from './SolicitudTerceros/BusquedaSolicitante';
 import FichaSolicitante from './SolicitudTerceros/FichaSolicitante';
 import DatosSolicitudTercero from './SolicitudTerceros/DatosSolicitudTercero';
@@ -24,7 +24,7 @@ export default function SolicitudTerceros() {
                 <div className="d-flex flex-wrap justify-content-between align-items-start gap-3">
                     <div>
                         <h2 className="mb-1 text-primary fw-bold"><i className="bi bi-person-plus me-2" />Solicitud por terceros</h2>
-                        <p className="text-muted mb-0">Ingresa el RUT o busca por nombre. Solo puedes seleccionar funcionarios de tu dirección.</p>
+                        <p className="text-muted mb-0">Ingresa el RUT o pulsa Buscar por nombre para seleccionar un funcionario de tu dirección.</p>
                     </div>
                     <a className="btn btn-outline-primary"
                         href={`${import.meta.env.BASE_URL}ayuda/manual-solicitud-por-terceros.pdf`}
@@ -45,11 +45,10 @@ export default function SolicitudTerceros() {
             {solicitante && <HistorialSolicitante key={`${gestor.rut}-${solicitante.rut}`}
                 rutGestor={gestor.rut} solicitante={solicitante} />}
             {!solicitante && !error && <output className="text-muted small d-block">Los saldos y el formulario se habilitarán al encontrar al solicitante.</output>}
-            {mostrarBusquedaNombre && (
-                <ModalBuscarPorNombre show={mostrarBusquedaNombre}
-                    onClose={() => setMostrarBusquedaNombre(false)} onSelected={seleccionarSolicitante}
-                    buscarFuncionarios={buscarPorNombreEnDireccion} />
-            )}
+            {mostrarBusquedaNombre && <ModalSolicitantes
+                cerrar={() => setMostrarBusquedaNombre(false)}
+                buscarFuncionarios={buscarPorNombreEnDireccion}
+                seleccionar={seleccionarSolicitante} seleccionando={buscando} />}
             <SolicitudTerceroContext.Provider value={valorSolicitudTercero}>
                 <UsuarioContext.Provider value={solicitante}>
                     <DatosSolicitudTercero key={solicitante?.rut || 'sin-solicitante'} />

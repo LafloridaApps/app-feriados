@@ -6,6 +6,7 @@ import ResultadosSubrogancia from './IngresoSubrogancia/ResultadosSubrogancia';
 import FormularioSubrogancia from './IngresoSubrogancia/FormularioSubrogancia';
 import { useIngresoSubrogancia } from './IngresoSubrogancia/useIngresoSubrogancia';
 import './IngresoSubrogancia.css';
+import ConfiguracionCeroPapel from './IngresoSubrogancia/ConfiguracionCeroPapel';
 
 const IngresoSubrogancia = () => {
     const gestion = useIngresoSubrogancia();
@@ -35,6 +36,7 @@ const IngresoSubrogancia = () => {
                     <h2 className="mb-1 text-primary fw-bold">Gestión de Subrogancias</h2>
                     <p className="text-muted mb-0">Administre y asigne subrogancias a los funcionarios</p>
                 </div>
+                <ConfiguracionCeroPapel />
             </div>
 
             <div className="subrogancia-main-card">

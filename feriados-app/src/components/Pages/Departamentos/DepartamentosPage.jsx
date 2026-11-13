@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import ArbolDepartamentos from './ArbolDepartamentos';
 import DetallesJefe from './DetallesJefe';
+import AsociacionDepartamento from './AsociacionDepartamento';
 import CrearDepartamentoModal from './CrearDepartamentoModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -106,6 +107,7 @@ const DepartamentosPage = () => {
                 <span>No se pudo actualizar el árbol: {error}</span>
                 <button className="btn btn-outline-danger btn-sm" onClick={() => void fetchDepartamentos()}>Reintentar</button>
             </div>}
+            <AsociacionDepartamento departamentos={departamentos} actualizar={fetchDepartamentos} />
             <div className="row g-4">
                 {/* Left Panel: Tree */}
                 <div className="col-lg-5 col-md-12">

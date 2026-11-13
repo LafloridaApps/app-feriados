@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { BASE_URL } from './url.js';
 
+export const consultarPermisoAsociacion = async () => (await api.get("/permiso-asociacion", { withCredentials: true })).data;
+
 const api = axios.create({
   baseURL: `${BASE_URL}/solicitudes/departamentos`
 });
@@ -69,7 +71,9 @@ export const getDepartamentosExterno = async () => {
 
 export const updateCodigoExterno = async (id, codigoExterno) => {
   try {
-    const { data } = await api.put(`/${id}/codex?codEx=${codigoExterno}`);
+    const { data } = await api.put(`/${id}/codex`, null, {
+      params: { codEx: codigoExterno }, withCredentials: true, headers: { 'X-Departamento-Admin': '1' }
+    });
     return data;
   } catch (error) {
     console.error('Error al actualizar el código externo:', error);
@@ -79,7 +83,9 @@ export const updateCodigoExterno = async (id, codigoExterno) => {
 
 export const deleteCodigoExternoByIdDepto = async (id) => {
   try {
-    const { data } = await api.delete(`/${id}/codex`);
+    const { data } = await api.delete(`/${id}/codex`, {
+      withCredentials: true, headers: { 'X-Departamento-Admin': '1' }
+    });
     return data;
   } catch (error) {
     console.error('Error al eliminar el código externo:', error);

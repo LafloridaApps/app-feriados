@@ -6,6 +6,12 @@ import { UsuarioContext } from "./UsuarioContext";
 export const UsuarioProvider = ({ children }) => {
 	const [funcionario, setFuncionario] = useState(null);
 	const [rut, setRut] = useState(null);
+    const [revision, setRevision] = useState(0);
+    useEffect(() => {
+        const recargar = () => setRevision(valor => valor + 1);
+        window.addEventListener('validar-departamento', recargar);
+        return () => window.removeEventListener('validar-departamento', recargar);
+    }, []);
 
 
 	useEffect(() => {
@@ -37,12 +43,15 @@ export const UsuarioProvider = ({ children }) => {
 					const data = await getFuncionarioByRutAndVrut(rut);
 					setFuncionario(data);
 				} catch (error) {
+                    setFuncionario(actual => actual ? { ...actual, configuracionDepartamento: {
+                        ...actual.configuracionDepartamento, estado: 'SERVICIO_NO_DISPONIBLE'
+                    } } : actual);
 					console.error("Error al obtener funcionario:", error);
 				}
 			}
 		};
 		void fetchFuncionario();
-	}, [rut]);
+	}, [rut, revision]);
 
 	return (
 		<UsuarioContext.Provider value={funcionario}>
