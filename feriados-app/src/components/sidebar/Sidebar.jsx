@@ -4,6 +4,8 @@ import SidebarMenu from './Sidebar/SidebarMenu';
 import { useSidebar } from './Sidebar/useSidebar';
 import './Sidebar.css';
 
+const MAIN_MENU_URL = import.meta.env.VITE_MAIN_MENU_URL || 'https://intranet.laflorida.cl/home';
+
 const Sidebar = () => {
     const sidebar = useSidebar();
     const { isSidebarOpen, toggleSidebar, closeSidebar } = sidebar;
@@ -26,7 +28,7 @@ const Sidebar = () => {
                 <SidebarMenu {...sidebar} />
 
                 <div className="sidebar-footer">
-                    <a className="footer-btn" href="https://intranet.laflorida.cl/home" title="Volver al Menú Principal">
+                    <a className="footer-btn" href={MAIN_MENU_URL} title="Volver al Menú Principal">
                         <i className="bi bi-arrow-left-circle"></i>
                         <span>Menú Principal</span>
                     </a>

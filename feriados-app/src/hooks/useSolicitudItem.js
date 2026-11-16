@@ -59,7 +59,7 @@ export const useSolicitudItem = (solicitud, rutFuncionario, onActualizarSolicitu
         }
     };
 
-    const acciones = useGestionAcciones(solicitud.derivaciones?.[0]);
+    const acciones = useGestionAcciones(solicitud.derivaciones?.[0], solicitud.estadoSolicitud);
     const { handlePostergar } = usePostergacion(solicitud, rutFuncionario, onActualizarSolicitud);
 
     const isSubrogada = solicitud.subroganciaInfo && solicitud.subroganciaInfo.length > 0;

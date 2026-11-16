@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-export const useGestionAcciones = (derivacion) => {
+export const useGestionAcciones = (derivacion, estadoSolicitud) => {
   const acciones = useMemo(() => {
     const initialState = {
       puedeRecibir: false,
@@ -22,6 +22,7 @@ export const useGestionAcciones = (derivacion) => {
     const puedeRecibir = !recepcionada && estadoDerivacion !== "ANULADA";
 
     const puedePostergar =
+      estadoSolicitud !== "POSTERGADA" &&
       recepcionada &&
       estadoDerivacion !== "DERIVADA" &&
       estadoDerivacion !== "FINALIZADA" &&
@@ -51,7 +52,7 @@ export const useGestionAcciones = (derivacion) => {
       esPostergada,
       idDerivacion: id,
     };
-  }, [derivacion]);
+  }, [derivacion, estadoSolicitud]);
 
   return acciones;
 };
