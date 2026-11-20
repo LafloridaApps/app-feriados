@@ -1,7 +1,5 @@
-/* SolicitudesMesWidget.css - Rediseño Premium */
-
-.solicitudes-mes-card {
-    padding: 1rem ;
+.ultimas-solicitudes-card {
+    padding: 1rem;
 }
 
 .solicitudes-header {
@@ -36,9 +34,11 @@
 
 .solicitud-item-premium {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    overflow-wrap: anywhere;
+    padding: 0.6rem 0;
     border-bottom: 1px solid #f1f5f9;
 }
 

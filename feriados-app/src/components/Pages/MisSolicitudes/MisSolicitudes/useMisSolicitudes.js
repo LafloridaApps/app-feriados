@@ -8,6 +8,7 @@ export const useMisSolicitudes = () => {
     const isMobile = ancho < 768; // Definir el breakpoint para móvil
 
     const [solicitudes, setSolicitudes] = useState([]);
+    const [revision, setRevision] = useState(0);
     const [loading, setLoading] = useState(false);
     const [openDetailId, setOpenDetailId] = useState(null);
     const funcionario = useContext(UsuarioContext);
@@ -19,10 +20,12 @@ export const useMisSolicitudes = () => {
 
 
     useEffect(() => {
-        const fetSolicitudesByRut = async () => {
+        let vigente = true;
+        const fetchSolicitudesByRut = async () => {
             setLoading(true);
             try {
                 const response = await getSolicitudesByRut(funcionario.rut, currentPage, pageSize);
+                if (!vigente) return;
                 setSolicitudes(Array.isArray(response.solicitudes) ? response.solicitudes : []);
                 setTotalPages(response.totalPages);
                 setCurrentPage(response.currentPage);
@@ -30,14 +33,15 @@ export const useMisSolicitudes = () => {
             } catch {
                 // Bloque intencionalmente vacío
             } finally {
-                setLoading(false);
+                if (vigente) setLoading(false);
             }
         };
 
         if (funcionario?.rut) {
-            void fetSolicitudesByRut();
+            void fetchSolicitudesByRut();
         }
-    }, [funcionario, currentPage, pageSize]);
+        return () => { vigente = false; };
+    }, [funcionario, currentPage, pageSize, revision]);
 
     const handleToggleDetail = (id) => {
         setOpenDetailId(openDetailId === id ? null : id);
@@ -45,6 +49,7 @@ export const useMisSolicitudes = () => {
 
     return {
         funcionario, isMobile, solicitudes, loading, openDetailId, handleToggleDetail,
+        actualizarSolicitudes: () => setRevision(valor => valor + 1),
         currentPage, setCurrentPage, totalPages, totalElements,
     };
 };

@@ -27,49 +27,73 @@ function parseDateAsLocal(dateString) {
 	return new Date(year, month - 1, day);
 }
 
-export function calculoDiasAusar(fechaInicio, fechaFin, tipoSolicitud, fechasFeriadas, jornadaInicio = null, jornadaFin = null) {
+export function calculoDiasAusar(fechaInicio, fechaFin, tipoSolicitud, fechasFeriadas, jornadaInicio = null, jornadaFin = null, diasCorridos = false) {
+	if (!fechaInicio || !fechaFin) return 0;
 	const inicio = parseDateAsLocal(fechaInicio);
 	const fin = parseDateAsLocal(fechaFin);
 
 	if (inicio > fin) return 0;
 
-	let count = 0;
 	const feriados = fechasFeriadas || [];
+	const totalDays = calcularTotalDias(inicio, fin);
 
+	if (diasCorridos) {
+		return calcularDiasCorridos(totalDays, tipoSolicitud, jornadaInicio, jornadaFin);
+	}
+
+	const diasHabiles = contarDiasHabiles(inicio, totalDays, feriados);
+	if (tipoSolicitud !== "ADMINISTRATIVO") return diasHabiles;
+
+	return calcularDiasAdministrativo(
+		diasHabiles,
+		inicio,
+		fin,
+		feriados,
+		jornadaInicio,
+		jornadaFin,
+		fechaInicio === fechaFin
+	);
+}
+
+function calcularTotalDias(inicio, fin) {
 	const oneDay = 1000 * 60 * 60 * 24;
-	const totalDays = Math.round(Math.abs((fin.getTime() - inicio.getTime()) / oneDay)) + 1;
+	return Math.round(Math.abs((fin.getTime() - inicio.getTime()) / oneDay)) + 1;
+}
 
-	let current = new Date(inicio); // Start with the beginning date
+function calcularDiasCorridos(totalDays, tipoSolicitud, jornadaInicio, jornadaFin) {
+	const esAdministrativo = tipoSolicitud === "ADMINISTRATIVO";
+	const ajusteInicio = obtenerAjusteJornada(jornadaInicio, "PM", esAdministrativo);
+	const ajusteFin = obtenerAjusteJornada(jornadaFin, "AM", esAdministrativo);
+	return totalDays - ajusteInicio - ajusteFin;
+}
+
+function contarDiasHabiles(inicio, totalDays, feriados) {
+	let count = 0;
+	let current = new Date(inicio);
+
 	for (let i = 0; i < totalDays; i++) {
-		// Check the current day
-		const dia = current.getDay(); // 0 = domingo, 6 = sábado
-		const fechaStr = current.toISOString().split("T")[0];
-		if (dia !== 0 && dia !== 6 && !feriados.includes(fechaStr)) {
+		if (esDiaHabil(current, feriados)) {
 			count++;
 		}
-		// Move to the next day for the next iteration
 		current.setDate(current.getDate() + 1);
 	}
 
-	if (tipoSolicitud === "ADMINISTRATIVO") {
-		if (fechaInicio === fechaFin) {
-			return calcularDiasAdministrativoMismoDia(jornadaInicio, jornadaFin);
-		}
+	return count;
+}
 
-		let ajusteInicio = 0;
-		let ajusteFin = 0;
-
-		if (esDiaHabil(inicio, feriados) && jornadaInicio === "PM") {
-			ajusteInicio = 0.5;
-		}
-		if (esDiaHabil(fin, feriados) && jornadaFin === "AM") {
-			ajusteFin = 0.5;
-		}
-
-		return count - ajusteInicio - ajusteFin;
+function calcularDiasAdministrativo(diasHabiles, inicio, fin, feriados, jornadaInicio, jornadaFin, esMismoDia) {
+	if (esMismoDia) {
+		return calcularDiasAdministrativoMismoDia(jornadaInicio, jornadaFin);
 	}
 
-	return count;
+	const ajusteInicio = obtenerAjusteJornada(jornadaInicio, "PM", esDiaHabil(inicio, feriados));
+	const ajusteFin = obtenerAjusteJornada(jornadaFin, "AM", esDiaHabil(fin, feriados));
+
+	return diasHabiles - ajusteInicio - ajusteFin;
+}
+
+function obtenerAjusteJornada(jornada, jornadaEsperada, aplicaAjuste) {
+	return jornada === jornadaEsperada && aplicaAjuste ? 0.5 : 0;
 }
 
 function calcularDiasAdministrativoMismoDia(jornadaInicio, jornadaFin) {
@@ -152,6 +176,18 @@ export function calcularPrimerDiaDelMes() {
 	const dia = fechaActual.getDate().toString().padStart(2, '0');
 	return `${anio}-${mes}-${dia}`;
 
+}
+
+export function calcularLimitesMesEnSantiago() {
+	const partes = new Intl.DateTimeFormat('es-CL', {
+		timeZone: 'America/Santiago',
+		year: 'numeric',
+		month: '2-digit',
+	}).formatToParts(new Date());
+	const anio = partes.find(({ type }) => type === 'year').value;
+	const mes = partes.find(({ type }) => type === 'month').value;
+	const ultimoDia = new Date(Date.UTC(Number(anio), Number(mes), 0)).getUTCDate();
+	return { inicio: `${anio}-${mes}-01`, fin: `${anio}-${mes}-${ultimoDia}` };
 }
 
 export function calcularPrimerDiaMesAnterior() {

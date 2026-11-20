@@ -7,7 +7,7 @@ import './MisSolicitudes.css';
 const MisSolicitudes = () => {
     const {
         funcionario, isMobile, solicitudes, loading, openDetailId, handleToggleDetail,
-        currentPage, setCurrentPage, totalPages, totalElements,
+        currentPage, setCurrentPage, totalPages, totalElements, actualizarSolicitudes,
     } = useMisSolicitudes();
 
     return (
@@ -17,7 +17,7 @@ const MisSolicitudes = () => {
             <div className="card mis-solicitudes-card">
                 <div className="card-body p-0">
                     <ContenidoMisSolicitudes loading={loading} solicitudes={solicitudes} isMobile={isMobile}
-                        openDetailId={openDetailId} handleToggleDetail={handleToggleDetail} />
+                        openDetailId={openDetailId} handleToggleDetail={handleToggleDetail} onAnulada={actualizarSolicitudes} />
                 </div>
                 <div className="pagination-container">
                     <MisSolicitudesPagination

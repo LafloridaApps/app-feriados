@@ -11,6 +11,9 @@ const jornadas = ['AM', 'PM'];
 const CamposSolicitud = ({
     tipo,
     handlerTipo,
+    permiteDiasCorridos,
+    diasCorridos,
+    setDiasCorridos,
     fechaInicio,
     handlerFechaInicio,
     fechaFin,
@@ -20,6 +23,7 @@ const CamposSolicitud = ({
     jornadaFin,
     setJornadaFin,
     minDateInicio,
+    maxDateInicio,
     maxDateFin,
     jornadasBloqueadas
 }) => {
@@ -47,6 +51,20 @@ const CamposSolicitud = ({
                 tiposPermiso
             )}
 
+            {permiteDiasCorridos && (
+                <div className="form-check mb-4">
+                    <input
+                        id="diasCorridos"
+                        type="checkbox"
+                        className="form-check-input"
+                        checked={diasCorridos}
+                        onChange={(event) => setDiasCorridos(event.target.checked)}
+                        disabled={tipo === ''}
+                    />
+                    <label htmlFor="diasCorridos" className="form-check-label">Días corridos</label>
+                </div>
+            )}
+
             <div className="mb-4">
                 <label htmlFor="fechaInicio" className="form-label-premium">
                     <i className="bi bi-calendar-event"></i> Fecha Desde
@@ -56,6 +74,7 @@ const CamposSolicitud = ({
                     type="date"
                     className="form-control form-control-premium"
                     min={minDateInicio}
+                    max={maxDateInicio}
                     value={fechaInicio}
                     onChange={handlerFechaInicio}
                     onKeyDown={(e) => e.preventDefault()}

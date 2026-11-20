@@ -1,6 +1,6 @@
 import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
-import SolicitudesMesWidget from './components/SolicitudesMesWidget';
+import UltimasSolicitudesWidget from './components/UltimasSolicitudesWidget';
 import JefeDashboard from './components/JefeDashboard';
 import { useEsJefe } from '../../../hooks/useEsJefe';
 import { useUsuario } from '../../../hooks/useUsuario';
@@ -45,13 +45,13 @@ const Inicio = () => {
                         <div className="d-flex align-items-center bg-primary bg-opacity-10 p-3 rounded-3 mb-4 border border-primary border-opacity-25 shadow-sm">
                             <i className="bi bi-info-circle-fill text-primary fs-4 me-3"></i>
                             <p className="text-dark mb-0" style={{ fontSize: '0.95rem' }}>
-                                En esta sección encontrarás un resumen rápido de tus saldos, accesos directos a trámites y el estado de tus solicitudes del mes.
+                                En esta sección encontrarás un resumen rápido de tus saldos, accesos directos a trámites y el estado de tu última solicitud.
                             </p>
                         </div>
                         <div className="row g-4">
                             <SaldosWidget />
                             <AccionesRapidasWidget />
-                            <SolicitudesMesWidget />
+                            <UltimasSolicitudesWidget />
                         </div>
                     </div>
 

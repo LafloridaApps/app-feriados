@@ -4,7 +4,7 @@ import MisSolicitudesNoDataMessage from '../MisSolicitudesNoDataMessage';
 import MisSolicitudesMobile from '../MisSolicitudesMobile';
 import MisSolicitudesTable from '../MisSolicitudesTable';
 
-const ContenidoMisSolicitudes = ({ loading, solicitudes, isMobile, openDetailId, handleToggleDetail }) => {
+const ContenidoMisSolicitudes = ({ loading, solicitudes, isMobile, openDetailId, handleToggleDetail, onAnulada }) => {
     if (loading) {
         return <MisSolicitudesLoadingSpinner />;
     }
@@ -19,6 +19,7 @@ const ContenidoMisSolicitudes = ({ loading, solicitudes, isMobile, openDetailId,
                 solicitudes={solicitudes}
                 openDetailId={openDetailId}
                 handleToggleDetail={handleToggleDetail}
+                onAnulada={onAnulada}
             />
         );
     }
@@ -29,6 +30,7 @@ const ContenidoMisSolicitudes = ({ loading, solicitudes, isMobile, openDetailId,
                 solicitudes={solicitudes}
                 openDetailId={openDetailId}
                 handleToggleDetail={handleToggleDetail}
+                onAnulada={onAnulada}
             />
         </div>
     );
@@ -39,6 +41,7 @@ ContenidoMisSolicitudes.propTypes = {
     solicitudes: PropTypes.array.isRequired,
     isMobile: PropTypes.bool.isRequired,
     openDetailId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    onAnulada: PropTypes.func.isRequired,
     handleToggleDetail: PropTypes.func.isRequired,
 };
 

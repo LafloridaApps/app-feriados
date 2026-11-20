@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
-import { calculoDiasAusar, calcularPrimerDiaDelMes, calcularPrimerDiaMesAnterior } from '../services/utils';
+import { calculoDiasAusar, calcularPrimerDiaDelMes, calcularPrimerDiaMesAnterior, calcularLimitesMesEnSantiago } from '../services/utils';
 import { useDateValidation } from './useDateValidation';
 
 const MS_POR_DIA = 86400000;
@@ -11,7 +11,7 @@ const calcularDiasParaCalculo = (tipo, diasDisponibles, permiteMedioDia) => {
 };
 
 export const useCalculoPermisos = ({
-    tipo, fechaInicio, fechaFin, setFechaFin, permiteMedioDia = true,
+    tipo, fechaInicio, fechaFin, setFechaFin, permiteMedioDia = true, permiteDiasCorridos = false, diasCorridos = false, esHonorarios = false,
     jornadaInicio, jornadaFin, setJornadaFin, fechaEditada,
     resumenAdministrativo, resumenFeriados, detalleFeriados, fechasFeriadas,
 }) => {
@@ -20,11 +20,18 @@ export const useCalculoPermisos = ({
     const [saldoFeriado, setSaldoFeriado] = useState(0);
     const [saldoAdministrativo, setSaldoAdministrativo] = useState(0);
     const [errorSaldo, setErrorSaldo] = useState("");
-    const [minDateInicio, setMinDateInicio] = useState('');
-    const [maxDateFin, setMaxDateFin] = useState('');
+    const limitesHonorarios = esHonorarios ? calcularLimitesMesEnSantiago() : null;
+    const minDateInicio = limitesHonorarios?.inicio ?? (new Date().getDate() > 7
+        ? calcularPrimerDiaDelMes()
+        : calcularPrimerDiaMesAnterior());
+    const maxDateInicio = limitesHonorarios?.fin;
+    const [maxDateFinPorSaldo, setMaxDateFinPorSaldo] = useState('');
+    const maxDateFin = maxDateFinPorSaldo || maxDateInicio;
     const [errorBloqueDiezDias, setErrorBloqueDiezDias] = useState("");
 
-    const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(fechasFeriadas);
+    const { errorFecha, errorFeriado, errorRangoFechas, validarFechas, resetErrors } = useDateValidation(
+        fechasFeriadas, esHonorarios ? minDateInicio : undefined, maxDateInicio, diasCorridos,
+    );
 
     const parseDateAsLocal = (dateString) => {
         const [year, month, day] = dateString.split('-').map(Number);
@@ -33,7 +40,13 @@ export const useCalculoPermisos = ({
 
     const calcularFechaFinPropuesta = useCallback((inicio, cantidadDias) => {
         if (!inicio || cantidadDias <= 0) return inicio;
-        let fecha = parseDateAsLocal(inicio);
+        if (diasCorridos) {
+            const fecha = new Date(inicio);
+            fecha.setUTCDate(fecha.getUTCDate() + cantidadDias - 1);
+            return fecha.toISOString().slice(0, 10);
+        }
+
+        const fecha = parseDateAsLocal(inicio);
         let diasRestantes = cantidadDias - 1;
         if (diasRestantes < 0) diasRestantes = 0;
 
@@ -54,7 +67,7 @@ export const useCalculoPermisos = ({
             }
         }
         return fecha.toISOString().split("T")[0];
-    }, [fechasFeriadas]);
+    }, [fechasFeriadas, diasCorridos]);
 
     const yaTieneBloqueDiezDias = useCallback(() => {
         if (!detalleFeriados || !Array.isArray(detalleFeriados)) return false;
@@ -66,18 +79,6 @@ export const useCalculoPermisos = ({
             return diff >= 10;
         });
     }, [detalleFeriados]);
-
-    useEffect(() => {
-        const today = new Date();
-        const dayOfMonth = today.getDate();
-        let minDate;
-        if (dayOfMonth > 7) {
-            minDate = calcularPrimerDiaDelMes();
-        } else {
-            minDate = calcularPrimerDiaMesAnterior();
-        }
-        setMinDateInicio(minDate);
-    }, []);
 
     // Sincroniza jornadaFin según el saldo de ADMINISTRATIVO (media jornada = .5)
     const sincronizarJornada = useCallback((saldoAdm) => {
@@ -110,8 +111,9 @@ export const useCalculoPermisos = ({
         if (diasDisponibles === null || diasDisponibles === undefined) return { currentFechaFin: fechaFin, fechaFinMaxima: null };
 
         // Para ADMINISTRATIVO con media jornada (ej: 1.5) se redondea según permitaMedioDia.
-        const fechaFinMaxima = calcularFechaFinPropuesta(fechaInicio, calcularDiasParaCalculo(tipo, diasDisponibles, permiteMedioDia));
-        setMaxDateFin(fechaFinMaxima);
+        const fechaFinPorSaldo = calcularFechaFinPropuesta(fechaInicio, calcularDiasParaCalculo(tipo, diasDisponibles, permiteMedioDia));
+        const fechaFinMaxima = maxDateInicio && fechaFinPorSaldo > maxDateInicio ? maxDateInicio : fechaFinPorSaldo;
+        setMaxDateFinPorSaldo(fechaFinMaxima);
 
         const ajustarFechaFin = (actual) => {
             if (fechaEditada === 'inicio' || fechaEditada === 'tipo') {
@@ -129,7 +131,7 @@ export const useCalculoPermisos = ({
         if (currentFechaFin !== fechaFin) setFechaFin(currentFechaFin);
 
         return { currentFechaFin, fechaFinMaxima };
-    }, [tipo, fechaFin, fechaInicio, fechaEditada, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta, setFechaFin, permiteMedioDia]);
+    }, [tipo, fechaFin, fechaInicio, fechaEditada, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta, setFechaFin, permiteMedioDia, maxDateInicio]);
 
     const validarFeriado = useCallback((diasSolicitados, currentFechaFin) => {
         setDiasUsarFeriado(diasSolicitados);
@@ -146,13 +148,13 @@ export const useCalculoPermisos = ({
         // se le permite usar sus días restantes sin bloquearlo.
         const excepcionCasosAntiguos = saldoPrevio < 10;
 
-        const cumpleReglaDiezDias = excepcionCasosAntiguos || yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
+        const cumpleReglaDiezDias = permiteDiasCorridos || excepcionCasosAntiguos || yaTieneBloqueDiezDias() || diasCorridos >= 10 || (nuevoSaldo >= 10) || nuevoSaldo < 0;
         if (cumpleReglaDiezDias) {
             setErrorBloqueDiezDias("");
         } else {
             setErrorBloqueDiezDias(`De acuerdo a la Ley N°18.883, debes tomar al menos un bloque de 10 días corridos. Esta solicitud de ${diasCorridos} días corridos dejaría tu saldo en ${nuevoSaldo} días, impidiendo cumplir con esta normativa.`);
         }
-    }, [resumenFeriados, fechaInicio, yaTieneBloqueDiezDias]);
+    }, [resumenFeriados, fechaInicio, yaTieneBloqueDiezDias, permiteDiasCorridos]);
 
     const validarAdministrativo = useCallback((diasSolicitados) => {
         setDiasUsarAdministrativo(diasSolicitados);
@@ -175,7 +177,7 @@ export const useCalculoPermisos = ({
             }
 
             const { currentFechaFin } = gestionarFechas();
-            const diasSolicitados = calculoDiasAusar(fechaInicio, currentFechaFin, tipo, fechasFeriadas, jornadaInicio, jornadaFin);
+            const diasSolicitados = calculoDiasAusar(fechaInicio, currentFechaFin, tipo, fechasFeriadas, jornadaInicio, jornadaFin, diasCorridos);
 
             if (tipo === "FERIADO") {
                 validarFeriado(diasSolicitados, currentFechaFin);
@@ -187,7 +189,7 @@ export const useCalculoPermisos = ({
         };
 
         actualizar();
-    }, [fechaInicio, fechaFin, tipo, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta, validarFechas, fechasFeriadas, jornadaInicio, jornadaFin, fechaEditada, yaTieneBloqueDiezDias, gestionarFechas, validarFeriado, validarAdministrativo]);
+    }, [fechaInicio, fechaFin, tipo, resumenFeriados, resumenAdministrativo, calcularFechaFinPropuesta, validarFechas, fechasFeriadas, jornadaInicio, jornadaFin, fechaEditada, yaTieneBloqueDiezDias, gestionarFechas, validarFeriado, validarAdministrativo, diasCorridos]);
 
     const mostrarAlertaError = useCallback((mensaje) => {
         if (mensaje) void Swal.fire({ icon: 'error', title: 'Oops...', text: mensaje });
@@ -212,7 +214,7 @@ export const useCalculoPermisos = ({
     return {
         diasUsar, saldo, diasUsarFeriado, diasUsarAdministrativo,
         error: hasErrors, errorSaldo, errorBloqueDiezDias,
-        minDateInicio, maxDateFin, sincronizarJornada,
+        minDateInicio, maxDateInicio, maxDateFin, sincronizarJornada,
         validarFechas, mostrarAlertaError, resetCalculo,
     };
 };

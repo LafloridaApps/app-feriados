@@ -18,7 +18,7 @@ const SaldosWidget = () => {
         );
     }
 
-    const { saldoFeriado, saldoAdministrativo, idUltimaSolicitud, estadoUltimaSolicitud } = resumenFuncionario || {};
+    const { saldoFeriado, saldoAdministrativo } = resumenFuncionario || {};
 
     return (
         <div className="col-12 col-md-6 col-lg-4">
@@ -50,13 +50,6 @@ const SaldosWidget = () => {
                             <span className="badge-saldo">{saldoAdministrativo || 0} días</span>
                         </button>
                     </div>
-                </div>
-
-                <div className="ultima-solicitud-row d-flex justify-content-between align-items-center">
-                    <span>Última Solicitud:</span>
-                    <span className="badge-ultima">
-                        {idUltimaSolicitud ? `ID ${idUltimaSolicitud} - ${estadoUltimaSolicitud}` : 'Sin solicitudes'}
-                    </span>
                 </div>
             </div>
         </div>

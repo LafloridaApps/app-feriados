@@ -298,3 +298,8 @@
         transform: none;
     }
 }
+@media (max-width: 767.98px) {
+    .mis-solicitudes-detalle-acciones .btn {
+        width: 100%;
+    }
+}

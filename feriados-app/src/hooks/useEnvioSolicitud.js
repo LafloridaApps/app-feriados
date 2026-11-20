@@ -14,7 +14,7 @@ const initialState = {
 
 export const useEnvioSolicitud = ({
     rut, depto, rutGestor, onSolicitudCreada,
-    tipo, fechaInicio, fechaFin, jornadaInicio, jornadaFin,
+    tipo, fechaInicio, fechaFin, jornadaInicio, jornadaFin, diasCorridos,
     diasUsarFeriado, diasUsarAdministrativo,
     resumenAdministrativo, resumenFeriados, errorSaldo, errorBloqueDiezDias,
     validarFechas, mostrarAlertaError, resetFormulario,
@@ -33,6 +33,7 @@ export const useEnvioSolicitud = ({
             fechaFin,
             depto,
             tipoSolicitud: tipo,
+            diasCorridos,
             ...(tipo === "ADMINISTRATIVO" && {
                 jornadaInicio,
                 jornadaTermino: jornadaFin,
@@ -87,7 +88,7 @@ export const useEnvioSolicitud = ({
         } finally {
             setEnviando(false);
         }
-    }, [solicitud, rut, rutGestor, onSolicitudCreada, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, subrogancia, diasUsarFeriado, diasUsarAdministrativo, resetFormulario]);
+    }, [solicitud, rut, rutGestor, onSolicitudCreada, fechaInicio, fechaFin, depto, tipo, jornadaInicio, jornadaFin, diasCorridos, subrogancia, diasUsarFeriado, diasUsarAdministrativo, resetFormulario]);
 
     const verificarConflictoFechas = async () => {
         const existe = await getSolicitudByFechaInicioAndTipo(rut, fechaInicio, tipo);

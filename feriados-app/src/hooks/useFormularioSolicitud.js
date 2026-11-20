@@ -25,6 +25,7 @@ const extractTipoValue = (e) => {
 };
 
 export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados, detalleFeriados }) => {
+    const [diasCorridosElegidos, setDiasCorridosElegidos] = useState(false);
     const [tipo, setTipo] = useState('');
     const [fechaInicio, setFechaInicio] = useState(fechaActual());
     const [fechaFin, setFechaFin] = useState(fechaActual());
@@ -36,9 +37,10 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     const { rutGestor = null, onSolicitudCreada } = useContext(SolicitudTerceroContext) ?? {};
     const feriados = useContext(FeriadosContext);
     const fechasFeriadas = feriados.map(f => f.fecha);
-    const permiteMedioDia = ['PLANTA', 'CONTRATA', 'SUPLENCIA', 'SUPLENTE EXTERNO'].includes(
-        String(funcionario?.tipoContrato ?? '').trim().toUpperCase()
-    );
+    const esHonorarios = funcionario?.ident > 1;
+    const permiteDiasCorridos = funcionario?.permiteDiasCorridos === true;
+    const permiteMedioDia = !permiteDiasCorridos;
+    const diasCorridos = permiteDiasCorridos && diasCorridosElegidos;
     const jornadasBloqueadas = tipo === 'ADMINISTRATIVO' && !permiteMedioDia;
     const jornadaInicio = jornadasBloqueadas ? 'AM' : jornadaInicioElegida;
     const jornadaFin = jornadasBloqueadas ? 'PM' : jornadaFinElegida;
@@ -47,13 +49,14 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
     const codDeptoJefe = funcionario?.codDeptoJefe;
 
     const calculo = useCalculoPermisos({
-        tipo, fechaInicio, fechaFin, setFechaFin, permiteMedioDia,
+        tipo, fechaInicio, fechaFin, setFechaFin, permiteMedioDia, permiteDiasCorridos, diasCorridos, esHonorarios,
         jornadaInicio, jornadaFin, setJornadaFin: setJornadaFinElegida, fechaEditada,
         resumenAdministrativo, resumenFeriados, detalleFeriados, fechasFeriadas,
     });
     const { sincronizarJornada, resetCalculo } = calculo;
 
     const resetFormulario = useCallback(() => {
+        setDiasCorridosElegidos(false);
         setFechaInicio(fechaActual());
         setFechaFin(fechaActual());
         resetCalculo();
@@ -61,7 +64,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
     const envio = useEnvioSolicitud({
         rut, depto, rutGestor, onSolicitudCreada,
-        tipo, fechaInicio, fechaFin, jornadaInicio, jornadaFin,
+        tipo, fechaInicio, fechaFin, jornadaInicio, jornadaFin, diasCorridos,
         diasUsarFeriado: calculo.diasUsarFeriado,
         diasUsarAdministrativo: calculo.diasUsarAdministrativo,
         resumenAdministrativo, resumenFeriados,
@@ -103,6 +106,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
 
     return {
         tipo, handlerTipo,
+        permiteDiasCorridos, diasCorridos, setDiasCorridos: setDiasCorridosElegidos,
         fechaInicio, handlerFechaInicio,
         fechaFin, handlerFechaFin,
         jornadaInicio, setJornadaInicio: setJornadaInicioElegida, jornadasBloqueadas,
@@ -114,6 +118,7 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         ...envio,
         rut, depto, codDeptoJefe,
         minDateInicio: calculo.minDateInicio,
+        maxDateInicio: calculo.maxDateInicio,
         maxDateFin: calculo.maxDateFin,
     };
 };

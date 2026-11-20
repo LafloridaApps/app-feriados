@@ -3,7 +3,7 @@ import { useUsuario } from '../../../hooks/useUsuario';
 import { useEsJefe } from '../../../hooks/useEsJefe';
 import SaldosWidget from './components/SaldosWidget';
 import AccionesRapidasWidget from './components/AccionesRapidasWidget';
-import SolicitudesMesWidget from './components/SolicitudesMesWidget';
+import UltimasSolicitudesWidget from './components/UltimasSolicitudesWidget';
 import JefeDashboard from './components/JefeDashboard';
 import './InicioMobile.css';
 
@@ -27,7 +27,7 @@ const InicioMobile = () => {
                 <div className="d-flex align-items-start">
                     <i className="bi bi-info-circle-fill text-primary me-2 mt-1"></i>
                     <p className="text-dark mb-0 small">
-                        En esta sección encontrarás un resumen rápido de tus saldos, accesos directos y tus solicitudes recientes.
+                        En esta sección encontrarás un resumen rápido de tus saldos, accesos directos y tu última solicitud.
                     </p>
                 </div>
             </div>
@@ -43,8 +43,7 @@ const InicioMobile = () => {
             </div>
 
             <div>
-                <h6 className="inicio-mobile-section-title">Solicitudes del Mes</h6>
-                <SolicitudesMesWidget />
+                <UltimasSolicitudesWidget />
             </div>
 
             {esJefe && (

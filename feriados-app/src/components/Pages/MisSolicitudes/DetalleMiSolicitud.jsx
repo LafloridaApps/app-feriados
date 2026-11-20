@@ -1,151 +1,233 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
+import Swal from 'sweetalert2';
 import { formatFecha } from '../../../services/utils';
+import { anularSolicitud } from '../../../services/anulacionService';
+import { getStatusBadge } from './estadoSolicitud';
 
-const DetalleMiSolicitud = ({ solicitud }) => {
+const ICONOS = {
+    'Creación': 'bi-send',
+    'Visación': 'bi-check-circle',
+    'Aprobación': 'bi-pen',
+    'Postergación': 'bi-clock-history',
+    'Anulación': 'bi-slash-circle',
+    'Solicitud de anulación': 'bi-hourglass-split',
+};
 
-
-
-
-
-    const getIconForAction = (action) => {
-        switch (action.toUpperCase()) {
-            case 'CREACIÓN':
-                return 'bi bi-pencil-fill';
-            case 'VISACIÓN':
-                return 'bi bi-check-circle-fill';
-            case 'APROBACIÓN':
-                return 'bi bi-patch-check-fill';
-            case 'POSTERGACIÓN':
-                return 'bi bi-x-circle-fill';
-            case 'ANULACIÓN':
-                return 'bi bi-slash-circle-fill';
-            default:
-                return 'bi bi-info-lg';
+function obtenerEstadoRecepcion(recepcion, solicitudAnulada) {
+    if (recepcion?.recepcionada === true) {
+        return 'Recepcionada';
+    }
+    if (recepcion?.recepcionada === false) {
+        if (solicitudAnulada) {
+            return 'Sin recepción registrada';
         }
-    };
+        return 'Pendiente de recepción';
+    }
+    return 'Sin información de recepción';
+}
 
-    const getBadgeClass = (estado) => {
-        switch (estado) {
-            case 'ANULADA':   return 'badge bg-danger text-white border small fw-normal';
-            case 'POSTERGADA': return 'badge bg-warning text-dark border small fw-normal';
-            case 'APROBADA':  return 'badge bg-success text-white border small fw-normal';
-            default:          return 'badge bg-light text-dark border small fw-normal';
-        }
-    };
+function obtenerTituloEvento(accion, esDerivacion) {
+    if (esDerivacion) {
+        return `Derivada para ${accion.toLowerCase()}`;
+    }
+    if (accion === 'Creación') {
+        return 'Solicitud enviada';
+    }
+    return accion;
+}
 
+function EventoTrazabilidad({ evento, solicitudAnulada }) {
+    const { accion, fecha, usuario, departamento, recepcion, firma, glosa } = evento;
+    const esDerivacion = accion === 'Visación' || accion === 'Aprobación';
+    const estadoRecepcion = obtenerEstadoRecepcion(recepcion, solicitudAnulada);
 
     return (
-        <div className="p-4 bg-white rounded-3 shadow-sm border mt-2">
-            <div className="row g-4">
-                <div className="col-12 col-md-5">
-                    <div className="d-flex align-items-center mb-3">
-                        <i className="bi bi-info-circle-fill text-primary me-2 fs-5"></i>
-                        <h6 className="mb-0 fw-bold">Detalles del Permiso</h6>
-                    </div>
-                    <div className="ps-0 ps-md-2">
-                        <div className="mb-3 d-flex justify-content-between border-bottom pb-2">
-                            <span className="text-muted small">Desde:</span>
-                            <span className="fw-bold">{formatFecha(solicitud.fechaInicio)}</span>
-                        </div>
-                        <div className="mb-3 d-flex justify-content-between border-bottom pb-2">
-                            <span className="text-muted small">Hasta:</span>
-                            <span className="fw-bold">{formatFecha(solicitud.fechaFin)}</span>
-                        </div>
-                        <div className="mb-0 d-flex justify-content-between">
-                            <span className="text-muted small">Días solicitados:</span>
-                            <span className="badge bg-primary rounded-pill px-3">{solicitud.cantidadDias}</span>
-                        </div>
-                    </div>
+        <li className="timeline-item-premium">
+            <div className="timeline-dot" aria-hidden="true">
+                <i className={`bi ${ICONOS[accion] ?? 'bi-info-lg'}`} />
+            </div>
+            <div className="timeline-content-card">
+                <div className="timeline-title d-flex justify-content-between flex-wrap gap-1">
+                    <span>{obtenerTituloEvento(accion, esDerivacion)}</span>
+                    {fecha && <span className="small text-muted fw-normal">{formatFecha(fecha)}</span>}
                 </div>
-                <div className="col-12 col-md-7 border-top border-md-top-0 border-md-start ps-md-4 pt-4 pt-md-0">
-                    <div className="d-flex align-items-center mb-4">
-                        <i className="bi bi-clock-history text-primary me-2 fs-5"></i>
-                        <h6 className="mb-0 fw-bold">Trazabilidad</h6>
-                    </div>
-                    <div className="timeline-premium ps-2">
-                        {solicitud.trazabilidad.map((evento, idx) => {
-                            const esUltimoEvento = idx === solicitud.trazabilidad.length - 1;
-                            const esAnulada = solicitud.estadoSolicitud === 'ANULADA';
-                            // Si la solicitud está anulada, no mostrar el badge PENDIENTE del último evento real
-                            const estadoMostrar = (esUltimoEvento && esAnulada && evento.estado === 'PENDIENTE')
-                                ? null
-                                : evento.estado;
-
-                            return (
-                                <div key={`${evento.fecha}-${evento.accion}-${idx}`} className="timeline-item-premium">
-                                    <div className="timeline-dot">
-                                        <i className={getIconForAction(evento.accion)} />
-                                    </div>
-                                    <div className="timeline-content-card">
-                                        <div className="timeline-title d-flex justify-content-between">
-                                            <span>{evento.accion}</span>
-                                            {estadoMostrar && (
-                                                <span className={getBadgeClass(estadoMostrar)}>
-                                                    {estadoMostrar}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="timeline-meta mt-1">
-                                            <div><i className="bi bi-person me-1" /> {evento.usuario}</div>
-                                            <div><i className="bi bi-calendar3 me-1" /> {formatFecha(evento.fecha)}</div>
-                                            {evento.departamento && (
-                                                <div className="mt-1 small"><i className="bi bi-diagram-3 me-1" /> {evento.departamento}</div>
-                                            )}
-                                            {evento.estado === "POSTERGADA" && evento.glosa && (
-                                                <div className="mt-2 p-2 bg-danger-subtle text-danger rounded small">
-                                                    <strong>Motivo:</strong> {evento.glosa}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-
-                        {/* Nodo sintético de anulación cuando el backend no lo envía */}
-                        {solicitud.estadoSolicitud === 'ANULADA' && (
-                            <div className="timeline-item-premium">
-                                <div className="timeline-dot" style={{ borderColor: '#dc2626', boxShadow: '0 0 0 4px #fee2e2', color: '#dc2626' }}>
-                                    <i className="bi bi-slash-circle-fill" />
-                                </div>
-                                <div className="timeline-content-card" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
-                                    <div className="timeline-title d-flex justify-content-between">
-                                        <span className="text-danger fw-bold">Anulación</span>
-                                        <span className="badge bg-danger text-white small fw-normal">ANULADA</span>
-                                    </div>
-                                    {solicitud.motivoAnulacion && (
-                                        <div className="timeline-meta mt-1">
-                                            <div className="mt-1 p-2 bg-danger-subtle text-danger rounded small">
-                                                <strong>Motivo:</strong> {solicitud.motivoAnulacion}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                <div className="timeline-meta">
+                    {departamento && <div>{departamento}</div>}
+                    {!esDerivacion && usuario && <div>{usuario}</div>}
+                    {esDerivacion && (
+                        <div className="mt-2 border-top pt-2">
+                            <strong>{estadoRecepcion}</strong>
+                            {recepcion?.responsable && <span> · {recepcion.responsable}</span>}
+                            {recepcion?.fecha && <span> · {formatFecha(recepcion.fecha)}</span>}
+                        </div>
+                    )}
+                    {firma && (
+                        <div className="mt-2 border-top pt-2">
+                            <strong>Firmada por {firma.firmante || 'una persona sin identificar'}</strong>
+                            {firma.fecha && <span> · {formatFecha(firma.fecha)}</span>}
+                            {firma.titularSubrogado && <div>Como subrogante de {firma.titularSubrogado}</div>}
+                        </div>
+                    )}
+                    {esDerivacion && !firma && evento.estado === 'REALIZADO' && (
+                        <div className="mt-2">{accion === 'Visación' ? 'Visación realizada' : 'Aprobación registrada'}</div>
+                    )}
+                    {esDerivacion && !firma && evento.estado === 'RECIBIDO' && !solicitudAnulada && (
+                        <div className="mt-2">{accion === 'Visación' ? 'Pendiente de visación' : 'Pendiente de firma'}</div>
+                    )}
+                    {glosa && <div className="mt-2 border-top pt-2"><strong>Motivo</strong> <span>{glosa}</span></div>}
                 </div>
             </div>
-        </div>
+        </li>
     );
+}
+
+EventoTrazabilidad.propTypes = {
+    evento: PropTypes.shape({
+        accion: PropTypes.string,
+        fecha: PropTypes.string,
+        usuario: PropTypes.string,
+        departamento: PropTypes.string,
+        estado: PropTypes.string,
+        glosa: PropTypes.string,
+        recepcion: PropTypes.shape({
+            recepcionada: PropTypes.bool,
+            responsable: PropTypes.string,
+            fecha: PropTypes.string,
+        }),
+        firma: PropTypes.shape({
+            firmante: PropTypes.string,
+            titularSubrogado: PropTypes.string,
+            fecha: PropTypes.string,
+        }),
+    }).isRequired,
+    solicitudAnulada: PropTypes.bool.isRequired,
 };
+
+export default function DetalleMiSolicitud({ solicitud, urlPdf, onAnulada }) {
+    const [anulando, setAnulando] = useState(false);
+    const historial = solicitud.trazabilidad ?? [];
+    const anulada = solicitud.estadoSolicitud === 'ANULADA';
+    const eventos = [{ accion: 'Creación', fecha: solicitud.fechaSolicitud }, ...historial];
+
+    if (anulada && !historial.some(evento => evento.accion === 'Anulación')) {
+        eventos.push({ accion: 'Anulación', glosa: solicitud.motivoAnulacion });
+    }
+    const anulacionPendiente = historial.some(evento => evento.accion === 'Solicitud de anulación');
+    const puedeAnular = Boolean(onAnulada && solicitud.id) && solicitud.estadoSolicitud === 'PENDIENTE' && !anulacionPendiente;
+
+    const confirmarAnulacion = async () => {
+        setAnulando(true);
+        const { isConfirmed, value: motivo } = await Swal.fire({
+            icon: 'warning',
+            title: `¿Anular la solicitud #${solicitud.id}?`,
+            input: 'textarea',
+            inputLabel: 'Motivo de anulación',
+            inputAttributes: { maxlength: '300', rows: '4' },
+            showCancelButton: true,
+            focusCancel: true,
+            reverseButtons: true,
+            confirmButtonColor: '#b91c1c',
+            confirmButtonText: 'Confirmar anulación',
+            cancelButtonText: 'Mantener solicitud',
+            inputValidator: value => value.trim().length < 10 ? 'Ingresa un motivo de al menos 10 caracteres.' : undefined,
+        });
+        if (!isConfirmed) {
+            setAnulando(false);
+            return;
+        }
+        try {
+            const respuesta = await anularSolicitud(solicitud.id, motivo.trim());
+            const requiereAprobacion = respuesta?.status === 'REQUIERE_APROBACION';
+            await Swal.fire({
+                icon: 'success',
+                title: requiereAprobacion ? 'Anulación solicitada' : 'Solicitud anulada',
+                text: respuesta?.message ?? respuesta?.mensaje,
+            });
+            onAnulada();
+        } catch (error) {
+            await Swal.fire({
+                icon: 'error',
+                title: 'No se pudo anular la solicitud',
+                text: error.response?.data?.message ?? error.response?.data?.mensaje ?? error.message,
+            });
+        } finally {
+            setAnulando(false);
+        }
+    };
+
+    const fechaFin = solicitud.fechaFin ?? solicitud.fechaTermino;
+    return (
+        <section className="mis-solicitudes-detalle bg-white rounded-3 border">
+            <header className="p-3 p-md-4 border-bottom">
+                <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div className="d-flex align-items-center flex-wrap gap-2">
+                        <h3 className="h5 mb-0">Solicitud #{solicitud.id}</h3>
+                        <span className={getStatusBadge(solicitud.estadoSolicitud)}>{solicitud.estadoSolicitud}</span>
+                    </div>
+                    {urlPdf && (
+                        <a className="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2"
+                            href={urlPdf} target="_blank" rel="noopener noreferrer"
+                            aria-label="Abrir PDF de la solicitud en una pestaña nueva">
+                            <i className="bi bi-file-earmark-pdf" aria-hidden="true" />{' '}
+                            Abrir PDF{' '}
+                            <i className="bi bi-box-arrow-up-right" aria-hidden="true" />
+                        </a>
+                    )}
+                </div>
+                <dl className="d-flex gap-3 gap-md-4 flex-wrap mt-3 mb-0">
+                    <div>
+                        <dt className="small text-muted">Tipo de permiso</dt>
+                        <dd className="mb-0">{solicitud.tipoSolicitud}</dd>
+                    </div>
+                    <div>
+                        <dt className="small text-muted">Desde</dt>
+                        <dd className="mb-0">{solicitud.fechaInicio ? formatFecha(solicitud.fechaInicio) : '—'}</dd>
+                    </div>
+                    <div>
+                        <dt className="small text-muted">Hasta</dt>
+                        <dd className="mb-0">{fechaFin ? formatFecha(fechaFin) : '—'}</dd>
+                    </div>
+                    <div>
+                        <dt className="small text-muted">Días solicitados</dt>
+                        <dd className="mb-0">{solicitud.cantidadDias ?? solicitud.diasSolicitados ?? '—'}</dd>
+                    </div>
+                </dl>
+            </header>
+            <div className="p-3 p-md-4">
+                <h4 className="h6 fw-bold mb-3">Trazabilidad</h4>
+                <ol className="timeline-premium list-unstyled mb-0">
+                    {eventos.map((evento, index) => (
+                        <EventoTrazabilidad key={evento.id ?? `${evento.accion}-${index}`} evento={evento} solicitudAnulada={anulada} />
+                    ))}
+                </ol>
+            </div>
+            {puedeAnular && (
+                <footer className="mis-solicitudes-detalle-acciones border-top p-3 p-md-4 d-flex justify-content-end">
+                    <button type="button" className="btn btn-outline-danger" disabled={anulando} onClick={confirmarAnulacion}>
+                        <i className="bi bi-x-circle me-2" aria-hidden="true" />
+                        {anulando ? 'Procesando…' : 'Anular solicitud'}
+                    </button>
+                </footer>
+            )}
+        </section>
+    );
+}
 
 DetalleMiSolicitud.propTypes = {
     solicitud: PropTypes.shape({
-        fechaInicio: PropTypes.string.isRequired,
-        fechaFin: PropTypes.string.isRequired,
-        cantidadDias: PropTypes.number.isRequired,
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        tipoSolicitud: PropTypes.string,
+        fechaSolicitud: PropTypes.string,
+        fechaInicio: PropTypes.string,
+        fechaFin: PropTypes.string,
+        fechaTermino: PropTypes.string,
+        cantidadDias: PropTypes.number,
+        diasSolicitados: PropTypes.number,
         estadoSolicitud: PropTypes.string,
         motivoAnulacion: PropTypes.string,
-        trazabilidad: PropTypes.arrayOf(PropTypes.shape({
-            fecha: PropTypes.string.isRequired,
-            accion: PropTypes.string.isRequired,
-            usuario: PropTypes.string.isRequired,
-            estado: PropTypes.string,
-            glosa: PropTypes.string,
-            departamento: PropTypes.string,
-        })).isRequired,
+        trazabilidad: PropTypes.arrayOf(EventoTrazabilidad.propTypes.evento),
     }).isRequired,
+    urlPdf: PropTypes.string,
+    onAnulada: PropTypes.func,
 };
-
-export default DetalleMiSolicitud;

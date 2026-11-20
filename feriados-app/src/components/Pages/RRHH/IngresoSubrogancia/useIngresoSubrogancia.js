@@ -22,17 +22,17 @@ export const useIngresoSubrogancia = () => {
         return await subroganciaService.buscarPorNombre(nombre, null, null, 0, null);
     };
 
-    const handleFuncionarioSelected = async (funcionario) => {
-        const fullRut = `${funcionario.rut}-${funcionario.vrut}`;
+    const handleFuncionarioSelected = ({ rut, vrut, nombreCompleto, departamento }) => {
+        const fullRut = `${rut}-${vrut}`;
 
         if (modalTarget === 'filtroJefe') {
             setFiltroRutJefe(fullRut);
         } else if (modalTarget === 'filtroSub') {
             setFiltroRutSubrogante(fullRut);
         } else if (modalTarget === 'createJefe') {
-            jefe.initData(fullRut, funcionario.rut, `${funcionario.nombre} ${funcionario.apellidoPaterno} ${funcionario.apellidoMaterno}`, funcionario.departamento);
+            jefe.initData(fullRut, rut, nombreCompleto, departamento);
         } else if (modalTarget === 'createSub') {
-            subrogante.initData(fullRut, funcionario.rut, `${funcionario.nombre} ${funcionario.apellidoPaterno} ${funcionario.apellidoMaterno}`, funcionario.departamento);
+            subrogante.initData(fullRut, rut, nombreCompleto, departamento);
         }
     };
 
