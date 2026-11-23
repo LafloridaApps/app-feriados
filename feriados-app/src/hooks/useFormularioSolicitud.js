@@ -118,7 +118,6 @@ export const useFormularioSolicitud = ({ resumenAdministrativo, resumenFeriados,
         ...envio,
         rut, depto, codDeptoJefe,
         minDateInicio: calculo.minDateInicio,
-        maxDateInicio: calculo.maxDateInicio,
         maxDateFin: calculo.maxDateFin,
     };
 };

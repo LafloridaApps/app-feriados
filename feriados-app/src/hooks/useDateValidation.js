@@ -1,7 +1,7 @@
 // hooks/useDateValidation.js
 import { useState, useCallback } from "react";
 
-export const useDateValidation = (fechasFeriadas, inicioMes, finMes, diasCorridos = false) => {
+export const useDateValidation = (fechasFeriadas, inicioMes, diasCorridos = false) => {
     const [errorFecha, setErrorFecha] = useState("");
     const [errorFeriado, setErrorFeriado] = useState("");
     const [errorRangoFechas, setErrorRangoFechas] = useState("");
@@ -16,8 +16,8 @@ export const useDateValidation = (fechasFeriadas, inicioMes, finMes, diasCorrido
 
         if (inicioDate > finDate) {
             currentErrorFecha = "La fecha de inicio no puede ser mayor a la fecha de fin";
-        } else if (finMes && (!inicio || !fin || inicio < inicioMes || fin > finMes)) {
-            currentErrorFecha = "Para Honorarios, el permiso debe comenzar y terminar dentro del mes en curso.";
+        } else if (inicioMes && (!inicio || !fin || inicio < inicioMes || fin < inicioMes)) {
+            currentErrorFecha = "Para Honorarios, no se pueden solicitar permisos con fechas anteriores al mes en curso.";
         }
 
         // Check if start or end date is a holiday
@@ -35,7 +35,7 @@ export const useDateValidation = (fechasFeriadas, inicioMes, finMes, diasCorrido
         setErrorRangoFechas(currentErrorRangoFechas);
 
         return !currentErrorFecha && !currentErrorFeriado && !currentErrorRangoFechas;
-    }, [fechasFeriadas, diasCorridos, inicioMes, finMes]); // hayConflictoDeFechas removed from dependencies
+    }, [fechasFeriadas, diasCorridos, inicioMes]); // hayConflictoDeFechas removed from dependencies
 
     return {
         errorFecha,

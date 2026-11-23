@@ -178,7 +178,7 @@ export function calcularPrimerDiaDelMes() {
 
 }
 
-export function calcularLimitesMesEnSantiago() {
+export function calcularPrimerDiaDelMesEnSantiago() {
 	const partes = new Intl.DateTimeFormat('es-CL', {
 		timeZone: 'America/Santiago',
 		year: 'numeric',
@@ -186,8 +186,7 @@ export function calcularLimitesMesEnSantiago() {
 	}).formatToParts(new Date());
 	const anio = partes.find(({ type }) => type === 'year').value;
 	const mes = partes.find(({ type }) => type === 'month').value;
-	const ultimoDia = new Date(Date.UTC(Number(anio), Number(mes), 0)).getUTCDate();
-	return { inicio: `${anio}-${mes}-01`, fin: `${anio}-${mes}-${ultimoDia}` };
+	return `${anio}-${mes}-01`;
 }
 
 export function calcularPrimerDiaMesAnterior() {

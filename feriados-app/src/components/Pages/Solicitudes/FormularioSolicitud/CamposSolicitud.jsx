@@ -23,7 +23,6 @@ const CamposSolicitud = ({
     jornadaFin,
     setJornadaFin,
     minDateInicio,
-    maxDateInicio,
     maxDateFin,
     jornadasBloqueadas
 }) => {
@@ -74,7 +73,6 @@ const CamposSolicitud = ({
                     type="date"
                     className="form-control form-control-premium"
                     min={minDateInicio}
-                    max={maxDateInicio}
                     value={fechaInicio}
                     onChange={handlerFechaInicio}
                     onKeyDown={(e) => e.preventDefault()}
