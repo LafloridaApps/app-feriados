@@ -128,13 +128,22 @@ def remote_action(staging, remote, version, deploy):
     commands = [
         'set -euo pipefail',
         'umask 077',
+        'fase=preparación',
+        """trap 'codigo=$?; printf "Falló la fase %s en server-app (código %s).\\n" "$fase" "$codigo" >&2' ERR""",
         'mkdir -p /opt/qa-replica/feriados-stack-releases',
         'mkdir -m 700 -- ' + quoted(remote),
         'install -m 600 -- ' + ' '.join(quoted(staging + '/' + name) for name in names) + ' ' + quoted(remote + '/'),
-        'bash ' + quoted(remote + '/' + RELEASE_SH) + ' build ' + quoted(version),
     ]
+    phases = [('build', 'construcción')]
     if deploy:
-        commands.append('bash ' + quoted(remote + '/' + RELEASE_SH) + ' deploy ' + quoted(version))
+        phases.append(('deploy', 'despliegue'))
+    for action, label in phases:
+        log = quoted(f'{remote}/{action}.log')
+        commands.extend([
+            f'fase={label}',
+            f'echo "Fase: $fase. Registro en server-app: " {log}',
+            f'bash {quoted(remote + "/" + RELEASE_SH)} {action} {quoted(version)} 2>&1 | tee -- {log}',
+        ])
     return 'sudo bash -c ' + quoted('\n'.join(commands))
 
 
@@ -208,5 +217,8 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+    except subprocess.CalledProcessError as error:
+        raise SystemExit(f'Publicación interrumpida: {error.cmd[0]} terminó con código {error.returncode}. '
+                         'Consulta el error de la fase en la salida anterior.')
+    except (ValueError, OSError) as error:
         raise SystemExit(f'Publicación interrumpida: {error}')
