@@ -132,6 +132,11 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
 
 def build(release, manifest):
+    frontend_build_args = {
+        'VITE_MAIN_MENU_URL': '/intranet/home',
+        'VITE_FUNCIONARIO_SESSION_PATH': '/api/auth/me-funcionarios',
+        **manifest.get('frontend_build_args', {}),
+    }
     # Comprobar las cinco etiquetas antes de construir cualquiera.
     for project in PROJECTS:
         if image_exists(image_name(project, manifest['version'])) or (release / project).exists():
@@ -156,12 +161,12 @@ def build(release, manifest):
                 '--label', f'org.opencontainers.image.revision={metadata["revision"]}',
                 '--label', f'local.source.sha256={metadata["source_sha256"]}']
         if project == 'app-feriados':
-            for key, value in manifest.get('frontend_build_args', {'VITE_MAIN_MENU_URL': '/intranet/home'}).items():
+            for key, value in frontend_build_args.items():
                 args += ['--build-arg', f'{key}={value}']
         docker(*args, str(source))
         metadata.update(image=image, image_id=inspect(image, image=True)['Id'])
         write_json(release / BUILT, manifest)
-    manifest['runtime_policy'] = {'backend_args': SAFE_ARGS, 'frontend_build_args': {**manifest.get('frontend_build_args', {'VITE_MAIN_MENU_URL': '/intranet/home'}), 'VITE_API_BASE_URL': ''}}
+    manifest['runtime_policy'] = {'backend_args': SAFE_ARGS, 'frontend_build_args': {**frontend_build_args, 'VITE_API_BASE_URL': ''}}
     manifest['build_complete'] = True
     write_json(release / BUILT, manifest)
     print('Las cinco imágenes están construidas; todavía no se reemplazó ningún servicio.')

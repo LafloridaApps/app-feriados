@@ -157,12 +157,11 @@ export const useEnvioSolicitud = ({
             return false;
         }
 
-        // Validacion de subrogancia para directores
         if (esDirector && !subrogancia) {
             await Swal.fire({
                 icon: 'info',
                 title: 'Subrogante Requerido',
-                text: 'Como director, es obligatorio que designe un subrogante.'
+                text: 'Debe designar un subrogante para ingresar la solicitud.'
             });
             setMostrarModalSubrogante(true);
             return false;

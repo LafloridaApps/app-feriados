@@ -58,7 +58,8 @@ export const searchDirectorByDeptoAndFechaInicioAndFechaFinSolicitud = async (id
 };
 
 export const getFuncionarioApi = async () => {
-    const url = `${BASE_URL}/auth-funcionario/me`;
+    const sessionPath = import.meta.env.VITE_FUNCIONARIO_SESSION_PATH || '/auth-funcionario/me';
+    const url = `${BASE_URL}${sessionPath}`;
 
     try {
         const response = await axios.get(url,  {
